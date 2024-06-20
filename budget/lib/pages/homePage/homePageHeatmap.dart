@@ -16,6 +16,7 @@ import 'package:budget/widgets/transactionEntries.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shamsi_date/shamsi_date.dart';
 
 import '../../widgets/linearGradientFadedEdges.dart';
 import '../../widgets/transactionEntry/incomeAmountArrow.dart';
@@ -67,9 +68,7 @@ class _HomePageHeatMapState extends State<HomePageHeatMap> {
         ),
         builder: (context, snapshotTotalSpentBefore) {
           if (snapshotTotalSpentBefore.hasData) {
-            double totalSpentBefore = appStateSettings["ignorePastAmountSpent"]
-                ? 0
-                : snapshotTotalSpentBefore.data!;
+            double totalSpentBefore = appStateSettings["ignorePastAmountSpent"] ? 0 : snapshotTotalSpentBefore.data!;
             return StreamBuilder<List<Transaction>>(
               stream: database.getTransactionsInTimeRangeFromCategories(
                 DateTime(
@@ -145,8 +144,7 @@ class HeatMap extends StatelessWidget {
   double? getMaxY(List<Pair?> pairs, bool isIncome) {
     double? maxY;
     for (Pair? pair in pairs) {
-      if (pair != null &&
-          (isIncome && pair.y > 0 || isIncome == false && pair.y < 0)) {
+      if (pair != null && (isIncome && pair.y > 0 || isIncome == false && pair.y < 0)) {
         if (maxY == null || pair.y > maxY) {
           maxY = pair.y;
         }
@@ -158,8 +156,7 @@ class HeatMap extends StatelessWidget {
   double? getMinY(List<Pair?> pairs, bool isIncome) {
     double? minY;
     for (Pair? pair in pairs) {
-      if (pair != null &&
-          (isIncome && pair.y > 0 || isIncome == false && pair.y < 0)) {
+      if (pair != null && (isIncome && pair.y > 0 || isIncome == false && pair.y < 0)) {
         if (minY == null || pair.y < minY) {
           minY = pair.y;
         }
@@ -172,10 +169,8 @@ class HeatMap extends StatelessWidget {
   Widget build(BuildContext context) {
     final int totalDaysBeforeFixed = points.length;
     final int totalWeeksBeforeFixed = (totalDaysBeforeFixed / 7).ceil();
-    final int lastDateWeekday =
-        points[totalDaysBeforeFixed - 1].dateTime?.weekday ?? 0;
-    final int lastDayGridLocation =
-        7 - (totalWeeksBeforeFixed * 7 - totalDaysBeforeFixed);
+    final int lastDateWeekday = points[totalDaysBeforeFixed - 1].dateTime?.weekday ?? 0;
+    final int lastDayGridLocation = 7 - (totalWeeksBeforeFixed * 7 - totalDaysBeforeFixed);
     // Subtract one here so the first day of the week is sunday
     int extraDaysOffsetAtStart = (lastDayGridLocation - lastDateWeekday) -
         1 +
@@ -186,18 +181,14 @@ class HeatMap extends StatelessWidget {
     } else {
       extraDaysOffsetAtStart = extraDaysOffsetAtStart.abs();
     }
-    final List<Pair?> pointsOffsetFixed = [
-      for (int i = 0; i < extraDaysOffsetAtStart; i++) null,
-      ...points
-    ];
+    final List<Pair?> pointsOffsetFixed = [for (int i = 0; i < extraDaysOffsetAtStart; i++) null, ...points];
     final double maxIncome = getMaxY(pointsOffsetFixed, true) ?? 0;
     final double minIncome = getMinY(pointsOffsetFixed, true) ?? 0;
     final double maxExpense = getMaxY(pointsOffsetFixed, false) ?? 0;
     final double minExpense = getMinY(pointsOffsetFixed, false) ?? 0;
     final int totalDays = pointsOffsetFixed.length;
     final int totalWeeks = (totalDays / 7).ceil();
-    final Color backgroundColor =
-        getColor(context, "lightDarkAccentHeavyLight");
+    final Color backgroundColor = getColor(context, "lightDarkAccentHeavyLight");
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 13),
@@ -215,9 +206,7 @@ class HeatMap extends StatelessWidget {
           gradientColor: backgroundColor,
           child: NotificationListener<ScrollNotification>(
             onNotification: (ScrollNotification scrollNotification) {
-              if (loadMoreMonths != null &&
-                  scrollNotification.metrics.pixels >=
-                      scrollNotification.metrics.maxScrollExtent) {
+              if (loadMoreMonths != null && scrollNotification.metrics.pixels >= scrollNotification.metrics.maxScrollExtent) {
                 loadMoreMonths!(1);
               }
               return false;
@@ -241,70 +230,37 @@ class HeatMap extends StatelessWidget {
                                   child: Builder(
                                     builder: (context) {
                                       int index = i * 7 + j;
-                                      double? amount = nullIfIndexOutOfRange(
-                                                  pointsOffsetFixed, index) ==
-                                              null
+                                      double? amount = nullIfIndexOutOfRange(pointsOffsetFixed, index) == null
                                           ? null
-                                          : nullIfIndexOutOfRange(
-                                                  pointsOffsetFixed, index)
-                                              .y;
-                                      DateTime? day = nullIfIndexOutOfRange(
-                                                  pointsOffsetFixed, index) ==
-                                              null
+                                          : nullIfIndexOutOfRange(pointsOffsetFixed, index).y;
+                                      DateTime? day = nullIfIndexOutOfRange(pointsOffsetFixed, index) == null
                                           ? null
-                                          : nullIfIndexOutOfRange(
-                                                  pointsOffsetFixed, index)
-                                              .dateTime;
+                                          : nullIfIndexOutOfRange(pointsOffsetFixed, index).dateTime;
                                       Color color = amount == null
                                           ? Colors.transparent
                                           : amount == 0
                                               ? appStateSettings["materialYou"]
-                                                  ? Theme.of(context)
-                                                      .colorScheme
-                                                      .onSecondary
-                                                      .withOpacity(0.6)
-                                                  : getColor(context,
-                                                          "lightDarkAccent")
-                                                      .withOpacity(0.6)
+                                                  ? Theme.of(context).colorScheme.onSecondary.withOpacity(0.6)
+                                                  : getColor(context, "lightDarkAccent").withOpacity(0.6)
                                               : amount < 0
-                                                  ? getColor(context,
-                                                          "expenseAmount")
-                                                      .withOpacity(
-                                                      0.5 +
-                                                          (((1 - 0.5) / 4) *
-                                                              (getRangeIndex(
-                                                                      maxExpense,
-                                                                      minExpense,
-                                                                      amount) +
-                                                                  1)),
+                                                  ? getColor(context, "expenseAmount").withOpacity(
+                                                      0.5 + (((1 - 0.5) / 4) * (getRangeIndex(maxExpense, minExpense, amount) + 1)),
                                                     )
-                                                  : getColor(context,
-                                                          "incomeAmount")
-                                                      .withOpacity(
-                                                      0.5 +
-                                                          (((1 - 0.5) / 4) *
-                                                              (getRangeIndex(
-                                                                      minIncome,
-                                                                      maxIncome,
-                                                                      amount) +
-                                                                  1)),
+                                                  : getColor(context, "incomeAmount").withOpacity(
+                                                      0.5 + (((1 - 0.5) / 4) * (getRangeIndex(minIncome, maxIncome, amount) + 1)),
                                                     );
                                       return Tooltip(
-                                        waitDuration:
-                                            Duration(milliseconds: 200),
+                                        waitDuration: Duration(milliseconds: 200),
                                         message: day == null
                                             ? ""
                                             : getWordedDate(
-                                                day,
+                                                Jalali.fromDateTime(day),
                                                 includeMonthDate: true,
-                                                includeYearIfNotCurrentYear:
-                                                    true,
+                                                includeYearIfNotCurrentYear: true,
                                               ),
                                         child: Tappable(
                                           onTap: () {
-                                            if (amount != null)
-                                              openTransactionsOnDayBottomSheet(
-                                                  context, day);
+                                            if (amount != null) openTransactionsOnDayBottomSheet(context, day);
                                           },
                                           child: Container(
                                             height: dayWidth,
@@ -312,17 +268,13 @@ class HeatMap extends StatelessWidget {
                                             decoration: BoxDecoration(
                                               border: Border.all(
                                                 color: amount == null
-                                                    ? Theme.of(context)
-                                                                .brightness ==
-                                                            Brightness.light
-                                                        ? color
-                                                            .withOpacity(0.05)
+                                                    ? Theme.of(context).brightness == Brightness.light
+                                                        ? color.withOpacity(0.05)
                                                         : color.withOpacity(0.2)
                                                     : color.withOpacity(0.3),
                                                 width: 1,
                                               ),
-                                              borderRadius:
-                                                  BorderRadius.circular(5),
+                                              borderRadius: BorderRadius.circular(5),
                                             ),
                                           ),
                                           borderRadius: 5,
@@ -346,9 +298,7 @@ class HeatMap extends StatelessWidget {
                             child: ButtonIcon(
                               padding: EdgeInsets.zero,
                               size: dayWidth * 2 + dayPadding * 4,
-                              icon: appStateSettings["outlinedIcons"]
-                                  ? Icons.history_outlined
-                                  : Icons.history_rounded,
+                              icon: appStateSettings["outlinedIcons"] ? Icons.history_outlined : Icons.history_rounded,
                               onTap: () {
                                 loadMoreMonths!(1);
                               },
@@ -361,10 +311,9 @@ class HeatMap extends StatelessWidget {
                             bottom: 0,
                             child: HeatMapMonthLabel(
                               label: getWordedDateShort(
-                                nullIfIndexOutOfRange(
-                                            pointsOffsetFixed, i * 7 + 6)
-                                        ?.dateTime ??
-                                    DateTime.now(),
+                                nullIfIndexOutOfRange(pointsOffsetFixed, i * 7 + 6)?.dateTime != null
+                                    ? Jalali.fromDateTime(nullIfIndexOutOfRange(pointsOffsetFixed, i * 7 + 6)?.dateTime!)
+                                    : Jalali.now(),
                                 showTodayTomorrow: false,
                               ),
                               weekNumber: i,
@@ -382,8 +331,7 @@ class HeatMap extends StatelessWidget {
   }
 }
 
-Future<dynamic> openTransactionsOnDayBottomSheet(
-    BuildContext context, DateTime? day) {
+Future<dynamic> openTransactionsOnDayBottomSheet(BuildContext context, DateTime? day) {
   return openBottomSheet(
     context,
     PopupFramework(
@@ -391,8 +339,8 @@ Future<dynamic> openTransactionsOnDayBottomSheet(
       customSubtitleWidget: StreamBuilder<double?>(
         stream: database.watchTotalSpentInTimeRangeFromCategories(
           allWallets: Provider.of<AllWallets>(context, listen: false),
-          start: day ?? DateTime.now(),
-          end: day ?? DateTime.now(),
+          start: day != null ? Jalali.fromDateTime(day) : Jalali.now(),
+          end: day != null ? Jalali.fromDateTime(day) : Jalali.now(),
           categoryFks: null,
           categoryFksExclude: null,
           budgetTransactionFilters: null,
@@ -402,17 +350,14 @@ Future<dynamic> openTransactionsOnDayBottomSheet(
         builder: (context, snapshot) {
           if (snapshot.hasData && snapshot.data != null) {
             return Padding(
-              padding: EdgeInsets.only(
-                  top: getPlatform() == PlatformOS.isIOS ? 4 : 1),
+              padding: EdgeInsets.only(top: getPlatform() == PlatformOS.isIOS ? 4 : 1),
               child: AmountWithColorAndArrow(
                 showIncomeArrow: true,
                 totalSpent: snapshot.data ?? 0,
                 fontSize: 19,
                 iconSize: 24,
                 iconWidth: 15,
-                mainAxisAlignment: getPlatform() == PlatformOS.isIOS
-                    ? MainAxisAlignment.center
-                    : MainAxisAlignment.start,
+                mainAxisAlignment: getPlatform() == PlatformOS.isIOS ? MainAxisAlignment.center : MainAxisAlignment.start,
                 countNumber: false,
               ),
             );
@@ -423,12 +368,10 @@ Future<dynamic> openTransactionsOnDayBottomSheet(
       ),
       child: TransactionEntries(
         renderType: TransactionEntriesRenderType.nonSlivers,
-        day,
-        day,
+        day != null ? Jalali.fromDateTime(day) : Jalali.now(),
+        day != null ? Jalali.fromDateTime(day) : Jalali.now(),
         transactionBackgroundColor: appStateSettings["materialYou"]
-            ? dynamicPastel(
-                context, Theme.of(context).colorScheme.secondaryContainer,
-                amountDark: 0.3, amountLight: 0.6)
+            ? dynamicPastel(context, Theme.of(context).colorScheme.secondaryContainer, amountDark: 0.3, amountLight: 0.6)
             : getColor(context, "lightDarkAccent"),
         dateDividerColor: Colors.transparent,
         includeDateDivider: false,
@@ -441,7 +384,7 @@ Future<dynamic> openTransactionsOnDayBottomSheet(
       title: day == null
           ? ""
           : getWordedDate(
-              day,
+              Jalali.fromDateTime(day),
               includeMonthDate: true,
               includeYearIfNotCurrentYear: true,
             ),
@@ -450,11 +393,7 @@ Future<dynamic> openTransactionsOnDayBottomSheet(
 }
 
 class HeatMapMonthLabel extends StatelessWidget {
-  const HeatMapMonthLabel(
-      {required this.weekNumber,
-      required this.label,
-      required this.weekWidth,
-      super.key});
+  const HeatMapMonthLabel({required this.weekNumber, required this.label, required this.weekWidth, super.key});
   final int weekNumber;
   final String label;
   final double weekWidth;
@@ -468,10 +407,7 @@ class HeatMapMonthLabel extends StatelessWidget {
           textAlign: TextAlign.center,
           fontSize: 13,
           text: label,
-          textColor: dynamicPastel(
-                  context, Theme.of(context).colorScheme.primary,
-                  amount: 0.8, inverse: true)
-              .withOpacity(0.5),
+          textColor: dynamicPastel(context, Theme.of(context).colorScheme.primary, amount: 0.8, inverse: true).withOpacity(0.5),
         ),
       ),
     );

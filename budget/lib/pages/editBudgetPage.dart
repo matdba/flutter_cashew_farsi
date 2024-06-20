@@ -29,6 +29,8 @@ import 'package:flutter/material.dart' hide SliverReorderableList;
 import 'package:flutter/services.dart' hide TextInput;
 import 'package:budget/modified/reorderable_list.dart';
 import 'package:provider/provider.dart';
+import 'package:shamsi_date/shamsi_date.dart';
+import 'package:flutter/material.dart' as material;
 
 String? hiddenOnSearchValue;
 
@@ -43,17 +45,12 @@ bool hideIfSearching(String? searchTerm, bool isFocused, BuildContext context) {
   if (hiddenOnSearchValue != null && hiddenOnSearchValue == searchTerm) {
     return true;
   }
-  if (kIsWeb == false &&
-      isFocused == true &&
-      MediaQuery.sizeOf(context).height < 950) {
+  if (kIsWeb == false && isFocused == true && MediaQuery.sizeOf(context).height < 950) {
     return true;
   }
   if (searchTerm == "" ||
       searchTerm == null ||
-      MediaQuery.sizeOf(context).height -
-              getKeyboardHeight(context) -
-              getExpandedHeaderHeight(context, null) >
-          400) {
+      MediaQuery.sizeOf(context).height - getKeyboardHeight(context) - getExpandedHeaderHeight(context, null) > 400) {
     return false;
   }
   hiddenOnSearchValue = searchTerm;
@@ -100,7 +97,7 @@ class _EditBudgetPageState extends State<EditBudgetPage> {
         horizontalPadding: getHorizontalPaddingConstrained(context),
         dragDownToDismiss: true,
         dragDownToDismissEnabled: dragDownToDismissEnabled,
-        title: "edit-budgets".tr(),
+        title: "ویرایش بودجه".tr(),
         scrollToTopButton: true,
         floatingActionButton: AnimateFABDelayed(
           fab: AddFAB(
@@ -130,9 +127,7 @@ class _EditBudgetPageState extends State<EditBudgetPage> {
                 ),
               );
             },
-            icon: Icon(appStateSettings["outlinedIcons"]
-                ? Icons.add_outlined
-                : Icons.add_rounded),
+            icon: Icon(appStateSettings["outlinedIcons"] ? Icons.add_outlined : Icons.add_rounded),
           ),
         ],
         slivers: [
@@ -147,9 +142,7 @@ class _EditBudgetPageState extends State<EditBudgetPage> {
                 },
                 child: TextInput(
                   labelText: "search-budgets-placeholder".tr(),
-                  icon: appStateSettings["outlinedIcons"]
-                      ? Icons.search_outlined
-                      : Icons.search_rounded,
+                  icon: appStateSettings["outlinedIcons"] ? Icons.search_outlined : Icons.search_rounded,
                   onSubmitted: (value) {
                     setState(() {
                       searchValue = value;
@@ -172,8 +165,7 @@ class _EditBudgetPageState extends State<EditBudgetPage> {
             ),
           ),
           StreamBuilder<List<Budget>>(
-            stream: database.watchAllBudgets(
-                searchFor: searchValue == "" ? null : searchValue),
+            stream: database.watchAllBudgets(searchFor: searchValue == "" ? null : searchValue),
             builder: (context, snapshot) {
               if (snapshot.hasData && (snapshot.data ?? []).length <= 0) {
                 return SliverToBoxAdapter(
@@ -199,15 +191,10 @@ class _EditBudgetPageState extends State<EditBudgetPage> {
                   },
                   itemBuilder: (context, index) {
                     Budget budget = snapshot.data![index];
-                    DateTimeRange budgetRange =
-                        getBudgetDate(budget, DateTime.now());
+                    DateTimeRange budgetRange = getBudgetDate(budget, DateTime.now());
                     Color accentColor = dynamicPastel(
-                        context,
-                        HexColor(budget.colour,
-                            defaultColor:
-                                Theme.of(context).colorScheme.primary),
-                        amountLight: 0.55,
-                        amountDark: 0.35);
+                        context, HexColor(budget.colour, defaultColor: Theme.of(context).colorScheme.primary),
+                        amountLight: 0.55, amountDark: 0.35);
                     return Stack(
                       key: ValueKey(index),
                       children: [
@@ -221,22 +208,18 @@ class _EditBudgetPageState extends State<EditBudgetPage> {
                                   ? Icons.visibility_outlined
                                   : Icons.visibility_rounded,
                           onExtra: () async {
-                            Budget updatedBudget =
-                                budget.copyWith(archived: !budget.archived);
+                            Budget updatedBudget = budget.copyWith(archived: !budget.archived);
                             await database.createOrUpdateBudget(updatedBudget);
                           },
                           opacity: budget.archived ? 0.5 : 1,
-                          canReorder: searchValue == "" &&
-                              (snapshot.data ?? []).length != 1,
-                          currentReorder:
-                              currentReorder != -1 && currentReorder != index,
+                          canReorder: searchValue == "" && (snapshot.data ?? []).length != 1,
+                          currentReorder: currentReorder != -1 && currentReorder != index,
                           accentColor: accentColor,
                           onDelete: () async {
                             return (await deleteBudgetPopup(
                                   context,
                                   budget: budget,
-                                  routesToPopAfterDelete:
-                                      RoutesToPopAfterDelete.None,
+                                  routesToPopAfterDelete: RoutesToPopAfterDelete.None,
                                 )) ==
                                 DeletePopupAction.Delete;
                           },
@@ -256,13 +239,8 @@ class _EditBudgetPageState extends State<EditBudgetPage> {
                               Row(
                                 children: [
                                   TextFont(
-                                    text: convertToMoney(
-                                        Provider.of<AllWallets>(context),
-                                        budget.amount,
-                                        currencyKey:
-                                            Provider.of<AllWallets>(context)
-                                                .indexedByPk[budget.walletFk]
-                                                ?.currency),
+                                    text: convertToMoney(Provider.of<AllWallets>(context), budget.amount,
+                                        currencyKey: Provider.of<AllWallets>(context).indexedByPk[budget.walletFk]?.currency),
                                     fontWeight: FontWeight.bold,
                                     fontSize: 18,
                                   ),
@@ -280,72 +258,47 @@ class _EditBudgetPageState extends State<EditBudgetPage> {
                                   //     : SizedBox(),
                                   TextFont(
                                     text: budget.periodLength == 1
-                                        ? nameRecurrence[budget.reoccurrence]
-                                            .toString()
-                                            .toLowerCase()
-                                            .tr()
-                                            .toLowerCase()
-                                        : namesRecurrence[budget.reoccurrence]
-                                            .toString()
-                                            .toLowerCase()
-                                            .tr()
-                                            .toLowerCase(),
+                                        ? nameRecurrence[budget.reoccurrence].toString()
+                                        : namesRecurrence[budget.reoccurrence].toString(),
                                     fontWeight: FontWeight.bold,
                                     fontSize: 16,
                                   ),
                                 ],
                               ),
                               TextFont(
-                                text: getWordedDateShort(budgetRange.start) +
+                                text: getWordedDateShort(Jalali.fromDateTime(budgetRange.start)) +
                                     " – " +
-                                    getWordedDateShort(budgetRange.end),
+                                    getWordedDateShort(Jalali.fromDateTime(budgetRange.end)),
                                 fontSize: 15,
                               ),
                               Container(height: 2),
-                              budget.sharedKey == null &&
-                                      !budget.addedTransactionsOnly
+                              budget.sharedKey == null && !budget.addedTransactionsOnly
                                   ? TextFont(
-                                      text: budget.categoryFks == null ||
-                                              budget.categoryFks!.length == 0
+                                      text: budget.categoryFks == null || budget.categoryFks!.length == 0
                                           ? "all-categories-budget".tr()
-                                          : budget.categoryFks!.length
-                                                  .toString() +
-                                              " " +
-                                              "category-budget".tr(),
+                                          : budget.categoryFks!.length.toString() + " " + "category-budget".tr(),
                                       fontSize: 14,
                                     )
                                   : FutureBuilder<int?>(
-                                      future: database
-                                          .getTotalCountOfTransactionsInBudget(
-                                              budget.budgetPk),
+                                      future: database.getTotalCountOfTransactionsInBudget(budget.budgetPk),
                                       builder: (context, snapshot) {
-                                        if (snapshot.hasData &&
-                                            snapshot.data != null) {
+                                        if (snapshot.hasData && snapshot.data != null) {
                                           return TextFont(
                                             textAlign: TextAlign.left,
                                             text: snapshot.data!.toString() +
                                                 " " +
                                                 (snapshot.data! == 1
-                                                    ? "transaction"
-                                                        .tr()
-                                                        .toLowerCase()
-                                                    : "transactions"
-                                                        .tr()
-                                                        .toLowerCase()),
+                                                    ? "transaction".tr().toLowerCase()
+                                                    : "transactions".tr().toLowerCase()),
                                             fontSize: 14,
-                                            textColor:
-                                                getColor(context, "black")
-                                                    .withOpacity(0.65),
+                                            textColor: getColor(context, "black").withOpacity(0.65),
                                           );
                                         } else {
                                           return TextFont(
                                             textAlign: TextAlign.left,
-                                            text:
-                                                "/" + " " + "transactions".tr(),
+                                            text: "/" + " " + "transactions".tr(),
                                             fontSize: 14,
-                                            textColor:
-                                                getColor(context, "black")
-                                                    .withOpacity(0.65),
+                                            textColor: getColor(context, "black").withOpacity(0.65),
                                           );
                                         }
                                       },
@@ -397,22 +350,15 @@ class _EditBudgetPageState extends State<EditBudgetPage> {
                         ),
                         budget.sharedKey != null
                             ? Padding(
-                                padding:
-                                    const EdgeInsets.only(top: 15, right: 20),
+                                padding: const EdgeInsets.only(top: 15, right: 20),
                                 child: Align(
                                   alignment: Alignment.topRight,
                                   child: Icon(
-                                    appStateSettings["outlinedIcons"]
-                                        ? Icons.people_alt_outlined
-                                        : Icons.people_alt_rounded,
+                                    appStateSettings["outlinedIcons"] ? Icons.people_alt_outlined : Icons.people_alt_rounded,
                                     size: 18,
                                     color: budget.colour == null
-                                        ? Theme.of(context)
-                                            .colorScheme
-                                            .secondary
-                                        : dynamicPastel(
-                                            context, HexColor(budget.colour),
-                                            inverse: true, amount: 0.5),
+                                        ? Theme.of(context).colorScheme.secondary
+                                        : dynamicPastel(context, HexColor(budget.colour), inverse: true, amount: 0.5),
                                   ),
                                 ),
                               )
@@ -428,11 +374,9 @@ class _EditBudgetPageState extends State<EditBudgetPage> {
                     // print(oldBudget.order);
 
                     if (_intNew > _intPrevious) {
-                      await database.moveBudget(
-                          oldBudget.budgetPk, _intNew - 1, oldBudget.order);
+                      await database.moveBudget(oldBudget.budgetPk, _intNew - 1, oldBudget.order);
                     } else {
-                      await database.moveBudget(
-                          oldBudget.budgetPk, _intNew, oldBudget.order);
+                      await database.moveBudget(oldBudget.budgetPk, _intNew, oldBudget.order);
                     }
                     return true;
                   },
@@ -467,16 +411,13 @@ Future<DeletePopupAction?> deleteBudgetPopup(
     if (budget.sharedKey != null) {
       result = await deleteSharedBudgetPopup(context, budget);
     } else if (budget.addedTransactionsOnly) {
-      int? numTransactions =
-          await database.getTotalCountOfTransactionsInBudget(budget.budgetPk);
+      int? numTransactions = await database.getTotalCountOfTransactionsInBudget(budget.budgetPk);
       if (numTransactions != null && numTransactions > 0) {
         result = await openPopup(
           context,
           title: "remove-transactions-from-added-budget-question".tr(),
           description: "delete-budget-added-warning".tr(),
-          icon: appStateSettings["outlinedIcons"]
-              ? Icons.warning_outlined
-              : Icons.warning_rounded,
+          icon: appStateSettings["outlinedIcons"] ? Icons.warning_outlined : Icons.warning_rounded,
           onCancel: () {
             Navigator.pop(context, false);
           },
@@ -516,9 +457,7 @@ Future<dynamic> deleteSharedBudgetPopup(context, Budget budget) {
       title: "Delete Shared Budget?",
       description:
           "You own this budget. Deleting it will remove it from the server. All transactions belonging to this budget will no longer be connected to a budget.",
-      icon: appStateSettings["outlinedIcons"]
-          ? Icons.delete_outlined
-          : Icons.delete_rounded,
+      icon: appStateSettings["outlinedIcons"] ? Icons.delete_outlined : Icons.delete_rounded,
       onCancel: () {
         Navigator.pop(context, false);
       },
@@ -534,9 +473,7 @@ Future<dynamic> deleteSharedBudgetPopup(context, Budget budget) {
       title: "Leave Shared Budget?",
       description:
           "You are a member of this budget. Deleting it will remove you from the shared group. All transactions belonging to this budget will no longer be connected to a budget, until you are added back.",
-      icon: appStateSettings["outlinedIcons"]
-          ? Icons.delete_outlined
-          : Icons.delete_rounded,
+      icon: appStateSettings["outlinedIcons"] ? Icons.delete_outlined : Icons.delete_rounded,
       onCancel: () {
         Navigator.pop(context, false);
       },
@@ -550,8 +487,7 @@ Future<dynamic> deleteSharedBudgetPopup(context, Budget budget) {
 }
 
 // either "none", null, or a Budget type
-Future<dynamic> selectAddableBudgetPopup(BuildContext context,
-    {String? removeWalletPk}) async {
+Future<dynamic> selectAddableBudgetPopup(BuildContext context, {String? removeWalletPk}) async {
   dynamic budget = await openBottomSheet(
     context,
     PopupFramework(
@@ -559,8 +495,7 @@ Future<dynamic> selectAddableBudgetPopup(BuildContext context,
       child: StreamBuilder<List<Budget>>(
         stream: database.watchAllAddableBudgets(),
         builder: (context, snapshot) {
-          if (snapshot.hasData &&
-              (snapshot.data != null && snapshot.data!.length > 0)) {
+          if (snapshot.hasData && (snapshot.data != null && snapshot.data!.length > 0)) {
             List<Budget> addableBudgets = snapshot.data!;
             return RadioItems(
               ifNullSelectNone: true,
@@ -620,11 +555,7 @@ Future<dynamic> selectAddableBudgetPopup(BuildContext context,
 }
 
 class NoResultsCreate extends StatelessWidget {
-  const NoResultsCreate(
-      {required this.message,
-      required this.buttonLabel,
-      required this.route,
-      super.key});
+  const NoResultsCreate({required this.message, required this.buttonLabel, required this.route, super.key});
   final String message;
   final String buttonLabel;
   final Widget route;
@@ -688,60 +619,54 @@ class TotalSpentToggle extends StatefulWidget {
 class _TotalSpentToggleState extends State<TotalSpentToggle> {
   @override
   Widget build(BuildContext context) {
-    String appSettingKey = widget.isForGoalTotal
-        ? "showTotalSpentForObjective"
-        : "showTotalSpentForBudget";
-    String titleLabel = widget.isForGoalTotal
-        ? "goal-total-type".tr()
-        : "budget-total-type".tr();
-    return SettingsContainer(
-      title: titleLabel,
-      description: appStateSettings[appSettingKey] == true
-          ? "total-spent".tr().toLowerCase().capitalizeFirst
-          : "total-remaining".tr().toLowerCase().capitalizeFirst,
-      onTap: () {
-        openBottomSheet(
-          context,
-          PopupFramework(
-            title: titleLabel,
-            child: RadioItems(
-              items: ["total-remaining", "total-spent"],
-              initial: appStateSettings[appSettingKey] == true
-                  ? "total-spent"
-                  : "total-remaining",
-              displayFilter: (label) {
-                return label.tr();
-              },
-              getDescription: (String label) {
-                if (label == "total-remaining") {
-                  return "total-remaining-example".tr();
-                } else if (label == "total-spent") {
-                  return "total-spent-example".tr();
-                } else {
-                  return "";
-                }
-              },
-              onChanged: (option) async {
-                bool result = option == "total-spent";
-                if (widget.isForGoalTotal) {
-                  await updateSettings(appSettingKey, result,
-                      updateGlobalState: true);
-                } else {
-                  await updateSettings(appSettingKey, result,
-                      pagesNeedingRefresh: [0, 2], updateGlobalState: false);
-                }
+    String appSettingKey = widget.isForGoalTotal ? "showTotalSpentForObjective" : "showTotalSpentForBudget";
+    String titleLabel = widget.isForGoalTotal ? "نوع هدف کل" : "نوع بودجه کل";
+    return Directionality(
+      textDirection: material.TextDirection.rtl,
+      child: SettingsContainer(
+        title: titleLabel,
+        description: appStateSettings[appSettingKey] == true ? "کل سپری شده" : "کل باقی مانده",
+        onTap: () {
+          openBottomSheet(
+            context,
+            Directionality(
+              textDirection: material.TextDirection.rtl,
+              child: PopupFramework(
+                title: titleLabel,
+                child: RadioItems(
+                  items: ["کل باقیمانده", "کل سپری شده"],
+                  initial: appStateSettings[appSettingKey] == true ? "کل سپری شده" : "کل باقیمانده",
+                  displayFilter: (label) {
+                    return label;
+                  },
+                  getDescription: (String label) {
+                    if (label == "کل باقیمانده") {
+                      return "مثال: ۷۵ عدد باقیمانده از ۱۰۰";
+                    } else if (label == "کل سپری شده") {
+                      return "مثال: ۲۵ عدد سپری شده از ۱۰۰";
+                    } else {
+                      return "";
+                    }
+                  },
+                  onChanged: (option) async {
+                    bool result = option == "total-spent";
+                    if (widget.isForGoalTotal) {
+                      await updateSettings(appSettingKey, result, updateGlobalState: true);
+                    } else {
+                      await updateSettings(appSettingKey, result, pagesNeedingRefresh: [0, 2], updateGlobalState: false);
+                    }
 
-                // Read the new settings value by setting state
-                setState(() {});
-                Navigator.pop(context);
-              },
+                    // Read the new settings value by setting state
+                    setState(() {});
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
             ),
-          ),
-        );
-      },
-      icon: appStateSettings["outlinedIcons"]
-          ? Icons.center_focus_weak_outlined
-          : Icons.center_focus_weak_rounded,
+          );
+        },
+        icon: appStateSettings["outlinedIcons"] ? Icons.center_focus_weak_outlined : Icons.center_focus_weak_rounded,
+      ),
     );
   }
 }

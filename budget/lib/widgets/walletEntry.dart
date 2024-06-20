@@ -1,10 +1,8 @@
 import 'package:budget/database/tables.dart';
 import 'package:budget/functions.dart';
-import 'package:budget/main.dart';
 import 'package:budget/pages/addWalletPage.dart';
 import 'package:budget/pages/homePage/homePageWalletSwitcher.dart';
 import 'package:budget/pages/transactionFilters.dart';
-import 'package:budget/struct/databaseGlobal.dart';
 import 'package:budget/struct/settings.dart';
 import 'package:budget/widgets/animatedExpanded.dart';
 import 'package:budget/widgets/fadeIn.dart';
@@ -15,16 +13,15 @@ import 'package:budget/widgets/openPopup.dart';
 import 'package:budget/widgets/tappable.dart';
 import 'package:budget/widgets/textWidgets.dart';
 import 'package:budget/widgets/transactionEntry/incomeAmountArrow.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:budget/pages/walletDetailsPage.dart';
 import 'package:budget/colors.dart';
+import 'package:persian_number_utility/persian_number_utility.dart';
 import 'package:provider/provider.dart';
 import 'package:budget/widgets/countNumber.dart';
 
 class WalletEntry extends StatelessWidget {
-  const WalletEntry(
-      {super.key, required this.walletWithDetails, required this.selected});
+  const WalletEntry({super.key, required this.walletWithDetails, required this.selected});
   final WalletWithDetails walletWithDetails;
   final bool selected;
 
@@ -38,8 +35,7 @@ class WalletEntry extends StatelessWidget {
       ),
       child: OpenContainerNavigation(
         borderRadius: 15,
-        openPage: WatchedWalletDetailsPage(
-            walletPk: walletWithDetails.wallet.walletPk),
+        openPage: WatchedWalletDetailsPage(walletPk: walletWithDetails.wallet.walletPk),
         button: (openContainer) {
           return Tappable(
             color: getColor(context, "lightDarkAccentHeavyLight"),
@@ -50,17 +46,13 @@ class WalletEntry extends StatelessWidget {
                 border: Border.all(
                   width: 2,
                   color: selected
-                      ? HexColor(walletWithDetails.wallet.colour,
-                              defaultColor:
-                                  Theme.of(context).colorScheme.primary)
-                          .withOpacity(0.7)
+                      ? HexColor(walletWithDetails.wallet.colour, defaultColor: Theme.of(context).colorScheme.primary).withOpacity(0.7)
                       : Colors.transparent,
                 ),
               ),
               duration: Duration(milliseconds: 450),
               child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 18, vertical: 13),
+                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 13),
                 child: Stack(
                   clipBehavior: Clip.none,
                   children: [
@@ -70,9 +62,7 @@ class WalletEntry extends StatelessWidget {
                       child: Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(100),
-                          color: HexColor(walletWithDetails.wallet.colour,
-                                  defaultColor:
-                                      Theme.of(context).colorScheme.primary)
+                          color: HexColor(walletWithDetails.wallet.colour, defaultColor: Theme.of(context).colorScheme.primary)
                               .withOpacity(0.7),
                         ),
                         width: 20,
@@ -98,15 +88,9 @@ class WalletEntry extends StatelessWidget {
                           ),
                           TextFont(
                             textAlign: TextAlign.left,
-                            text: walletWithDetails.numberTransactions
-                                    .toString() +
-                                " " +
-                                (walletWithDetails.numberTransactions == 1
-                                    ? "transaction".tr().toLowerCase()
-                                    : "transactions".tr().toLowerCase()),
+                            text: "تعداد تراکنش" + " " + walletWithDetails.numberTransactions.toString().toPersianDigit(),
                             fontSize: 14,
-                            textColor:
-                                getColor(context, "black").withOpacity(0.65),
+                            textColor: getColor(context, "black").withOpacity(0.65),
                           ),
                         ],
                       ),
@@ -161,14 +145,12 @@ class WalletEntryRow extends StatelessWidget {
               initialSearchFilters: SearchFilters(
                 walletPks: Provider.of<AllWallets>(context)
                     .list
-                    .where((wallet) =>
-                        wallet.currency == walletWithDetails.wallet.currency)
+                    .where((wallet) => wallet.currency == walletWithDetails.wallet.currency)
                     .map((e) => e.walletPk)
                     .toList(),
               ),
             )
-          : WatchedWalletDetailsPage(
-              walletPk: walletWithDetails.wallet.walletPk),
+          : WatchedWalletDetailsPage(walletPk: walletWithDetails.wallet.walletPk),
       closedColor: getColor(context, "lightDarkAccentHeavyLight"),
       button: (openContainer) {
         return Tappable(
@@ -193,8 +175,7 @@ class WalletEntryRow extends StatelessWidget {
                                     borderRadius: BorderRadius.circular(100),
                                     color: HexColor(
                                       walletWithDetails.wallet.colour,
-                                      defaultColor:
-                                          Theme.of(context).colorScheme.primary,
+                                      defaultColor: Theme.of(context).colorScheme.primary,
                                     ).withOpacity(0.7),
                                   ),
                                   width: 20,
@@ -209,9 +190,7 @@ class WalletEntryRow extends StatelessWidget {
                                         width: 2,
                                         color: HexColor(
                                           walletWithDetails.wallet.colour,
-                                          defaultColor: Theme.of(context)
-                                              .colorScheme
-                                              .primary,
+                                          defaultColor: Theme.of(context).colorScheme.primary,
                                         ).withOpacity(0.7),
                                       ),
                                     ),
@@ -233,10 +212,7 @@ class WalletEntryRow extends StatelessWidget {
                               richTextSpan: [
                                 TextSpan(
                                   text: isCurrencyRow
-                                      ? (walletWithDetails.wallet.currency ??
-                                              "")
-                                          .toString()
-                                          .allCaps
+                                      ? (walletWithDetails.wallet.currency ?? "").toString().allCaps
                                       : walletWithDetails.wallet.name,
                                   style: TextStyle(
                                     fontSize: 18,
@@ -248,11 +224,7 @@ class WalletEntryRow extends StatelessWidget {
                                 ),
                                 if (percent != null)
                                   TextSpan(
-                                    text: "  " +
-                                        "(" +
-                                        convertToPercent(percent ?? 0,
-                                            useLessThanZero: true) +
-                                        ")",
+                                    text: "  " + "(" + convertToPercent(percent ?? 0, useLessThanZero: true) + ")",
                                     style: TextStyle(
                                       fontSize: 15,
                                       color: getColor(context, "textLight"),
@@ -331,18 +303,16 @@ class AmountAccount extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color textColor =
-        appStateSettings["accountColorfulAmountsWithArrows"] == true
-            ? ((walletWithDetails.totalSpent ?? 0) == 0
-                ? getColor(context, "black")
-                : (walletWithDetails.totalSpent ?? 0) > 0
-                    ? getColor(context, "incomeAmount")
-                    : getColor(context, "expenseAmount"))
-            : getColor(context, "black");
-    double finalTotal =
-        appStateSettings["accountColorfulAmountsWithArrows"] == true
-            ? (walletWithDetails.totalSpent ?? 0).abs()
-            : (absoluteZero(walletWithDetails.totalSpent ?? 0));
+    Color textColor = appStateSettings["accountColorfulAmountsWithArrows"] == true
+        ? ((walletWithDetails.totalSpent ?? 0) == 0
+            ? getColor(context, "black")
+            : (walletWithDetails.totalSpent ?? 0) > 0
+                ? getColor(context, "incomeAmount")
+                : getColor(context, "expenseAmount"))
+        : getColor(context, "black");
+    double finalTotal = appStateSettings["accountColorfulAmountsWithArrows"] == true
+        ? (walletWithDetails.totalSpent ?? 0).abs()
+        : (absoluteZero(walletWithDetails.totalSpent ?? 0));
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [

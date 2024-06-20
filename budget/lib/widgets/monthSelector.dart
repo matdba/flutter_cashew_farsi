@@ -30,6 +30,7 @@ import 'package:budget/widgets/transactionEntry/swipeToSelectTransactions.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shamsi_date/shamsi_date.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 import 'package:budget/widgets/util/sliverPinnedOverlapInjector.dart';
 import 'package:budget/widgets/util/multiDirectionalInfiniteScroll.dart';
@@ -50,12 +51,10 @@ class MonthSelectorState extends State<MonthSelector> {
   bool showScrollBottom = false;
   bool showScrollTop = false;
 
-  GlobalKey<MultiDirectionalInfiniteScrollState>
-      MultiDirectionalInfiniteScrollKey = GlobalKey();
+  GlobalKey<MultiDirectionalInfiniteScrollState> MultiDirectionalInfiniteScrollKey = GlobalKey();
 
   scrollTo(double position) {
-    MultiDirectionalInfiniteScrollKey.currentState!
-        .scrollTo(Duration(milliseconds: 700), position: position);
+    MultiDirectionalInfiniteScrollKey.currentState!.scrollTo(Duration(milliseconds: 700), position: position);
   }
 
   setSelectedDateStart(DateTime dateTime, int offset) {
@@ -67,11 +66,7 @@ class MonthSelectorState extends State<MonthSelector> {
 
   _onScroll(double position) {
     final upperBound = 200;
-    final lowerBound = -200 -
-        (MediaQuery.sizeOf(context).width -
-                getWidthNavigationSidebar(context)) /
-            2 -
-        100;
+    final lowerBound = -200 - (MediaQuery.sizeOf(context).width - getWidthNavigationSidebar(context)) / 2 - 100;
     if (position > upperBound) {
       if (showScrollBottom == false)
         setState(() {
@@ -103,18 +98,13 @@ class MonthSelectorState extends State<MonthSelector> {
   Widget build(BuildContext context) {
     double monthWidth = 100;
     return StreamBuilder<EarliestLatestDateTime?>(
-      stream: database.watchEarliestLatestTransactionDateTime(
-          searchFilters: SearchFilters(dateTimeRange: null), paid: null),
+      stream: database.watchEarliestLatestTransactionDateTime(searchFilters: SearchFilters(dateTimeRange: null), paid: null),
       builder: (context, snapshot) {
-        EarliestLatestDateTime earliestLatestDateTime = snapshot.data ??
-            EarliestLatestDateTime(
-                earliest: DateTime.now(), latest: DateTime.now());
+        EarliestLatestDateTime earliestLatestDateTime =
+            snapshot.data ?? EarliestLatestDateTime(earliest: DateTime.now(), latest: DateTime.now());
         return NotificationListener(
           onNotification: (SizeChangedLayoutNotification notification) {
-            double middle = -(MediaQuery.sizeOf(context).width -
-                        getWidthNavigationSidebar(context)) /
-                    2 +
-                monthWidth / 2;
+            double middle = -(MediaQuery.sizeOf(context).width - getWidthNavigationSidebar(context)) / 2 + monthWidth / 2;
             scrollTo(middle + (pageOffset - 1) * monthWidth + monthWidth);
             return true;
           },
@@ -129,20 +119,16 @@ class MonthSelectorState extends State<MonthSelector> {
                   height: 50,
                   overBoundsDetection: 50,
                   initialItems: 10,
-                  startingScrollPosition: -(MediaQuery.sizeOf(context).width -
-                              getWidthNavigationSidebar(context)) /
-                          2 +
-                      monthWidth / 2,
+                  startingScrollPosition:
+                      -(MediaQuery.sizeOf(context).width - getWidthNavigationSidebar(context)) / 2 + monthWidth / 2,
                   shouldAddBottom: (bottom) {
-                    if (getDateFromIndex(bottom)
-                        .isAfter(earliestLatestDateTime.latest)) {
+                    if (getDateFromIndex(bottom).isAfter(earliestLatestDateTime.latest)) {
                       return false;
                     }
                     return true;
                   },
                   shouldAddTop: (top) {
-                    if (getDateFromIndex(top + 1)
-                        .isBefore(earliestLatestDateTime.earliest)) {
+                    if (getDateFromIndex(top + 1).isBefore(earliestLatestDateTime.earliest)) {
                       return false;
                     }
                     return true;
@@ -151,28 +137,14 @@ class MonthSelectorState extends State<MonthSelector> {
                   itemBuilder: (index, isFirst, isLast) {
                     DateTime currentDateTime = getDateFromIndex(index);
                     bool isSelected =
-                        selectedDateStart.month == currentDateTime.month &&
-                            selectedDateStart.year == currentDateTime.year;
-                    bool isToday =
-                        currentDateTime.month == DateTime.now().month &&
-                            currentDateTime.year == DateTime.now().year;
-                    double spacePadding = (MediaQuery.sizeOf(context).width -
-                                getWidthNavigationSidebar(context)) /
-                            2 -
-                        monthWidth / 2;
+                        selectedDateStart.month == currentDateTime.month && selectedDateStart.year == currentDateTime.year;
+                    bool isToday = currentDateTime.month == DateTime.now().month && currentDateTime.year == DateTime.now().year;
+                    double spacePadding = (MediaQuery.sizeOf(context).width - getWidthNavigationSidebar(context)) / 2 - monthWidth / 2;
                     return Container(
                       color: Theme.of(context).canvasColor,
                       padding: EdgeInsets.only(
-                        left: isFirst &&
-                                getDateFromIndex(index)
-                                    .isBefore(earliestLatestDateTime.earliest)
-                            ? spacePadding
-                            : 0,
-                        right: isLast &&
-                                getDateFromIndex(index + 1)
-                                    .isAfter(earliestLatestDateTime.latest)
-                            ? spacePadding
-                            : 0,
+                        left: isFirst && getDateFromIndex(index).isBefore(earliestLatestDateTime.earliest) ? spacePadding : 0,
+                        right: isLast && getDateFromIndex(index + 1).isAfter(earliestLatestDateTime.latest) ? spacePadding : 0,
                       ),
                       child: Stack(
                         children: [
@@ -180,8 +152,7 @@ class MonthSelectorState extends State<MonthSelector> {
                             height: 50,
                             child: Tappable(
                               onTap: () {
-                                widget.setSelectedDateStart(
-                                    currentDateTime, index);
+                                widget.setSelectedDateStart(currentDateTime, index);
                               },
                               borderRadius: 10,
                               child: Container(
@@ -197,12 +168,9 @@ class MonthSelectorState extends State<MonthSelector> {
                                           ? TextFont(
                                               key: ValueKey(1),
                                               fontSize: 14,
-                                              text: getMonth(currentDateTime),
-                                              textColor:
-                                                  getColor(context, "black"),
-                                              fontWeight: isToday
-                                                  ? FontWeight.bold
-                                                  : FontWeight.normal,
+                                              text: getMonth(Jalali.fromDateTime(currentDateTime)),
+                                              textColor: getColor(context, "black"),
+                                              fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
                                               overflow: TextOverflow.clip,
                                               maxLines: 1,
                                               textAlign: TextAlign.center,
@@ -210,12 +178,9 @@ class MonthSelectorState extends State<MonthSelector> {
                                           : TextFont(
                                               key: ValueKey(2),
                                               fontSize: 14,
-                                              text: getMonth(currentDateTime),
-                                              textColor: getColor(
-                                                  context, "textLight"),
-                                              fontWeight: isToday
-                                                  ? FontWeight.bold
-                                                  : FontWeight.normal,
+                                              text: getMonth(Jalali.fromDateTime(currentDateTime)),
+                                              textColor: getColor(context, "textLight"),
+                                              fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
                                               overflow: TextOverflow.clip,
                                               maxLines: 1,
                                               textAlign: TextAlign.center,
@@ -223,24 +188,19 @@ class MonthSelectorState extends State<MonthSelector> {
                                     ),
                                     DateTime.now().year != currentDateTime.year
                                         ? AnimatedSwitcher(
-                                            duration:
-                                                Duration(milliseconds: 300),
+                                            duration: Duration(milliseconds: 300),
                                             child: isSelected
                                                 ? TextFont(
                                                     key: ValueKey(1),
                                                     fontSize: 9,
-                                                    text: currentDateTime.year
-                                                        .toString(),
-                                                    textColor: getColor(
-                                                        context, "black"),
+                                                    text: currentDateTime.year.toString(),
+                                                    textColor: getColor(context, "black"),
                                                   )
                                                 : TextFont(
                                                     key: ValueKey(2),
                                                     fontSize: 9,
-                                                    text: currentDateTime.year
-                                                        .toString(),
-                                                    textColor: getColor(
-                                                        context, "textLight"),
+                                                    text: currentDateTime.year.toString(),
+                                                    textColor: getColor(context, "textLight"),
                                                   ),
                                           )
                                         : SizedBox(),
@@ -265,14 +225,11 @@ class MonthSelectorState extends State<MonthSelector> {
                                           color: appStateSettings["materialYou"]
                                               ? dynamicPastel(
                                                   context,
-                                                  Theme.of(context)
-                                                      .colorScheme
-                                                      .secondaryContainer,
+                                                  Theme.of(context).colorScheme.secondaryContainer,
                                                   amountDark: 0.5,
                                                   amountLight: 0,
                                                 )
-                                              : getColor(
-                                                  context, "lightDarkAccent"),
+                                              : getColor(context, "lightDarkAccent"),
                                         ),
                                         width: 75,
                                         height: 7,
@@ -289,9 +246,7 @@ class MonthSelectorState extends State<MonthSelector> {
                               color: appStateSettings["materialYou"]
                                   ? dynamicPastel(
                                       context,
-                                      Theme.of(context)
-                                          .colorScheme
-                                          .secondaryContainer,
+                                      Theme.of(context).colorScheme.secondaryContainer,
                                       amountDark: 0.5,
                                       amountLight: 0,
                                     )
@@ -302,12 +257,9 @@ class MonthSelectorState extends State<MonthSelector> {
                             alignment: Alignment.bottomCenter,
                             child: AnimatedScaleOpacity(
                               duration: Duration(milliseconds: 500),
-                              durationOpacity:
-                                  const Duration(milliseconds: 300),
+                              durationOpacity: const Duration(milliseconds: 300),
                               animateIn: isSelected,
-                              curve: isSelected
-                                  ? Curves.decelerate
-                                  : Curves.easeOutQuart,
+                              curve: isSelected ? Curves.decelerate : Curves.easeOutQuart,
                               child: Container(
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.only(
@@ -335,18 +287,13 @@ class MonthSelectorState extends State<MonthSelector> {
                     alignment: Alignment.centerLeft,
                     curve: Curves.fastOutSlowIn,
                     child: Padding(
-                      padding:
-                          const EdgeInsets.only(top: 8, bottom: 8, left: 2),
+                      padding: const EdgeInsets.only(top: 8, bottom: 8, left: 2),
                       child: Tappable(
                         borderRadius: 10,
                         color: Theme.of(context).colorScheme.primary,
                         onTap: () {
-                          MultiDirectionalInfiniteScrollKey.currentState!
-                              .scrollTo(Duration(milliseconds: 700));
-                          widget.setSelectedDateStart(
-                              DateTime(
-                                  DateTime.now().year, DateTime.now().month),
-                              0);
+                          MultiDirectionalInfiniteScrollKey.currentState!.scrollTo(Duration(milliseconds: 700));
+                          widget.setSelectedDateStart(DateTime(DateTime.now().year, DateTime.now().month), 0);
                         },
                         child: Container(
                           width: 44,
@@ -354,9 +301,7 @@ class MonthSelectorState extends State<MonthSelector> {
                           child: Transform.scale(
                             scale: 1.5,
                             child: Icon(
-                              appStateSettings["outlinedIcons"]
-                                  ? Icons.arrow_left_outlined
-                                  : Icons.arrow_left_rounded,
+                              appStateSettings["outlinedIcons"] ? Icons.arrow_left_outlined : Icons.arrow_left_rounded,
                               color: Theme.of(context).colorScheme.onPrimary,
                             ),
                           ),
@@ -374,28 +319,20 @@ class MonthSelectorState extends State<MonthSelector> {
                     alignment: Alignment.centerRight,
                     curve: Curves.fastOutSlowIn,
                     child: Padding(
-                      padding:
-                          const EdgeInsets.only(top: 8, bottom: 8, right: 2),
+                      padding: const EdgeInsets.only(top: 8, bottom: 8, right: 2),
                       child: Tappable(
                         borderRadius: 10,
                         color: Theme.of(context).colorScheme.primary,
                         onTap: () {
-                          MultiDirectionalInfiniteScrollKey.currentState!
-                              .scrollTo(Duration(milliseconds: 700));
-                          widget.setSelectedDateStart(
-                              DateTime(
-                                  DateTime.now().year, DateTime.now().month),
-                              0);
+                          MultiDirectionalInfiniteScrollKey.currentState!.scrollTo(Duration(milliseconds: 700));
+                          widget.setSelectedDateStart(DateTime(DateTime.now().year, DateTime.now().month), 0);
                         },
                         child: Container(
                           width: 44,
                           height: 34,
                           child: Transform.scale(
                             scale: 1.5,
-                            child: Icon(
-                                appStateSettings["outlinedIcons"]
-                                    ? Icons.arrow_right_outlined
-                                    : Icons.arrow_right_rounded,
+                            child: Icon(appStateSettings["outlinedIcons"] ? Icons.arrow_right_outlined : Icons.arrow_right_rounded,
                                 color: Theme.of(context).colorScheme.onPrimary),
                           ),
                         ),

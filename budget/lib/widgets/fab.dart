@@ -1,13 +1,11 @@
 import 'package:budget/struct/settings.dart';
 import 'package:budget/widgets/framework/popupFramework.dart';
 import 'package:budget/widgets/navigationFramework.dart';
-import 'package:budget/widgets/navigationSidebar.dart';
 import 'package:budget/widgets/openBottomSheet.dart';
 import 'package:budget/widgets/openContainerNavigation.dart';
 import 'package:budget/widgets/outlinedButtonStacked.dart';
 import 'package:budget/widgets/tappable.dart';
 import 'package:budget/widgets/textWidgets.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 class AddFAB extends StatelessWidget {
@@ -33,9 +31,7 @@ class AddFAB extends StatelessWidget {
       colorIcon: colorIcon,
       color: color,
       tooltip: tooltip,
-      iconData: appStateSettings["outlinedIcons"]
-          ? Icons.add_outlined
-          : Icons.add_rounded,
+      iconData: appStateSettings["outlinedIcons"] ? Icons.add_outlined : Icons.add_rounded,
       openPage: openPage,
       onTap: onTap,
       fabSize: getIsFullScreen(context) == false ? 60 : 70,
@@ -130,8 +126,7 @@ class FAB extends StatelessWidget {
                     children: [
                       fabIcon,
                       Padding(
-                        padding:
-                            const EdgeInsets.only(top: 5, bottom: 5, right: 20),
+                        padding: const EdgeInsets.only(top: 5, bottom: 5, left: 20),
                         child: TextFont(
                           text: label ?? "",
                           fontSize: labelSize,

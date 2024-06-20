@@ -56,8 +56,7 @@ class TextFont extends StatelessWidget {
   Widget build(BuildContext context) {
     Color finalTextColor = textColor ?? getColor(context, "black");
     if (appStateSettings["increaseTextContrast"] == true) {
-      double threshold =
-          Theme.of(context).brightness == Brightness.light ? 0.7 : 0.65;
+      double threshold = Theme.of(context).brightness == Brightness.light ? 0.7 : 0.65;
       if (finalTextColor.alpha.toDouble() < (255 * threshold)) {
         finalTextColor = finalTextColor.withOpacity(1 * threshold);
       }
@@ -66,11 +65,8 @@ class TextFont extends StatelessWidget {
     final TextStyle textStyle = TextStyle(
       fontWeight: this.fontWeight,
       fontSize: this.fontSize,
-      fontFamily: fallbackFontLocales.contains(appStateSettings["locale"]) &&
-              appStateSettings["font"] == "Avenir"
-          ? "DMSans"
-          : appStateSettings["font"],
-      fontFamilyFallback: ['Inter'],
+      fontFamily: 'Sans',
+      fontFamilyFallback: ['Sans'],
       color: finalTextColor,
       decoration: TextDecoration.underline,
       decorationStyle: TextDecorationStyle.double,
@@ -87,57 +83,54 @@ class TextFont extends StatelessWidget {
           : [],
     );
     Widget textWidget(textPassed) {
-      return AnimatedDefaultTextStyle(
-        duration: Duration(milliseconds: 200),
-        style: textStyle,
-        child: Transform.translate(
-          offset: Offset(
-            0,
-            this.fontSize *
-                (fallbackFontLocales.contains(appStateSettings["locale"]) ==
-                            true ||
-                        appStateSettings["font"] != "Avenir"
-                    ? 0
-                    : 0.1),
-          ),
-          child: selectableText == true
-              ? SelectableText(
-                  textPassed,
-                  maxLines: maxLines,
-                  textAlign: textAlign,
-                  contextMenuBuilder: contextMenuBuilder,
-                )
-              : richTextSpan != null
-                  ? RichText(
-                      textScaleFactor: MediaQuery.of(context).textScaleFactor,
-                      textAlign: textAlign,
-                      maxLines: maxLines,
-                      overflow: overflow ?? TextOverflow.ellipsis,
-                      text: TextSpan(
-                        text: textPassed,
-                        children: richTextSpan,
-                      ),
-                    )
-                  : autoSizeText
-                      ? AutoSizeText(
-                          textPassed,
-                          maxLines: maxLines,
-                          textAlign: textAlign,
-                          overflow: overflowReplacement != null
-                              ? null
-                              : overflow ?? TextOverflow.ellipsis,
-                          minFontSize: minFontSize ?? fontSize - 10,
-                          maxFontSize: maxFontSize ?? fontSize + 10,
-                          softWrap: softWrap,
-                          overflowReplacement: overflowReplacement,
-                        )
-                      : Text(
-                          textPassed,
-                          maxLines: maxLines,
-                          textAlign: textAlign,
-                          overflow: overflow ?? TextOverflow.ellipsis,
-                          softWrap: softWrap,
+      return Directionality(
+        textDirection: TextDirection.rtl,
+        child: AnimatedDefaultTextStyle(
+          duration: Duration(milliseconds: 200),
+          style: textStyle,
+          child: Transform.translate(
+            offset: Offset(
+              0,
+              this.fontSize *
+                  (fallbackFontLocales.contains(appStateSettings["locale"]) == true || appStateSettings["font"] != "Sans" ? 0 : 0.1),
+            ),
+            child: selectableText == true
+                ? SelectableText(
+                    textPassed,
+                    maxLines: maxLines,
+                    textAlign: textAlign,
+                    contextMenuBuilder: contextMenuBuilder,
+                  )
+                : richTextSpan != null
+                    ? RichText(
+                        textScaleFactor: MediaQuery.of(context).textScaleFactor,
+                        textAlign: textAlign,
+                        maxLines: maxLines,
+                        overflow: overflow ?? TextOverflow.ellipsis,
+                        text: TextSpan(
+                          text: textPassed,
+                          children: richTextSpan,
                         ),
+                      )
+                    : autoSizeText
+                        ? AutoSizeText(
+                            textPassed,
+                            maxLines: maxLines,
+                            textAlign: textAlign,
+                            overflow: overflowReplacement != null ? null : overflow ?? TextOverflow.ellipsis,
+                            minFontSize: minFontSize ?? fontSize - 10,
+                            maxFontSize: maxFontSize ?? fontSize + 10,
+                            softWrap: softWrap,
+                            overflowReplacement: overflowReplacement,
+                          )
+                        : Text(
+                            textPassed,
+                            maxLines: maxLines,
+                            textAlign: textAlign,
+                            overflow: overflow ?? TextOverflow.ellipsis,
+                            softWrap: softWrap,
+                          ),
+          ),
         ),
       );
     }
@@ -154,15 +147,14 @@ List<TextSpan> generateSpans({
 }) {
   List<TextSpan> spans = [];
   if (boldedText != null) {
-    mainText = mainText.replaceAllMapped(
-        RegExp(boldedText, caseSensitive: false), (match) => boldedText);
+    mainText = mainText.replaceAllMapped(RegExp(boldedText, caseSensitive: false), (match) => boldedText);
   }
   final List<String> textParts = mainText.split(boldedText ?? "");
 
   TextStyle textStyle = TextStyle(
     color: getColor(context, "black"),
     fontFamily: appStateSettings["font"],
-    fontFamilyFallback: ['Inter'],
+    fontFamilyFallback: ['Sans'],
     fontSize: fontSize,
   );
 

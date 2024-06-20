@@ -25,6 +25,7 @@ import 'package:budget/widgets/transactionEntry/transactionEntry.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shamsi_date/shamsi_date.dart';
 import '../functions.dart';
 import 'package:budget/struct/settings.dart';
 import 'package:budget/widgets/countNumber.dart';
@@ -43,8 +44,7 @@ enum SelectedSubscriptionsType {
 }
 
 class SubscriptionsPageState extends State<SubscriptionsPage> {
-  SelectedSubscriptionsType selectedType = SelectedSubscriptionsType
-      .values[appStateSettings["selectedSubscriptionType"]];
+  SelectedSubscriptionsType selectedType = SelectedSubscriptionsType.values[appStateSettings["selectedSubscriptionType"]];
   GlobalKey<PageFrameworkState> pageState = GlobalKey();
 
   void scrollToTop() {
@@ -87,9 +87,7 @@ class SubscriptionsPageState extends State<SubscriptionsPage> {
                   DropdownItemMenu(
                     id: "settings",
                     label: "settings".tr(),
-                    icon: appStateSettings["outlinedIcons"]
-                        ? Icons.settings_outlined
-                        : Icons.settings_rounded,
+                    icon: appStateSettings["outlinedIcons"] ? Icons.settings_outlined : Icons.settings_rounded,
                     action: () {
                       openBottomSheet(
                         context,
@@ -143,8 +141,7 @@ class SubscriptionsPageState extends State<SubscriptionsPage> {
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              HorizontalBreak(
-                                  padding: EdgeInsets.only(top: 4, bottom: 6)),
+                              HorizontalBreak(padding: EdgeInsets.only(top: 4, bottom: 6)),
                               TransactionEntry(
                                 aboveWidget: UpcomingTransactionDateHeader(
                                   selectedType: selectedType,
@@ -152,8 +149,7 @@ class SubscriptionsPageState extends State<SubscriptionsPage> {
                                 ),
                                 openPage: AddTransactionPage(
                                   transaction: transaction,
-                                  routesToPopAfterDelete:
-                                      RoutesToPopAfterDelete.One,
+                                  routesToPopAfterDelete: RoutesToPopAfterDelete.One,
                                 ),
                                 transaction: transaction,
                                 listID: "Subscriptions",
@@ -196,9 +192,7 @@ class UpcomingTransactionDateHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     int daysDifference =
-        DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day)
-            .difference(transaction.dateCreated)
-            .inDays;
+        DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day).difference(transaction.dateCreated).inDays;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -209,7 +203,7 @@ class UpcomingTransactionDateHeader extends StatelessWidget {
               children: [
                 TextFont(
                   text: getWordedDateShortMore(
-                    transaction.dateCreated,
+                    Jalali.fromDateTime(transaction.dateCreated),
                   ),
                   fontWeight: FontWeight.bold,
                   fontSize: 17,
@@ -218,18 +212,12 @@ class UpcomingTransactionDateHeader extends StatelessWidget {
                     ? Flexible(
                         child: TextFont(
                           fontSize: 17,
-                          textColor: daysDifference > 0
-                              ? getColor(context, "unPaidOverdue")
-                              : getColor(context, "textLight"),
+                          textColor: daysDifference > 0 ? getColor(context, "unPaidOverdue") : getColor(context, "textLight"),
                           text: " • " +
                               daysDifference.abs().toString() +
                               " " +
-                              (daysDifference.abs() == 1
-                                  ? "day".tr()
-                                  : "days".tr()) +
-                              (daysDifference > 0
-                                  ? " " + "overdue".tr().toLowerCase()
-                                  : ""),
+                              (daysDifference.abs() == 1 ? "day".tr() : "days".tr()) +
+                              (daysDifference > 0 ? " " + "overdue".tr().toLowerCase() : ""),
                           fontWeight: FontWeight.bold,
                         ),
                       )
@@ -238,20 +226,15 @@ class UpcomingTransactionDateHeader extends StatelessWidget {
             ),
           ),
         ),
-        transaction.type == TransactionSpecialType.repetitive ||
-                transaction.type == TransactionSpecialType.subscription
+        transaction.type == TransactionSpecialType.repetitive || transaction.type == TransactionSpecialType.subscription
             ? Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Row(
                     children: [
                       Icon(
-                        appStateSettings["outlinedIcons"]
-                            ? Icons.loop_outlined
-                            : Icons.loop_rounded,
-                        color: dynamicPastel(
-                            context, Theme.of(context).colorScheme.primary,
-                            amount: 0.4),
+                        appStateSettings["outlinedIcons"] ? Icons.loop_outlined : Icons.loop_rounded,
+                        color: dynamicPastel(context, Theme.of(context).colorScheme.primary, amount: 0.4),
                         size: 14,
                       ),
                       SizedBox(width: 3),
@@ -259,20 +242,10 @@ class UpcomingTransactionDateHeader extends StatelessWidget {
                         text: transaction.periodLength.toString() +
                             " " +
                             (transaction.periodLength == 1
-                                ? nameRecurrence[transaction.reoccurrence]
-                                    .toString()
-                                    .toLowerCase()
-                                    .tr()
-                                    .toLowerCase()
-                                : namesRecurrence[transaction.reoccurrence]
-                                    .toString()
-                                    .toLowerCase()
-                                    .tr()
-                                    .toLowerCase()),
+                                ? nameRecurrence[transaction.reoccurrence].toString().toLowerCase().tr().toLowerCase()
+                                : namesRecurrence[transaction.reoccurrence].toString().toLowerCase().tr().toLowerCase()),
                         fontSize: 14,
-                        textColor: dynamicPastel(
-                            context, Theme.of(context).colorScheme.primary,
-                            amount: 0.4),
+                        textColor: dynamicPastel(context, Theme.of(context).colorScheme.primary, amount: 0.4),
                       ),
                     ],
                   ),
@@ -286,26 +259,18 @@ class UpcomingTransactionDateHeader extends StatelessWidget {
                               key: ValueKey(selectedType.toString()),
                               text: convertToMoney(
                                     Provider.of<AllWallets>(context),
-                                    getTotalSubscriptions(
-                                        Provider.of<AllWallets>(context),
-                                        selectedType ??
-                                            SelectedSubscriptionsType.monthly,
-                                        [transaction]),
+                                    getTotalSubscriptions(Provider.of<AllWallets>(context),
+                                        selectedType ?? SelectedSubscriptionsType.monthly, [transaction]),
                                   ) +
                                   " / " +
-                                  (selectedType ==
-                                              SelectedSubscriptionsType.monthly
+                                  (selectedType == SelectedSubscriptionsType.monthly
                                           ? "month".tr()
-                                          : selectedType ==
-                                                  SelectedSubscriptionsType
-                                                      .yearly
+                                          : selectedType == SelectedSubscriptionsType.yearly
                                               ? "year".tr()
                                               : "")
                                       .toLowerCase(),
                               fontSize: 14,
-                              textColor: dynamicPastel(context,
-                                  Theme.of(context).colorScheme.primary,
-                                  amount: 0.4),
+                              textColor: dynamicPastel(context, Theme.of(context).colorScheme.primary, amount: 0.4),
                             ),
                     ),
                 ],
@@ -340,8 +305,7 @@ class AutoPaySubscriptionsSetting extends StatelessWidget {
       description: "pay-subscriptions-description".tr(),
       onSwitched: (value) async {
         // Need to change setting first, otherwise the function would not run!
-        await updateSettings("automaticallyPaySubscriptions", value,
-            updateGlobalState: false);
+        await updateSettings("automaticallyPaySubscriptions", value, updateGlobalState: false);
         await markSubscriptionsAsPaid(context);
         await setUpcomingNotifications(context);
       },
@@ -374,10 +338,7 @@ class TotalUpcomingHeaderPeriodSwitcher extends StatelessWidget {
           StreamBuilder<List<Transaction>>(
             stream: transactionListStream,
             builder: (context, snapshot) {
-              double total = getTotalSubscriptions(
-                  Provider.of<AllWallets>(context),
-                  selectedType,
-                  snapshot.data);
+              double total = getTotalSubscriptions(Provider.of<AllWallets>(context), selectedType, snapshot.data);
               return AmountWithColorAndArrow(
                 showIncomeArrow: true,
                 totalSpent: total,
@@ -408,11 +369,9 @@ class TotalUpcomingHeaderPeriodSwitcher extends StatelessWidget {
                 AnimatedSwitcher(
                   duration: Duration(milliseconds: 250),
                   child: Button(
-                    key: ValueKey(
-                        selectedType != SelectedSubscriptionsType.monthly),
+                    key: ValueKey(selectedType != SelectedSubscriptionsType.monthly),
                     color: selectedType != SelectedSubscriptionsType.monthly
-                        ? dynamicPastel(context,
-                            Theme.of(context).colorScheme.secondaryContainer,
+                        ? dynamicPastel(context, Theme.of(context).colorScheme.secondaryContainer,
                             amount: appStateSettings["materialYou"] ? 0.2 : 0.7)
                         : null,
                     textColor: selectedType != SelectedSubscriptionsType.monthly
@@ -421,8 +380,7 @@ class TotalUpcomingHeaderPeriodSwitcher extends StatelessWidget {
                     label: "monthly".tr(),
                     onTap: () {
                       setSelectedType(SelectedSubscriptionsType.monthly);
-                      updateSettings("selectedSubscriptionType",
-                          SelectedSubscriptionsType.monthly.index,
+                      updateSettings("selectedSubscriptionType", SelectedSubscriptionsType.monthly.index,
                           pagesNeedingRefresh: [], updateGlobalState: false);
                     },
                     fontSize: 12,
@@ -433,11 +391,9 @@ class TotalUpcomingHeaderPeriodSwitcher extends StatelessWidget {
                 AnimatedSwitcher(
                   duration: Duration(milliseconds: 250),
                   child: Button(
-                    key: ValueKey(
-                        selectedType != SelectedSubscriptionsType.yearly),
+                    key: ValueKey(selectedType != SelectedSubscriptionsType.yearly),
                     color: selectedType != SelectedSubscriptionsType.yearly
-                        ? dynamicPastel(context,
-                            Theme.of(context).colorScheme.secondaryContainer,
+                        ? dynamicPastel(context, Theme.of(context).colorScheme.secondaryContainer,
                             amount: appStateSettings["materialYou"] ? 0.2 : 0.7)
                         : null,
                     textColor: selectedType != SelectedSubscriptionsType.yearly
@@ -446,8 +402,7 @@ class TotalUpcomingHeaderPeriodSwitcher extends StatelessWidget {
                     label: "yearly".tr(),
                     onTap: () {
                       setSelectedType(SelectedSubscriptionsType.yearly);
-                      updateSettings("selectedSubscriptionType",
-                          SelectedSubscriptionsType.yearly.index,
+                      updateSettings("selectedSubscriptionType", SelectedSubscriptionsType.yearly.index,
                           pagesNeedingRefresh: [], updateGlobalState: false);
                     },
                     fontSize: 12,
@@ -458,11 +413,9 @@ class TotalUpcomingHeaderPeriodSwitcher extends StatelessWidget {
                 AnimatedSwitcher(
                   duration: Duration(milliseconds: 250),
                   child: Button(
-                    key: ValueKey(
-                        selectedType != SelectedSubscriptionsType.total),
+                    key: ValueKey(selectedType != SelectedSubscriptionsType.total),
                     color: selectedType != SelectedSubscriptionsType.total
-                        ? dynamicPastel(context,
-                            Theme.of(context).colorScheme.secondaryContainer,
+                        ? dynamicPastel(context, Theme.of(context).colorScheme.secondaryContainer,
                             amount: appStateSettings["materialYou"] ? 0.2 : 0.7)
                         : null,
                     textColor: selectedType != SelectedSubscriptionsType.total
@@ -471,8 +424,7 @@ class TotalUpcomingHeaderPeriodSwitcher extends StatelessWidget {
                     label: "total".tr(),
                     onTap: () {
                       setSelectedType(SelectedSubscriptionsType.total);
-                      updateSettings("selectedSubscriptionType",
-                          SelectedSubscriptionsType.total.index,
+                      updateSettings("selectedSubscriptionType", SelectedSubscriptionsType.total.index,
                           pagesNeedingRefresh: [], updateGlobalState: false);
                     },
                     fontSize: 12,

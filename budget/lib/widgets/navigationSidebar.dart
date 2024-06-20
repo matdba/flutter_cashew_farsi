@@ -19,6 +19,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:budget/colors.dart';
+import 'package:shamsi_date/shamsi_date.dart';
 import 'package:timer_builder/timer_builder.dart';
 
 // returns 0 if no navigation sidebar should be shown
@@ -107,26 +108,19 @@ class NavigationSidebarState extends State<NavigationSidebar> {
             border: Border(
               right: BorderSide(
                 color: appStateSettings["materialYou"]
-                    ? dynamicPastel(context,
-                        Theme.of(context).colorScheme.secondaryContainer,
-                        amountLight: 0, amountDark: 0.6)
+                    ? dynamicPastel(context, Theme.of(context).colorScheme.secondaryContainer, amountLight: 0, amountDark: 0.6)
                     : getColor(context, "lightDarkAccent"),
                 width: 3,
               ),
             ),
           ),
           child: Padding(
-            padding:
-                EdgeInsets.only(left: MediaQuery.viewPaddingOf(context).left),
+            padding: EdgeInsets.only(left: MediaQuery.viewPaddingOf(context).left),
             child: IgnorePointer(
-              ignoring: appStateSettings["hasOnboarded"] == false ||
-                  lockAppWaitForRestart == true,
+              ignoring: appStateSettings["hasOnboarded"] == false || lockAppWaitForRestart == true,
               child: AnimatedOpacity(
                 duration: Duration(milliseconds: 500),
-                opacity: appStateSettings["hasOnboarded"] == false ||
-                        lockAppWaitForRestart == true
-                    ? 0.3
-                    : 1,
+                opacity: appStateSettings["hasOnboarded"] == false || lockAppWaitForRestart == true ? 0.3 : 1,
                 child: SingleChildScrollView(
                   child: IntrinsicHeight(
                     child: ConstrainedBox(
@@ -149,39 +143,22 @@ class NavigationSidebarState extends State<NavigationSidebar> {
                                   duration: Duration(milliseconds: 1500),
                                   curve: Curves.easeInOutCubicEmphasized,
                                   padding: EdgeInsets.only(
-                                    bottom: appStateSettings[
-                                            "expandedNavigationSidebar"]
-                                        ? 0
-                                        : 5,
-                                    top: appStateSettings[
-                                            "expandedNavigationSidebar"]
-                                        ? 0
-                                        : 7,
-                                    left: appStateSettings[
-                                            "expandedNavigationSidebar"]
-                                        ? 0
-                                        : 7,
+                                    bottom: appStateSettings["expandedNavigationSidebar"] ? 0 : 5,
+                                    top: appStateSettings["expandedNavigationSidebar"] ? 0 : 7,
+                                    left: appStateSettings["expandedNavigationSidebar"] ? 0 : 7,
                                   ),
                                   child: AnimatedRotation(
                                     duration: Duration(milliseconds: 1500),
-                                    turns: appStateSettings[
-                                            "expandedNavigationSidebar"]
-                                        ? 0
-                                        : -0.5,
+                                    turns: appStateSettings["expandedNavigationSidebar"] ? 0 : -0.5,
                                     curve: Curves.easeInOutCubicEmphasized,
                                     child: IconButton(
                                       padding: EdgeInsets.all(15),
                                       onPressed: () {
-                                        updateSettings(
-                                            "expandedNavigationSidebar",
-                                            !appStateSettings[
-                                                "expandedNavigationSidebar"],
+                                        updateSettings("expandedNavigationSidebar", !appStateSettings["expandedNavigationSidebar"],
                                             updateGlobalState: true);
                                       },
                                       icon: Icon(
-                                        appStateSettings["outlinedIcons"]
-                                            ? Icons.chevron_left_outlined
-                                            : Icons.chevron_left_rounded,
+                                        appStateSettings["outlinedIcons"] ? Icons.chevron_left_outlined : Icons.chevron_left_rounded,
                                       ),
                                     ),
                                   ),
@@ -191,14 +168,12 @@ class NavigationSidebarState extends State<NavigationSidebar> {
                                 children: [
                                   Expanded(
                                     child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 14),
+                                      padding: const EdgeInsets.symmetric(horizontal: 14),
                                       child: Tappable(
                                         borderRadius: 20,
                                         onTap: () async {
                                           isCalendarOpened = true;
-                                          if (navigatorKey.currentContext !=
-                                              null) {
+                                          if (navigatorKey.currentContext != null) {
                                             await showCustomDatePicker(
                                               navigatorKey.currentContext!,
                                               DateTime.now(),
@@ -210,19 +185,11 @@ class NavigationSidebarState extends State<NavigationSidebar> {
                                           }
                                         },
                                         child: AnimatedPadding(
-                                          duration:
-                                              Duration(milliseconds: 1500),
-                                          curve:
-                                              Curves.easeInOutCubicEmphasized,
+                                          duration: Duration(milliseconds: 1500),
+                                          curve: Curves.easeInOutCubicEmphasized,
                                           padding: EdgeInsets.only(
-                                            top: appStateSettings[
-                                                    "expandedNavigationSidebar"]
-                                                ? 12
-                                                : 0,
-                                            bottom: appStateSettings[
-                                                    "expandedNavigationSidebar"]
-                                                ? 18
-                                                : 0,
+                                            top: appStateSettings["expandedNavigationSidebar"] ? 12 : 0,
+                                            bottom: appStateSettings["expandedNavigationSidebar"] ? 18 : 0,
                                           ),
                                           child: SidebarClock(),
                                         ),
@@ -234,10 +201,7 @@ class NavigationSidebarState extends State<NavigationSidebar> {
                               AnimatedContainer(
                                 duration: Duration(milliseconds: 1500),
                                 curve: Curves.easeInOutCubicEmphasized,
-                                height: appStateSettings[
-                                        "expandedNavigationSidebar"]
-                                    ? 40
-                                    : 0,
+                                height: appStateSettings["expandedNavigationSidebar"] ? 40 : 0,
                               ),
                               NavigationSidebarButtonWithNavBarIconData(
                                 navBarIconDataKey: "home",
@@ -289,8 +253,7 @@ class NavigationSidebarState extends State<NavigationSidebar> {
                               GoogleAccountLoginButton(
                                 navigationSidebarButton: true,
                                 onTap: () {
-                                  pageNavigationFrameworkKey.currentState!
-                                      .changePage(8, switchNavbar: true);
+                                  pageNavigationFrameworkKey.currentState!.changePage(8, switchNavbar: true);
                                   appStateKey.currentState?.refreshAppState();
                                 },
                                 isButtonSelected: selectedIndex == 8,
@@ -305,9 +268,7 @@ class NavigationSidebarState extends State<NavigationSidebar> {
                               ),
                               SyncButton(),
                               SizedBox(height: 10),
-                              SizedBox(
-                                  height:
-                                      MediaQuery.viewPaddingOf(context).bottom),
+                              SizedBox(height: MediaQuery.viewPaddingOf(context).bottom),
                             ],
                           ),
                         ],
@@ -337,22 +298,19 @@ class SidebarClock extends StatelessWidget {
               child: TimerBuilder.periodic(
                 Duration(seconds: 5),
                 builder: (context) {
-                  DateTime now = DateTime.now();
+                  Jalali now = Jalali.now();
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      isSetting24HourFormat() ??
-                              isSystem24HourFormat(context) == true
+                      isSetting24HourFormat() ?? isSystem24HourFormat(context) == true
                           ? TextFont(
                               textColor: getColor(context, "black"),
                               fontSize: 48,
                               fontWeight: FontWeight.bold,
                               // Remove any am/pm indication by substring
                               // Add extra spaces so substring never fails
-                              text: (getWordedTime(null, now) + "      ")
-                                  .substring(0, 5)
-                                  .trim(),
+                              text: (getWordedTime(null, now.toDateTime()) + "      ").substring(0, 5).trim(),
                             )
                           : Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -363,18 +321,15 @@ class SidebarClock extends StatelessWidget {
                                   fontSize: 45,
                                   fontWeight: FontWeight.bold,
                                   // Remove any am/pm indication by substring
-                                  text: getWordedTime(null, now)
-                                      .substring(0, 5)
-                                      .trim(),
+                                  text: getWordedTime(null, now.toDateTime()).substring(0, 5).trim(),
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.only(
-                                      bottom: 4.4, left: 7),
+                                  padding: const EdgeInsets.only(bottom: 4.4, left: 7),
                                   child: TextFont(
                                     textColor: getColor(context, "black"),
                                     fontSize: 25,
                                     fontWeight: FontWeight.bold,
-                                    text: getMeridiemString(now),
+                                    text: getMeridiemString(now.toDateTime()),
                                   ),
                                 ),
                               ],
@@ -383,15 +338,13 @@ class SidebarClock extends StatelessWidget {
                         textColor: getColor(context, "black").withOpacity(0.5),
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        text: DateFormat('EEEE', context.locale.toString())
-                            .format(now),
+                        text: DateFormat('EEEE', context.locale.toString()).format(now.toDateTime()),
                       ),
                       SizedBox(height: 5),
                       TextFont(
                         textColor: getColor(context, "black").withOpacity(0.5),
                         fontSize: 18,
-                        text: DateFormat.yMMMMd(context.locale.toString())
-                            .format(now),
+                        text: DateFormat.yMMMMd(context.locale.toString()).format(now.toDateTime()),
                       ),
                     ],
                   );
@@ -422,9 +375,7 @@ class _SyncButtonState extends State<SyncButton> {
       child: RefreshButton(
         key: refreshButtonKey,
         halfAnimation: true,
-        customIcon: appStateSettings["outlinedIcons"]
-            ? Icons.sync_outlined
-            : Icons.sync_rounded,
+        customIcon: appStateSettings["outlinedIcons"] ? Icons.sync_outlined : Icons.sync_rounded,
         flipIcon: true,
         padding: EdgeInsets.zero,
         iconOnly: true,
@@ -439,8 +390,7 @@ class _SyncButtonState extends State<SyncButton> {
       ),
     );
     return AnimatedExpanded(
-      expand: !(appStateSettings["currentUserEmail"] == "" ||
-          appStateSettings["backupSync"] == false),
+      expand: !(appStateSettings["currentUserEmail"] == "" || appStateSettings["backupSync"] == false),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
         child: Tappable(
@@ -459,8 +409,7 @@ class _SyncButtonState extends State<SyncButton> {
           child: appStateSettings["expandedNavigationSidebar"]
               ? Padding(
                   key: ValueKey(appStateSettings["expandedNavigationSidebar"]),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 13),
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 13),
                   child: Row(
                     children: [
                       refreshButton,
@@ -473,19 +422,12 @@ class _SyncButtonState extends State<SyncButton> {
                             child: TimerBuilder.periodic(
                               Duration(seconds: 5),
                               builder: (context) {
-                                DateTime? dateTimeLastSynced =
-                                    getTimeLastSynced();
-                                int diff = DateTime.now()
-                                    .difference(
-                                        dateTimeLastSynced ?? DateTime.now())
-                                    .inDays;
+                                DateTime? dateTimeLastSynced = getTimeLastSynced();
+                                int diff = DateTime.now().difference(dateTimeLastSynced ?? DateTime.now()).inDays;
                                 return TextFont(
                                   textAlign: TextAlign.left,
                                   textColor: diff > 1
-                                      ? Theme.of(context)
-                                          .colorScheme
-                                          .onErrorContainer
-                                          .withOpacity(0.5)
+                                      ? Theme.of(context).colorScheme.onErrorContainer.withOpacity(0.5)
                                       : getColor(context, "textLight"),
                                   fontSize: 13,
                                   maxLines: 3,
@@ -493,7 +435,7 @@ class _SyncButtonState extends State<SyncButton> {
                                       " " +
                                       (dateTimeLastSynced == null
                                           ? "never".tr()
-                                          : getTimeAgo(dateTimeLastSynced)),
+                                          : getTimeAgo(Jalali.fromDateTime(dateTimeLastSynced))),
                                 );
                               },
                             ),
@@ -505,8 +447,7 @@ class _SyncButtonState extends State<SyncButton> {
                 )
               : Padding(
                   key: ValueKey(appStateSettings["expandedNavigationSidebar"]),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 0, vertical: 13),
+                  padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 13),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [refreshButton],
@@ -546,16 +487,12 @@ class NavigationSidebarButtonWithNavBarIconData extends StatelessWidget {
   Widget build(BuildContext context) {
     return NavigationSidebarButton(
       icon: navBarIconsData[navBarIconDataKey]!.iconData,
-      label: useLongLabel == true
-          ? navBarIconsData[navBarIconDataKey]!.labelLong.tr()
-          : navBarIconsData[navBarIconDataKey]!.label.tr(),
-      isSelected:
-          navBarIconsData[navBarIconDataKey]!.navigationIndexedStackIndex ==
-              currentPageIndex,
+      label:
+          useLongLabel == true ? navBarIconsData[navBarIconDataKey]!.labelLong.tr() : navBarIconsData[navBarIconDataKey]!.label.tr(),
+      isSelected: navBarIconsData[navBarIconDataKey]!.navigationIndexedStackIndex == currentPageIndex,
       onTap: () {
-        pageNavigationFrameworkKey.currentState!.changePage(
-            navBarIconsData[navBarIconDataKey]!.navigationIndexedStackIndex,
-            switchNavbar: true);
+        pageNavigationFrameworkKey.currentState!
+            .changePage(navBarIconsData[navBarIconDataKey]!.navigationIndexedStackIndex, switchNavbar: true);
       },
       iconScale: navBarIconsData[navBarIconDataKey]?.iconScale ?? 1,
     );
@@ -588,9 +525,7 @@ class NavigationSidebarButton extends StatelessWidget {
       scale: iconScale,
       child: Icon(
         icon,
-        color: isSelected
-            ? Theme.of(context).colorScheme.onSecondaryContainer
-            : Theme.of(context).colorScheme.secondary,
+        color: isSelected ? Theme.of(context).colorScheme.onSecondaryContainer : Theme.of(context).colorScheme.secondary,
       ),
     );
     return Padding(
@@ -600,16 +535,13 @@ class NavigationSidebarButton extends StatelessWidget {
         child: Tappable(
           key: ValueKey(isSelected),
           borderRadius: getPlatform() == PlatformOS.isIOS ? 10 : 50,
-          color: isSelected
-              ? Theme.of(context).colorScheme.secondaryContainer
-              : null,
+          color: isSelected ? Theme.of(context).colorScheme.secondaryContainer : null,
           onTap: () {
             if (popRoutes) {
               // pop all routes without animation
               navigatorKey.currentState!.pushAndRemoveUntil(
                   PageRouteBuilder(
-                    pageBuilder: (context, animation1, animation2) =>
-                        SizedBox(),
+                    pageBuilder: (context, animation1, animation2) => SizedBox(),
                     transitionDuration: Duration(seconds: 0),
                   ),
                   (route) => route.isFirst);
@@ -620,8 +552,7 @@ class NavigationSidebarButton extends StatelessWidget {
           child: AnimatedSizeSwitcher(
             child: appStateSettings["expandedNavigationSidebar"]
                 ? Padding(
-                    key:
-                        ValueKey(appStateSettings["expandedNavigationSidebar"]),
+                    key: ValueKey(appStateSettings["expandedNavigationSidebar"]),
                     padding: EdgeInsets.symmetric(
                       horizontal: 20,
                       vertical: 13,
@@ -641,8 +572,7 @@ class NavigationSidebarButton extends StatelessWidget {
                     ),
                   )
                 : Padding(
-                    key:
-                        ValueKey(appStateSettings["expandedNavigationSidebar"]),
+                    key: ValueKey(appStateSettings["expandedNavigationSidebar"]),
                     padding: EdgeInsets.symmetric(
                       horizontal: 0,
                       vertical: 13,
@@ -677,8 +607,7 @@ class _EdiDatatButtonsState extends State<EditDataButtons> {
         NavigationSidebarButton(
           icon: Icons.edit_document,
           label: "edit-data".tr(),
-          isSelected: showEditDataButtons == false &&
-              [9, 10, 11, 12].contains(widget.selectedIndex),
+          isSelected: showEditDataButtons == false && [9, 10, 11, 12].contains(widget.selectedIndex),
           onTap: () {
             setState(() {
               showEditDataButtons = !showEditDataButtons;
@@ -690,17 +619,14 @@ class _EdiDatatButtonsState extends State<EditDataButtons> {
             curve: Curves.easeInOutCubicEmphasized,
             turns: showEditDataButtons ? 0 : -0.5,
             child: Icon(
-              appStateSettings["outlinedIcons"]
-                  ? Icons.arrow_drop_up_outlined
-                  : Icons.arrow_drop_up_rounded,
+              appStateSettings["outlinedIcons"] ? Icons.arrow_drop_up_outlined : Icons.arrow_drop_up_rounded,
             ),
           ),
         ),
         AnimatedPadding(
           duration: Duration(milliseconds: 1500),
           curve: Curves.easeInOutCubicEmphasized,
-          padding: EdgeInsets.only(
-              left: appStateSettings["expandedNavigationSidebar"] ? 8 : 0),
+          padding: EdgeInsets.only(left: appStateSettings["expandedNavigationSidebar"] ? 8 : 0),
           child: AnimatedSizeSwitcher(
             child: !showEditDataButtons
                 ? Container(key: ValueKey(1))

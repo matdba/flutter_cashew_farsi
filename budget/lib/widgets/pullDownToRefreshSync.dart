@@ -9,12 +9,11 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shamsi_date/shamsi_date.dart';
 import 'package:timer_builder/timer_builder.dart';
 
 bool enableSwipeDownToRefresh(BuildContext context) {
-  return runningCloudFunctions == false &&
-      appStateSettings["hasSignedIn"] != false &&
-      appStateSettings["backupSync"] == true;
+  return runningCloudFunctions == false && appStateSettings["hasSignedIn"] != false && appStateSettings["backupSync"] == true;
   // && getIsFullScreen(context) == false;
 }
 
@@ -32,8 +31,7 @@ class PullDownToRefreshSync extends StatefulWidget {
   State<PullDownToRefreshSync> createState() => _PullDownToRefreshSyncState();
 }
 
-class _PullDownToRefreshSyncState extends State<PullDownToRefreshSync>
-    with SingleTickerProviderStateMixin {
+class _PullDownToRefreshSyncState extends State<PullDownToRefreshSync> with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   double totalDragY = 0;
   double totalDragX = 0;
@@ -86,8 +84,7 @@ class _PullDownToRefreshSyncState extends State<PullDownToRefreshSync>
         if (totalDragX > totalDragXToCancel) return;
         totalDragY = totalDragY + ptr.delta.dy * speed;
         if (totalDragY > swipeDownThreshold) {
-          _animationController.value =
-              (totalDragY - swipeDownThreshold) / maxDrag;
+          _animationController.value = (totalDragY - swipeDownThreshold) / maxDrag;
         } else {
           // Only increase the total drag X if we have not reached the threshold for swiping down
           // (i.e. we aren't in a swiping down to refresh)
@@ -104,8 +101,7 @@ class _PullDownToRefreshSyncState extends State<PullDownToRefreshSync>
   }
 
   _onPointerUp(PointerUpEvent event) {
-    if ((totalDragY - swipeDownThreshold) > dragAmountForRefresh &&
-        swipeDownToRefresh) {
+    if ((totalDragY - swipeDownThreshold) > dragAmountForRefresh && swipeDownToRefresh) {
       _refreshBudgets();
       HapticFeedback.heavyImpact();
     } else {
@@ -165,24 +161,16 @@ class _PullDownToRefreshSyncState extends State<PullDownToRefreshSync>
           animation: curvedAnimationSlow,
           builder: (context, child) {
             return Transform.translate(
-              offset: Offset(
-                  0,
-                  -(maxDrag + MediaQuery.viewPaddingOf(context).top) *
-                      (1 - curvedAnimation.value)),
+              offset: Offset(0, -(maxDrag + MediaQuery.viewPaddingOf(context).top) * (1 - curvedAnimation.value)),
               child: Column(
                 children: [
                   Container(
-                    padding: EdgeInsets.only(
-                        top: MediaQuery.viewPaddingOf(context).top),
+                    padding: EdgeInsets.only(top: MediaQuery.viewPaddingOf(context).top),
                     height: maxDrag + MediaQuery.viewPaddingOf(context).top,
                     width: double.infinity,
                     color: appStateSettings["materialYou"]
-                        ? dynamicPastel(context,
-                            Theme.of(context).colorScheme.secondaryContainer,
-                            amountLight: 0.3, amountDark: 0.65)
-                        : dynamicPastel(
-                            context, getColor(context, "lightDarkAccent"),
-                            amountLight: 0.1, amountDark: 0.3),
+                        ? dynamicPastel(context, Theme.of(context).colorScheme.secondaryContainer, amountLight: 0.3, amountDark: 0.65)
+                        : dynamicPastel(context, getColor(context, "lightDarkAccent"), amountLight: 0.1, amountDark: 0.3),
                     child: TimerBuilder.periodic(
                       Duration(seconds: 5),
                       builder: (context) {
@@ -195,9 +183,7 @@ class _PullDownToRefreshSyncState extends State<PullDownToRefreshSync>
                             maxLines: 3,
                             text: "synced".tr() +
                                 " " +
-                                (dateTimeLastSynced == null
-                                    ? "never".tr()
-                                    : getTimeAgo(dateTimeLastSynced)),
+                                (dateTimeLastSynced == null ? "never".tr() : getTimeAgo(Jalali.fromDateTime(dateTimeLastSynced))),
                           ),
                         );
                       },
@@ -208,9 +194,7 @@ class _PullDownToRefreshSyncState extends State<PullDownToRefreshSync>
                     scaleX: curvedAnimationSlow.value,
                     child: Container(
                       height: 2,
-                      color: dynamicPastel(
-                          context, Theme.of(context).colorScheme.primary,
-                          amountLight: 0.5, amountDark: 0.55),
+                      color: dynamicPastel(context, Theme.of(context).colorScheme.primary, amountLight: 0.5, amountDark: 0.55),
                       child: Container(),
                     ),
                   ),

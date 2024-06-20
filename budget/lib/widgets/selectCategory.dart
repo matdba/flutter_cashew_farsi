@@ -6,14 +6,11 @@ import 'package:budget/struct/settings.dart';
 import 'package:budget/widgets/animatedExpanded.dart';
 import 'package:budget/widgets/button.dart';
 import 'package:budget/widgets/categoryIcon.dart';
-import 'package:budget/widgets/incomeExpenseTabSelector.dart';
 import 'package:budget/widgets/openBottomSheet.dart';
 import 'package:budget/widgets/openPopup.dart';
 import 'package:budget/widgets/tappable.dart';
 import 'package:budget/widgets/textWidgets.dart';
-import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/material.dart'
-    hide SliverReorderableList, ReorderableDelayedDragStartListener;
+import 'package:flutter/material.dart' hide SliverReorderableList, ReorderableDelayedDragStartListener;
 import 'package:flutter/services.dart';
 import 'package:reorderable_grid_view/reorderable_grid_view.dart';
 
@@ -125,14 +122,10 @@ class _SelectCategoryState extends State<SelectCategory> {
   //find the selected category using selectedCategory
   @override
   Widget build(BuildContext context) {
-    bool dragEnabled = widget.selectedIncome == null &&
-        widget.categoryFks == null &&
-        widget.hideCategoryFks == null &&
-        widget.allowRearrange == true;
+    bool dragEnabled =
+        widget.selectedIncome == null && widget.categoryFks == null && widget.hideCategoryFks == null && widget.allowRearrange == true;
 
-    if (updatedInitial == false &&
-        (widget.selectedCategory != null ||
-            widget.selectedCategories != null)) {
+    if (updatedInitial == false && (widget.selectedCategory != null || widget.selectedCategories != null)) {
       setInitialCategories();
       setState(() {
         updatedInitial = true;
@@ -149,11 +142,9 @@ class _SelectCategoryState extends State<SelectCategory> {
           if (widget.horizontalList) {
             List<Widget> children = [];
             for (TransactionCategory category in snapshot.data!) {
-              if (widget.categoryFks != null &&
-                  !widget.categoryFks!.contains(category.categoryPk)) {
+              if (widget.categoryFks != null && !widget.categoryFks!.contains(category.categoryPk)) {
                 continue;
-              } else if (widget.hideCategoryFks != null &&
-                  widget.hideCategoryFks!.contains(category.categoryPk)) {
+              } else if (widget.hideCategoryFks != null && widget.hideCategoryFks!.contains(category.categoryPk)) {
                 continue;
               }
 
@@ -161,18 +152,11 @@ class _SelectCategoryState extends State<SelectCategory> {
                 key: ValueKey(category.categoryPk.toString()),
                 duration: Duration(milliseconds: 1500),
                 curve: Curves.elasticOut,
-                scale: widget.scaleWhenSelected == true &&
-                        selectedCategories.contains(category.categoryPk) ==
-                            false
-                    ? 0.86
-                    : 1,
+                scale: widget.scaleWhenSelected == true && selectedCategories.contains(category.categoryPk) == false ? 0.86 : 1,
                 child: Builder(builder: (context) {
                   return AnimatedOpacity(
                     duration: Duration(milliseconds: 500),
-                    opacity: widget.fadeOutWhenSelected == true &&
-                            selectedCategories.contains(category.categoryPk)
-                        ? 0.3
-                        : 1,
+                    opacity: widget.fadeOutWhenSelected == true && selectedCategories.contains(category.categoryPk) ? 0.3 : 1,
                     child: CategoryIcon(
                       enableTooltip: category.name.length > 10,
                       categoryPk: category.categoryPk,
@@ -191,16 +175,14 @@ class _SelectCategoryState extends State<SelectCategory> {
                             selectedCategories.add(category.categoryPk);
                           });
                           Future.delayed(Duration(milliseconds: 70), () {
-                            if (widget.popRoute)
-                              Navigator.pop(context, category);
+                            if (widget.popRoute) Navigator.pop(context, category);
                             if (widget.next != null) {
                               widget.next!();
                             }
                           });
                         } else if (widget.setSelectedCategories != null) {
                           // print(selectedCategories);
-                          if (selectedCategories
-                              .contains(category.categoryPk)) {
+                          if (selectedCategories.contains(category.categoryPk)) {
                             setState(() {
                               selectedCategories.remove(category.categoryPk);
                             });
@@ -224,9 +206,7 @@ class _SelectCategoryState extends State<SelectCategory> {
               child: AnimatedSizeSwitcher(
                 child: Container(
                   key: ValueKey(children.length <= 0),
-                  height: children.length <= 0
-                      ? 0
-                      : widget.horizontalListViewHeight,
+                  height: children.length <= 0 ? 0 : widget.horizontalListViewHeight,
                   child: ListView(
                     addAutomaticKeepAlives: true,
                     clipBehavior: Clip.none,
@@ -235,7 +215,7 @@ class _SelectCategoryState extends State<SelectCategory> {
                     children: [
                       if (widget.showSelectedAllCategoriesIfNoneSelected)
                         SelectedCategoryHorizontalExtraButton(
-                          label: "all".tr(),
+                          label: "همه",
                           onTap: () {
                             if (widget.setSelectedCategories != null) {
                               widget.setSelectedCategories!(null);
@@ -244,12 +224,8 @@ class _SelectCategoryState extends State<SelectCategory> {
                               selectedCategories = [];
                             });
                           },
-                          isOutlined: widget.forceSelectAllToFalse == true
-                              ? false
-                              : selectedCategories.isEmpty,
-                          icon: appStateSettings["outlinedIcons"]
-                              ? Icons.category_outlined
-                              : Icons.category_rounded,
+                          isOutlined: widget.forceSelectAllToFalse == true ? false : selectedCategories.isEmpty,
+                          icon: appStateSettings["outlinedIcons"] ? Icons.category_outlined : Icons.category_rounded,
                         ),
                       if (widget.header != null) ...widget.header!,
                       ...children,
@@ -265,12 +241,9 @@ class _SelectCategoryState extends State<SelectCategory> {
                                 onTap: () {},
                                 margin: EdgeInsets.symmetric(horizontal: 7),
                                 openPage: AddCategoryPage(
-                                    routesToPopAfterDelete:
-                                        RoutesToPopAfterDelete.None,
-                                    mainCategoryPkWhenSubCategory:
-                                        widget.mainCategoryPks?[0],
-                                    initiallyIsExpense:
-                                        widget.selectedIncome != true),
+                                    routesToPopAfterDelete: RoutesToPopAfterDelete.None,
+                                    mainCategoryPkWhenSubCategory: widget.mainCategoryPks?[0],
+                                    initiallyIsExpense: widget.selectedIncome != true),
                                 width: 70,
                               ),
                             ),
@@ -280,19 +253,15 @@ class _SelectCategoryState extends State<SelectCategory> {
               ),
             );
           }
-          double size = getWidthBottomSheet(context) <= 400
-              ? (getWidthBottomSheet(context) - 20) / 4 - 50
-              : 45;
+          double size = getWidthBottomSheet(context) <= 400 ? (getWidthBottomSheet(context) - 20) / 4 - 50 : 45;
           // print(size);
           // print(snapshot.data);
           // print(size);
           List<Widget> categoryIcons = [];
           for (TransactionCategory category in snapshot.data!) {
-            if (widget.categoryFks != null &&
-                !widget.categoryFks!.contains(category.categoryPk)) {
+            if (widget.categoryFks != null && !widget.categoryFks!.contains(category.categoryPk)) {
               continue;
-            } else if (widget.hideCategoryFks != null &&
-                widget.hideCategoryFks!.contains(category.categoryPk)) {
+            } else if (widget.hideCategoryFks != null && widget.hideCategoryFks!.contains(category.categoryPk)) {
               continue;
             }
             categoryIcons.add(
@@ -300,17 +269,10 @@ class _SelectCategoryState extends State<SelectCategory> {
                 key: ValueKey(category.categoryPk),
                 duration: Duration(milliseconds: 1500),
                 curve: Curves.elasticOut,
-                scale: widget.scaleWhenSelected == true &&
-                        selectedCategories.contains(category.categoryPk) ==
-                            false
-                    ? 0.86
-                    : 1,
+                scale: widget.scaleWhenSelected == true && selectedCategories.contains(category.categoryPk) == false ? 0.86 : 1,
                 child: AnimatedOpacity(
                   duration: Duration(milliseconds: 500),
-                  opacity: widget.fadeOutWhenSelected == true &&
-                          selectedCategories.contains(category.categoryPk)
-                      ? 0.3
-                      : 1,
+                  opacity: widget.fadeOutWhenSelected == true && selectedCategories.contains(category.categoryPk) ? 0.3 : 1,
                   child: CategoryIcon(
                     enableTooltip: category.name.length > 10,
                     canEditByLongPress: dragEnabled == false,
@@ -379,10 +341,7 @@ class _SelectCategoryState extends State<SelectCategory> {
                     controller: _scrollController,
                     crossAxisSpacing: 0,
                     mainAxisSpacing: 5,
-                    crossAxisCount: getWidthBottomSheet(context) <= 400
-                        ? 4
-                        : ((getWidthBottomSheet(context)) ~/ size ~/ 2.1)
-                            .toInt(),
+                    crossAxisCount: getWidthBottomSheet(context) <= 400 ? 4 : ((getWidthBottomSheet(context)) ~/ size ~/ 2.1).toInt(),
                     shrinkWrap: true,
                     children: categoryIcons,
                     header: widget.header ?? [],
@@ -396,19 +355,12 @@ class _SelectCategoryState extends State<SelectCategory> {
                                 builder: (context, BoxConstraints constraints) {
                                   return AddButton(
                                     onTap: () {},
-                                    height: constraints.maxWidth < 70
-                                        ? constraints.maxWidth
-                                        : 70,
-                                    width: constraints.maxWidth < 70
-                                        ? constraints.maxWidth
-                                        : 70,
+                                    height: constraints.maxWidth < 70 ? constraints.maxWidth : 70,
+                                    width: constraints.maxWidth < 70 ? constraints.maxWidth : 70,
                                     openPage: AddCategoryPage(
-                                      routesToPopAfterDelete:
-                                          RoutesToPopAfterDelete.None,
-                                      mainCategoryPkWhenSubCategory:
-                                          widget.mainCategoryPks?[0],
-                                      initiallyIsExpense:
-                                          widget.selectedIncome != true,
+                                      routesToPopAfterDelete: RoutesToPopAfterDelete.None,
+                                      mainCategoryPkWhenSubCategory: widget.mainCategoryPks?[0],
+                                      initiallyIsExpense: widget.selectedIncome != true,
                                     ),
                                   );
                                 },
@@ -418,15 +370,12 @@ class _SelectCategoryState extends State<SelectCategory> {
                         ),
                     ],
                     onReorder: (_intPrevious, _intNew) async {
-                      TransactionCategory oldCategory =
-                          snapshot.data![_intPrevious];
+                      TransactionCategory oldCategory = snapshot.data![_intPrevious];
 
                       if (_intNew > _intPrevious) {
-                        await database.moveCategory(
-                            oldCategory.categoryPk, _intNew, oldCategory.order);
+                        await database.moveCategory(oldCategory.categoryPk, _intNew, oldCategory.order);
                       } else {
-                        await database.moveCategory(
-                            oldCategory.categoryPk, _intNew, oldCategory.order);
+                        await database.moveCategory(oldCategory.categoryPk, _intNew, oldCategory.order);
                       }
                       return true;
                     },
@@ -551,11 +500,7 @@ class _SelectCategoryState extends State<SelectCategory> {
 
 class SelectedCategoryHorizontalExtraButton extends StatelessWidget {
   const SelectedCategoryHorizontalExtraButton(
-      {required this.label,
-      required this.onTap,
-      required this.isOutlined,
-      required this.icon,
-      super.key});
+      {required this.label, required this.onTap, required this.isOutlined, required this.icon, super.key});
   final String label;
   final VoidCallback onTap;
   final bool isOutlined;
@@ -581,8 +526,7 @@ class SelectedCategoryHorizontalExtraButton extends StatelessWidget {
               decoration: isOutlined
                   ? BoxDecoration(
                       border: Border.all(
-                        color: dynamicPastel(
-                            context, Theme.of(context).colorScheme.primary,
+                        color: dynamicPastel(context, Theme.of(context).colorScheme.primary,
                             amountLight: 0.5, amountDark: 0.4, inverse: true),
                         width: 3,
                       ),

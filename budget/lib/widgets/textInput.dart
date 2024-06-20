@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:budget/functions.dart';
 import 'package:budget/struct/settings.dart';
 import 'package:budget/widgets/textWidgets.dart';
@@ -28,13 +26,11 @@ class ResumeTextFieldFocus extends StatelessWidget {
     if (getPlatform(ignoreEmulation: true) == PlatformOS.isAndroid) {
       return Focus(
         onFocusChange: (value) {
-          if (value == false &&
-              appLifecycleState == AppLifecycleState.resumed) {
+          if (value == false && appLifecycleState == AppLifecycleState.resumed) {
             Future.delayed(Duration(milliseconds: 50), () {
               _currentTextInputFocus = FocusScope.of(context).focusedChild;
             });
-          } else if (value == true &&
-              appLifecycleState == AppLifecycleState.resumed) {
+          } else if (value == true && appLifecycleState == AppLifecycleState.resumed) {
             _currentTextInputFocus = FocusScope.of(context).focusedChild;
           }
 
@@ -150,9 +146,7 @@ class TextInput extends StatelessWidget {
                     (appStateSettings["materialYou"]
                         ? Theme.of(context).colorScheme.secondaryContainer
                         : getColor(context, "canvasContainer")),
-            borderRadius: borderRadius ??
-                BorderRadius.circular(
-                    getPlatform() == PlatformOS.isIOS ? 8 : 15),
+            borderRadius: borderRadius ?? BorderRadius.circular(getPlatform() == PlatformOS.isIOS ? 8 : 15),
           ),
           child: Center(
             child: TextFormField(
@@ -160,12 +154,10 @@ class TextInput extends StatelessWidget {
               maxLength: maxLength,
               inputFormatters: inputFormatters,
               textInputAction: textInputAction,
-              textCapitalization:
-                  textCapitalization ?? TextCapitalization.sentences,
+              textCapitalization: textCapitalization ?? TextCapitalization.sentences,
               textAlignVertical: kIsWeb ? TextAlignVertical.bottom : null,
               //incognito keyboard
-              enableIMEPersonalizedLearning:
-                  !appStateSettings["incognitoKeyboard"],
+              enableIMEPersonalizedLearning: !appStateSettings["incognitoKeyboard"],
               scrollPadding: EdgeInsets.only(bottom: 80),
               focusNode: focusNode,
               keyboardType: keyboardType != null
@@ -185,20 +177,18 @@ class TextInput extends StatelessWidget {
               textAlign: textAlign,
               autocorrect: autocorrect,
               style: TextStyle(
-                fontSize:
-                    fontSize != null ? fontSize : (bubbly == false ? 18 : 15),
+                fontSize: fontSize != null ? fontSize : (bubbly == false ? 18 : 15),
                 height: kIsWeb
                     ? null
                     : bubbly == true
                         ? 1.7
                         : 1.3,
                 fontWeight: fontWeight,
-                fontFamily: appStateSettings["font"],
-                fontFamilyFallback: ['Inter'],
+                fontFamily: 'SansFaNum',
+                // fontFamily: appStateSettings["font"],
+                // fontFamilyFallback: ['Inter'],
               ),
-              cursorColor: dynamicPastel(
-                  context, Theme.of(context).colorScheme.primary,
-                  amount: 0.2, inverse: false),
+              cursorColor: dynamicPastel(context, Theme.of(context).colorScheme.primary, amount: 0.2, inverse: false),
               decoration: new InputDecoration(
                 counterText: "",
                 hintStyle: TextStyle(color: getColor(context, "textLight")),
@@ -208,11 +198,8 @@ class TextInput extends StatelessWidget {
                 contentPadding: EdgeInsets.only(
                   left: bubbly == false ? (kIsWeb ? 8 + 5 : 8) : 18,
                   right: (kIsWeb ? paddingRight + 5 : paddingRight),
-                  top: topContentPadding != null
-                      ? topContentPadding ?? 0
-                      : (bubbly == false ? 15 : 18),
-                  bottom:
-                      bubbly == false ? (kIsWeb ? 8 : 5) : (kIsWeb ? 15 : 0),
+                  top: topContentPadding != null ? topContentPadding ?? 0 : (bubbly == false ? 15 : 18),
+                  bottom: bubbly == false ? (kIsWeb ? 8 : 5) : (kIsWeb ? 15 : 0),
                 ),
                 hintText: labelText,
                 filled: bubbly == false ? true : false,
@@ -246,29 +233,19 @@ class TextInput extends StatelessWidget {
                     : null,
                 enabledBorder: bubbly == false
                     ? UnderlineInputBorder(
-                        borderRadius:
-                            BorderRadius.vertical(top: Radius.circular(10)),
+                        borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
                         borderSide: BorderSide(
                           color: appStateSettings["materialYou"]
-                              ? Theme.of(context)
-                                  .colorScheme
-                                  .primary
-                                  .withOpacity(0.2)
+                              ? Theme.of(context).colorScheme.primary.withOpacity(0.2)
                               : getColor(context, "lightDarkAccentHeavy"),
                           width: 2,
                         ),
                       )
                     : null,
-                hoverColor: bubbly == false
-                    ? Theme.of(context)
-                        .colorScheme
-                        .secondaryContainer
-                        .withAlpha(90)
-                    : null,
+                hoverColor: bubbly == false ? Theme.of(context).colorScheme.secondaryContainer.withAlpha(90) : null,
                 focusedBorder: bubbly == false
                     ? UnderlineInputBorder(
-                        borderRadius:
-                            BorderRadius.vertical(top: Radius.circular(5.0)),
+                        borderRadius: BorderRadius.vertical(top: Radius.circular(5.0)),
                         borderSide: BorderSide(
                           color: Theme.of(context).colorScheme.secondary,
                           width: 2,

@@ -4,6 +4,7 @@ import 'package:budget/widgets/breathingAnimation.dart';
 import 'package:budget/widgets/framework/pageFramework.dart';
 import 'package:budget/widgets/textWidgets.dart';
 import 'package:flutter/material.dart';
+import 'package:persian_number_utility/persian_number_utility.dart';
 import '../colors.dart';
 
 class DropdownSelect extends StatefulWidget {
@@ -12,8 +13,7 @@ class DropdownSelect extends StatefulWidget {
   final Function(String) onChanged;
   final Color? backgroundColor;
   final bool compact;
-  final bool
-      checkInitialValue; //Check if the initial value not in list, default to using the first index
+  final bool checkInitialValue; //Check if the initial value not in list, default to using the first index
   final List<String> boldedValues;
   final List<String> faintValues;
   final Function(String)? getLabel;
@@ -61,8 +61,7 @@ class DropdownSelectState extends State<DropdownSelect> {
   @override
   void initState() {
     super.initState();
-    if (widget.checkInitialValue == true &&
-        !widget.items.contains(widget.initial)) {
+    if (widget.checkInitialValue == true && !widget.items.contains(widget.initial)) {
       currentValue = widget.items[0];
     } else {
       currentValue = widget.initial;
@@ -73,51 +72,39 @@ class DropdownSelectState extends State<DropdownSelect> {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.only(
-          left: widget.compact ? 13 : 15,
-          right: widget.compact ? 1 : 6,
+          right: widget.compact ? 13 : 15,
+          left: widget.compact ? 1 : 6,
           top: widget.compact ? 2 : 10,
           bottom: widget.compact ? 2 : 10),
       decoration: BoxDecoration(
-        color: widget.backgroundColor == null
-            ? getColor(context, "lightDarkAccent")
-            : widget.backgroundColor,
+        color: widget.backgroundColor == null ? getColor(context, "lightDarkAccent") : widget.backgroundColor,
         borderRadius: BorderRadius.circular(10),
       ),
       child: DropdownButton<String>(
         key: _dropdownButtonKey,
         underline: Container(),
         style: TextStyle(color: getColor(context, "black"), fontSize: 15),
-        dropdownColor: widget.backgroundColor == null
-            ? getColor(context, "lightDarkAccent")
-            : widget.backgroundColor,
+        dropdownColor: widget.backgroundColor == null ? getColor(context, "lightDarkAccent") : widget.backgroundColor,
         isDense: true,
         value: currentValue ?? widget.initial,
         elevation: 15,
         iconSize: 32,
         borderRadius: BorderRadius.circular(10),
-        icon: Icon(appStateSettings["outlinedIcons"]
-            ? Icons.arrow_drop_down_outlined
-            : Icons.arrow_drop_down_rounded),
+        icon: Icon(appStateSettings["outlinedIcons"] ? Icons.arrow_drop_down_outlined : Icons.arrow_drop_down_rounded),
         onChanged: (String? value) {
           widget.onChanged(value ?? widget.items[0]);
           setState(() {
             currentValue = value;
           });
         },
-        items: widget.items
-            .toSet()
-            .toList()
-            .map<DropdownMenuItem<String>>((String value) {
+        items: widget.items.toSet().toList().map<DropdownMenuItem<String>>((String value) {
           return DropdownMenuItem(
             alignment: Alignment.centerLeft,
             child: TextFont(
-              text: widget.getLabel != null ? widget.getLabel!(value) : value,
+              text: widget.getLabel != null ? widget.getLabel!(value).toString().toPersianDigit() : value.toPersianDigit(),
               fontSize: widget.compact ? 14 : 18,
-              fontWeight: widget.boldedValues.contains(value)
-                  ? FontWeight.bold
-                  : FontWeight.normal,
-              textColor: getColor(context, "black")
-                  .withOpacity(widget.faintValues.contains(value) ? 0.3 : 1),
+              fontWeight: widget.boldedValues.contains(value) ? FontWeight.bold : FontWeight.normal,
+              textColor: getColor(context, "black").withOpacity(widget.faintValues.contains(value) ? 0.3 : 1),
             ),
             value: value,
           );
@@ -210,13 +197,10 @@ class CustomPopupMenuButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool keepOutFirstConsideringHeader = (keepOutFirst &&
-            getCenteredTitleSmall(context: context, backButtonEnabled: true) ==
-                false) ||
-        this.items.length == 1;
+    bool keepOutFirstConsideringHeader =
+        (keepOutFirst && getCenteredTitleSmall(context: context, backButtonEnabled: true) == false) || this.items.length == 1;
     List<DropdownItemMenu> itemsFiltered = [...items];
-    if ((keepOutFirstConsideringHeader || forceKeepOutFirst) &&
-        items.length > 0) {
+    if ((keepOutFirstConsideringHeader || forceKeepOutFirst) && items.length > 0) {
       itemsFiltered.removeAt(0);
       if (items.length == 2) itemsFiltered.removeAt(0);
     }
@@ -239,16 +223,12 @@ class CustomPopupMenuButton extends StatelessWidget {
 
     return Row(
       children: [
-        if ((keepOutFirstConsideringHeader || forceKeepOutFirst) &&
-            items.length > 0)
+        if ((keepOutFirstConsideringHeader || forceKeepOutFirst) && items.length > 0)
           Transform.translate(
-            offset: Offset(
-                itemsFiltered.isNotEmpty || items.length == 2 ? 7 : 0, 0),
+            offset: Offset(itemsFiltered.isNotEmpty || items.length == 2 ? 7 : 0, 0),
             child: menuIconButtonBuilder(context, items[0]),
           ),
-        if ((keepOutFirstConsideringHeader || forceKeepOutFirst) &&
-            items.length > 0 &&
-            items.length == 2)
+        if ((keepOutFirstConsideringHeader || forceKeepOutFirst) && items.length > 0 && items.length == 2)
           Transform.translate(
             offset: Offset(itemsFiltered.isNotEmpty ? 7 : 0, 0),
             child: menuIconButtonBuilder(context, items[1]),
@@ -270,9 +250,7 @@ class CustomPopupMenuButton extends StatelessWidget {
               }
             },
             icon: Icon(
-              appStateSettings["outlinedIcons"]
-                  ? Icons.more_vert_outlined
-                  : Icons.more_vert_rounded,
+              appStateSettings["outlinedIcons"] ? Icons.more_vert_outlined : Icons.more_vert_rounded,
               color: dynamicPastel(
                 context,
                 Theme.of(context).colorScheme.onSecondaryContainer,
@@ -299,11 +277,7 @@ class CustomPopupMenuButton extends StatelessWidget {
                                 width: 20,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: item.selected
-                                      ? Theme.of(context)
-                                          .colorScheme
-                                          .secondaryContainer
-                                      : null,
+                                  color: item.selected ? Theme.of(context).colorScheme.secondaryContainer : null,
                                 ),
                               ),
                             ),

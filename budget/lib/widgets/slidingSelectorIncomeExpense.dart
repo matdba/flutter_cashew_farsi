@@ -26,19 +26,13 @@ class SlidingSelectorIncomeExpense extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    BorderRadius borderRadius = getPlatform() == PlatformOS.isIOS
-        ? BorderRadius.circular(10)
-        : BorderRadius.circular(15);
+    BorderRadius borderRadius = getPlatform() == PlatformOS.isIOS ? BorderRadius.circular(10) : BorderRadius.circular(15);
     return Padding(
-      padding: EdgeInsets.symmetric(
-          horizontal: useHorizontalPaddingConstrained == false
-              ? 0
-              : getHorizontalPaddingConstrained(context)),
+      padding:
+          EdgeInsets.symmetric(horizontal: useHorizontalPaddingConstrained == false ? 0 : getHorizontalPaddingConstrained(context)),
       child: Padding(
         padding: customPadding ??
-            (alternateTheme
-                ? const EdgeInsets.symmetric(horizontal: 20)
-                : const EdgeInsets.symmetric(horizontal: 13)),
+            (alternateTheme ? const EdgeInsets.symmetric(horizontal: 20) : const EdgeInsets.symmetric(horizontal: 13)),
         child: Container(
           decoration: BoxDecoration(
             boxShadow: appStateSettings["materialYou"]
@@ -58,9 +52,7 @@ class SlidingSelectorIncomeExpense extends StatelessWidget {
                     ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
                     : getColor(context, "lightDarkAccentHeavyLight"),
                 child: TabBar(
-                  splashFactory: getPlatform() == PlatformOS.isIOS
-                      ? NoSplash.splashFactory
-                      : null,
+                  splashFactory: getPlatform() == PlatformOS.isIOS ? NoSplash.splashFactory : null,
                   splashBorderRadius: borderRadius,
                   onTap: (value) {
                     onSelected(value + 1);
@@ -84,11 +76,10 @@ class SlidingSelectorIncomeExpense extends StatelessWidget {
                               child: AutoSizeText(
                                 minFontSize: 11,
                                 maxLines: 1,
-                                "all".tr(),
+                                "همه",
                                 style: TextStyle(
                                   fontSize: 14,
-                                  fontFamily: appStateSettings["font"],
-                                  fontFamilyFallback: ['Inter'],
+                                  fontFamily: 'Sans',
                                 ),
                               ),
                             ),
@@ -99,11 +90,10 @@ class SlidingSelectorIncomeExpense extends StatelessWidget {
                               child: AutoSizeText(
                                 minFontSize: 11,
                                 maxLines: 1,
-                                "expense".tr(),
+                                "هزینه ها",
                                 style: TextStyle(
                                   fontSize: 14,
-                                  fontFamily: appStateSettings["font"],
-                                  fontFamilyFallback: ['Inter'],
+                                  fontFamily: 'Sans',
                                 ),
                               ),
                             ),
@@ -114,11 +104,10 @@ class SlidingSelectorIncomeExpense extends StatelessWidget {
                               child: AutoSizeText(
                                 minFontSize: 11,
                                 maxLines: 1,
-                                "income".tr(),
+                                "درآمد ها",
                                 style: TextStyle(
                                   fontSize: 14,
-                                  fontFamily: appStateSettings["font"],
-                                  fontFamilyFallback: ['Inter'],
+                                  fontFamily: 'Sans',
                                 ),
                               ),
                             ),

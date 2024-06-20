@@ -1,31 +1,22 @@
 import 'package:budget/colors.dart';
 import 'package:budget/database/tables.dart';
 import 'package:budget/functions.dart';
-import 'package:budget/pages/addCategoryPage.dart';
 import 'package:budget/pages/addObjectivePage.dart';
 import 'package:budget/pages/editBudgetPage.dart';
-import 'package:budget/pages/editHomePage.dart';
 import 'package:budget/pages/editObjectivesPage.dart';
 import 'package:budget/pages/objectivesListPage.dart';
-import 'package:budget/pages/transactionsSearchPage.dart';
-import 'package:budget/pages/walletDetailsPage.dart';
 import 'package:budget/struct/databaseGlobal.dart';
 import 'package:budget/struct/settings.dart';
 import 'package:budget/widgets/framework/popupFramework.dart';
 import 'package:budget/widgets/tappable.dart';
 import 'package:budget/widgets/util/keepAliveClientMixin.dart';
-import 'package:budget/widgets/linearGradientFadedEdges.dart';
-import 'package:budget/widgets/navigationSidebar.dart';
 import 'package:budget/widgets/openBottomSheet.dart';
 import 'package:budget/widgets/openPopup.dart';
 import 'package:budget/widgets/selectItems.dart';
-import 'package:budget/widgets/transactionsAmountBox.dart';
-import 'package:budget/widgets/util/rightSideClipper.dart';
 import 'package:budget/widgets/util/widgetSize.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import '../addButton.dart';
 
@@ -67,11 +58,8 @@ class _HomePageObjectivesState extends State<HomePageObjectives> {
                     },
                     height: 160,
                     width: null,
-                    labelUnder: widget.objectiveType == ObjectiveType.goal
-                        ? "goal".tr()
-                        : "long-term-loan".tr(),
-                    margin:
-                        const EdgeInsets.only(left: 13, right: 13, bottom: 13),
+                    labelUnder: widget.objectiveType == ObjectiveType.goal ? "هدف" : "وام بلند مدت",
+                    margin: const EdgeInsets.only(left: 13, right: 13, bottom: 13),
                     icon: Icons.format_list_bulleted_add,
                   );
                 }
@@ -86,8 +74,7 @@ class _HomePageObjectivesState extends State<HomePageObjectives> {
                 // }
 
                 List<Widget> objectiveContainers = (snapshot.data
-                        ?.where((Objective objective) =>
-                            getIsDifferenceOnlyLoan(objective) == false)
+                        ?.where((Objective objective) => getIsDifferenceOnlyLoan(objective) == false)
                         .map((Objective objective) {
                       return Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 3),
@@ -119,9 +106,7 @@ class _HomePageObjectivesState extends State<HomePageObjectives> {
                       height: null,
                       width: null,
                       margin: EdgeInsets.all(0),
-                      labelUnder: widget.objectiveType == ObjectiveType.goal
-                          ? "goal".tr()
-                          : "loan".tr(),
+                      labelUnder: widget.objectiveType == ObjectiveType.goal ? "goal".tr() : "loan".tr(),
                       icon: Icons.format_list_bulleted_add,
                     ),
                   ),
@@ -202,12 +187,9 @@ class _HomePageObjectivesState extends State<HomePageObjectives> {
                   )
                   .$1,
               builder: (context, snapshot) {
-                if (snapshot.hasData &&
-                    snapshot.data != null &&
-                    (snapshot.data?.length ?? 0) > 0) {
+                if (snapshot.hasData && snapshot.data != null && (snapshot.data?.length ?? 0) > 0) {
                   List<Widget> objectiveItems = [
-                    if (snapshot.hasData && snapshot.data!.length > 0)
-                      SizedBox(height: 8),
+                    if (snapshot.hasData && snapshot.data!.length > 0) SizedBox(height: 8),
                     ...(snapshot.data?.map((Objective objective) {
                           return ObjectiveContainerDifferenceLoan(
                             objective: objective,
@@ -217,13 +199,11 @@ class _HomePageObjectivesState extends State<HomePageObjectives> {
                           );
                         }).toList() ??
                         []),
-                    if (snapshot.hasData && snapshot.data!.length > 0)
-                      SizedBox(height: 8),
+                    if (snapshot.hasData && snapshot.data!.length > 0) SizedBox(height: 8),
                   ];
 
                   return Padding(
-                    padding:
-                        const EdgeInsets.only(bottom: 13, left: 13, right: 13),
+                    padding: const EdgeInsets.only(bottom: 13, left: 13, right: 13),
                     child: Container(
                       decoration: BoxDecoration(
                         boxShadow: boxShadowCheck(boxShadowGeneral(context)),
@@ -282,17 +262,12 @@ class EditHomePagePinnedGoalsPopup extends StatelessWidget {
       builder: (context, snapshot) {
         List<Objective> allObjectives = snapshot.data ?? [];
         return PopupFramework(
-          title: objectiveType == ObjectiveType.goal
-              ? "select-goals".tr()
-              : "select-loans".tr(),
+          title: objectiveType == ObjectiveType.goal ? "انتخاب هدف" : "انتخاب وام",
           outsideExtraWidget: IconButton(
             iconSize: 25,
-            padding:
-                EdgeInsets.all(getPlatform() == PlatformOS.isIOS ? 15 : 20),
+            padding: EdgeInsets.all(getPlatform() == PlatformOS.isIOS ? 15 : 20),
             icon: Icon(
-              appStateSettings["outlinedIcons"]
-                  ? Icons.edit_outlined
-                  : Icons.edit_rounded,
+              appStateSettings["outlinedIcons"] ? Icons.edit_outlined : Icons.edit_rounded,
             ),
             onPressed: () async {
               pushRoute(
@@ -312,12 +287,8 @@ class EditHomePagePinnedGoalsPopup extends StatelessWidget {
                 ),
               if (allObjectives.length <= 0)
                 NoResultsCreate(
-                  message: objectiveType == ObjectiveType.goal
-                      ? "no-goals-found".tr()
-                      : "no-long-term-loans-found".tr(),
-                  buttonLabel: objectiveType == ObjectiveType.goal
-                      ? "create-goal".tr()
-                      : "create-loan".tr(),
+                  message: objectiveType == ObjectiveType.goal ? "هدفی پیدا نشد" : "وام بلند مدتی پیدا نشد",
+                  buttonLabel: objectiveType == ObjectiveType.goal ? "ایجاد هدف" : "ایجاد وام",
                   route: AddObjectivePage(
                     routesToPopAfterDelete: RoutesToPopAfterDelete.None,
                     objectiveType: objectiveType,
@@ -327,25 +298,18 @@ class EditHomePagePinnedGoalsPopup extends StatelessWidget {
                 syncWithInitial: true,
                 checkboxCustomIconSelected: Icons.push_pin_rounded,
                 checkboxCustomIconUnselected: Icons.push_pin_outlined,
-                items: [
-                  for (Objective objective in allObjectives)
-                    objective.objectivePk.toString()
-                ],
+                items: [for (Objective objective in allObjectives) objective.objectivePk.toString()],
                 getColor: (objectivePk, selected) {
                   for (Objective objective in allObjectives)
-                    if (objective.objectivePk.toString() ==
-                        objectivePk.toString()) {
-                      return HexColor(objective.colour,
-                              defaultColor:
-                                  Theme.of(context).colorScheme.primary)
+                    if (objective.objectivePk.toString() == objectivePk.toString()) {
+                      return HexColor(objective.colour, defaultColor: Theme.of(context).colorScheme.primary)
                           .withOpacity(selected == true ? 0.7 : 0.5);
                     }
                   return null;
                 },
                 displayFilter: (objectivePk) {
                   for (Objective objective in allObjectives)
-                    if (objective.objectivePk.toString() ==
-                        objectivePk.toString()) {
+                    if (objective.objectivePk.toString() == objectivePk.toString()) {
                       return objective.name;
                     }
                   return "";
@@ -355,18 +319,14 @@ class EditHomePagePinnedGoalsPopup extends StatelessWidget {
                     if (objective.pinned) objective.objectivePk.toString()
                 ],
                 onChangedSingleItem: (value) async {
-                  Objective objective = allObjectives[allObjectives
-                      .indexWhere((item) => item.objectivePk == value)];
-                  Objective objectiveToUpdate = await database
-                      .getObjectiveInstance(objective.objectivePk);
+                  Objective objective = allObjectives[allObjectives.indexWhere((item) => item.objectivePk == value)];
+                  Objective objectiveToUpdate = await database.getObjectiveInstance(objective.objectivePk);
                   await database.createOrUpdateObjective(
-                    objectiveToUpdate.copyWith(
-                        pinned: !objectiveToUpdate.pinned),
+                    objectiveToUpdate.copyWith(pinned: !objectiveToUpdate.pinned),
                   );
                 },
                 onLongPress: (String objectivePk) async {
-                  Objective objective =
-                      await database.getObjectiveInstance(objectivePk);
+                  Objective objective = await database.getObjectiveInstance(objectivePk);
                   pushRoute(
                     context,
                     AddObjectivePage(
@@ -393,8 +353,7 @@ class EditHomePagePinnedGoalsPopup extends StatelessWidget {
                   ),
                   afterOpenPage: () {
                     Future.delayed(Duration(milliseconds: 100), () {
-                      bottomSheetControllerGlobalCustomAssigned
-                          ?.snapToExtent(0);
+                      bottomSheetControllerGlobalCustomAssigned?.snapToExtent(0);
                     });
                   },
                 ),

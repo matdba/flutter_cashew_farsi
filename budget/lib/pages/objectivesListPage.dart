@@ -18,30 +18,24 @@ import 'package:budget/widgets/openPopup.dart';
 import 'package:budget/widgets/tappable.dart';
 import 'package:budget/widgets/textWidgets.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/material.dart'
-    hide SliverReorderableList, ReorderableDelayedDragStartListener;
+import 'package:flutter/material.dart' hide SliverReorderableList, ReorderableDelayedDragStartListener;
 import 'package:provider/provider.dart';
+import 'package:shamsi_date/shamsi_date.dart';
 import 'addButton.dart';
 
 // This defines what a difference only loan can be
 bool getIsDifferenceOnlyLoan(Objective objective) {
-  return objective.amount == -1 &&
-      objective.type == ObjectiveType.loan &&
-      appStateSettings["longTermLoansDifferenceFeature"] == true;
+  return objective.amount == -1 && objective.type == ObjectiveType.loan && appStateSettings["longTermLoansDifferenceFeature"] == true;
 }
 
 // negative to collect / you are owed
 // positive to pay back / you owe
-double getDifferenceOfLoan(
-    Objective objective, double totalAmount, double objectiveAmount) {
-  return objective.income
-      ? totalAmount - objectiveAmount
-      : objectiveAmount - totalAmount;
+double getDifferenceOfLoan(Objective objective, double totalAmount, double objectiveAmount) {
+  return objective.income ? totalAmount - objectiveAmount : objectiveAmount - totalAmount;
 }
 
 class ObjectivesListPage extends StatefulWidget {
-  const ObjectivesListPage({required this.backButton, Key? key})
-      : super(key: key);
+  const ObjectivesListPage({required this.backButton, Key? key}) : super(key: key);
   final bool backButton;
 
   @override
@@ -62,9 +56,7 @@ class ObjectivesListPageState extends State<ObjectivesListPage> {
       dragDownToDismiss: true,
       title: "goals".tr(),
       backButton: widget.backButton,
-      horizontalPadding: enableDoubleColumn(context) == false
-          ? getHorizontalPaddingConstrained(context)
-          : 0,
+      horizontalPadding: enableDoubleColumn(context) == false ? getHorizontalPaddingConstrained(context) : 0,
       actions: [
         IconButton(
           padding: EdgeInsets.all(15),
@@ -76,9 +68,7 @@ class ObjectivesListPageState extends State<ObjectivesListPage> {
             );
           },
           icon: Icon(
-            appStateSettings["outlinedIcons"]
-                ? Icons.edit_outlined
-                : Icons.edit_rounded,
+            appStateSettings["outlinedIcons"] ? Icons.edit_outlined : Icons.edit_rounded,
             color: Theme.of(context).colorScheme.onSecondaryContainer,
           ),
         ),
@@ -89,21 +79,17 @@ class ObjectivesListPageState extends State<ObjectivesListPage> {
             onPressed: () {
               pushRoute(
                 context,
-                AddObjectivePage(
-                    routesToPopAfterDelete: RoutesToPopAfterDelete.None),
+                AddObjectivePage(routesToPopAfterDelete: RoutesToPopAfterDelete.None),
               );
             },
             icon: Icon(
-              appStateSettings["outlinedIcons"]
-                  ? Icons.add_outlined
-                  : Icons.add_rounded,
+              appStateSettings["outlinedIcons"] ? Icons.add_outlined : Icons.add_rounded,
               color: Theme.of(context).colorScheme.onSecondaryContainer,
             ),
           ),
       ],
       slivers: [
-        ObjectiveList(
-            showExamplesIfEmpty: true, objectiveType: ObjectiveType.goal),
+        ObjectiveList(showExamplesIfEmpty: true, objectiveType: ObjectiveType.goal),
         SliverToBoxAdapter(
           child: SizedBox(height: 50),
         ),
@@ -140,9 +126,7 @@ class ObjectiveList extends StatelessWidget {
         bool showDemoObjectives = false;
         // Need to use spread operator or else demo objectives glitches in and out when first loaded
         List<Objective> objectivesList = [...(snapshot.data ?? [])];
-        if (showExamplesIfEmpty &&
-            (snapshot.hasData == false ||
-                (objectivesList.length <= 0 && snapshot.hasData))) {
+        if (showExamplesIfEmpty && (snapshot.hasData == false || (objectivesList.length <= 0 && snapshot.hasData))) {
           showDemoObjectives = true;
           objectivesList.add(
             Objective(
@@ -189,14 +173,12 @@ class ObjectiveList extends StatelessWidget {
                           ),
                           child: Padding(
                             padding: EdgeInsets.symmetric(
-                              horizontal:
-                                  getPlatform() == PlatformOS.isIOS ? 13 : 0,
+                              horizontal: getPlatform() == PlatformOS.isIOS ? 13 : 0,
                             ),
                             child: AddButton(
                               onTap: () {},
                               openPage: AddObjectivePage(
-                                routesToPopAfterDelete:
-                                    RoutesToPopAfterDelete.PreventDelete,
+                                routesToPopAfterDelete: RoutesToPopAfterDelete.PreventDelete,
                                 objectiveType: objectiveType,
                                 selectedIncome: isIncome,
                               ),
@@ -229,42 +211,32 @@ class ObjectiveList extends StatelessWidget {
                   gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
                     maxCrossAxisExtent: 500.0,
                     mainAxisExtent: 160,
-                    mainAxisSpacing:
-                        getPlatform() == PlatformOS.isIOS ? 0 : 15.0,
-                    crossAxisSpacing:
-                        getPlatform() == PlatformOS.isIOS ? 0 : 15.0,
+                    mainAxisSpacing: getPlatform() == PlatformOS.isIOS ? 0 : 15.0,
+                    crossAxisSpacing: getPlatform() == PlatformOS.isIOS ? 0 : 15.0,
                     childAspectRatio: 5,
                   ),
                   delegate: SliverChildBuilderDelegate(
                     (BuildContext context, int index) {
-                      if ((showDemoObjectives && index == 0) ||
-                          (showDemoObjectives == false &&
-                              index == objectivesList.length)) {
+                      if ((showDemoObjectives && index == 0) || (showDemoObjectives == false && index == objectivesList.length)) {
                         return showAddButton == false
                             ? SizedBox.shrink()
                             : AddButton(
                                 onTap: () {},
                                 openPage: AddObjectivePage(
-                                  routesToPopAfterDelete:
-                                      RoutesToPopAfterDelete.PreventDelete,
+                                  routesToPopAfterDelete: RoutesToPopAfterDelete.PreventDelete,
                                   objectiveType: objectiveType,
                                   selectedIncome: isIncome,
                                 ),
                               );
                       } else {
-                        Objective objective = objectivesList[
-                            index - (showDemoObjectives ? 1 : 0)];
+                        Objective objective = objectivesList[index - (showDemoObjectives ? 1 : 0)];
                         return ObjectiveContainer(
                           index: index,
                           objective: objective,
                           forcedTotalAmount: showDemoObjectives
-                              ? (objective.income
-                                      ? randomInt[index].toDouble() * -1
-                                      : randomInt[index].toDouble()) *
-                                  15
+                              ? (objective.income ? randomInt[index].toDouble() * -1 : randomInt[index].toDouble()) * 15
                               : null,
-                          forcedNumberTransactions:
-                              showDemoObjectives ? randomInt[index] : null,
+                          forcedNumberTransactions: showDemoObjectives ? randomInt[index] : null,
                         );
                       }
                     },
@@ -274,29 +246,21 @@ class ObjectiveList extends StatelessWidget {
               : SliverList(
                   delegate: SliverChildBuilderDelegate(
                     (BuildContext context, int index) {
-                      if ((showDemoObjectives && index == 0) ||
-                          (showDemoObjectives == false &&
-                              index == objectivesList.length)) {
+                      if ((showDemoObjectives && index == 0) || (showDemoObjectives == false && index == objectivesList.length)) {
                         return addButton;
                       } else {
-                        Objective objective = objectivesList[
-                            index - (showDemoObjectives ? 1 : 0)];
+                        Objective objective = objectivesList[index - (showDemoObjectives ? 1 : 0)];
                         return Padding(
                           padding: EdgeInsets.only(
-                            bottom:
-                                getPlatform() == PlatformOS.isIOS ? 0 : 16.0,
+                            bottom: getPlatform() == PlatformOS.isIOS ? 0 : 16.0,
                           ),
                           child: ObjectiveContainer(
                             index: index,
                             objective: objective,
                             forcedTotalAmount: showDemoObjectives
-                                ? (objective.income
-                                        ? randomInt[index].toDouble() * -1
-                                        : randomInt[index].toDouble()) *
-                                    15
+                                ? (objective.income ? randomInt[index].toDouble() * -1 : randomInt[index].toDouble()) * 15
                                 : null,
-                            forcedNumberTransactions:
-                                showDemoObjectives ? randomInt[index] : null,
+                            forcedNumberTransactions: showDemoObjectives ? randomInt[index] : null,
                           ),
                         );
                       }
@@ -385,23 +349,13 @@ class ObjectiveContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double borderRadius =
-        getPlatform() == PlatformOS.isIOS && forceAndroidBubbleDesign == false
-            ? 0
-            : 20;
-    Color containerColor =
-        getPlatform() == PlatformOS.isIOS && forceAndroidBubbleDesign == false
-            ? Theme.of(context).canvasColor
-            : getColor(context, "lightDarkAccentHeavyLight");
+    double borderRadius = getPlatform() == PlatformOS.isIOS && forceAndroidBubbleDesign == false ? 0 : 20;
+    Color containerColor = getPlatform() == PlatformOS.isIOS && forceAndroidBubbleDesign == false
+        ? Theme.of(context).canvasColor
+        : getColor(context, "lightDarkAccentHeavyLight");
     EdgeInsets containerPadding = EdgeInsets.only(
-      left:
-          getPlatform() == PlatformOS.isIOS && forceAndroidBubbleDesign == false
-              ? 23
-              : 30,
-      right:
-          getPlatform() == PlatformOS.isIOS && forceAndroidBubbleDesign == false
-              ? 23
-              : 20,
+      left: getPlatform() == PlatformOS.isIOS && forceAndroidBubbleDesign == false ? 23 : 30,
+      right: getPlatform() == PlatformOS.isIOS && forceAndroidBubbleDesign == false ? 23 : 20,
     );
     Widget child = WatchTotalAndAmountOfObjective(
       objective: objective,
@@ -413,8 +367,7 @@ class ObjectiveContainer extends StatelessWidget {
 
         return Container(
           decoration: BoxDecoration(
-            boxShadow: getPlatform() == PlatformOS.isIOS &&
-                    forceAndroidBubbleDesign == false
+            boxShadow: getPlatform() == PlatformOS.isIOS && forceAndroidBubbleDesign == false
                 ? []
                 : boxShadowCheck(boxShadowGeneral(context)),
           ),
@@ -465,19 +418,13 @@ class ObjectiveContainer extends StatelessWidget {
                                       children: [
                                         Flexible(
                                           child: Padding(
-                                            padding:
-                                                const EdgeInsets.only(right: 3),
+                                            padding: const EdgeInsets.only(right: 3),
                                             child: Padding(
-                                              padding: const EdgeInsets.only(
-                                                  bottom: 3),
-                                              child:
-                                                  Builder(builder: (context) {
-                                                String content =
-                                                    getWordedDateShortMore(
-                                                  objective.dateCreated,
-                                                  includeYear: objective
-                                                          .dateCreated.year !=
-                                                      DateTime.now().year,
+                                              padding: const EdgeInsets.only(bottom: 3),
+                                              child: Builder(builder: (context) {
+                                                String content = getWordedDateShortMore(
+                                                  Jalali.fromDateTime(objective.dateCreated),
+                                                  includeYear: objective.dateCreated.year != DateTime.now().year,
                                                 );
                                                 if (objective.endDate != null) {
                                                   content = getObjectiveStatus(
@@ -491,9 +438,7 @@ class ObjectiveContainer extends StatelessWidget {
                                                 return TextFont(
                                                   text: content,
                                                   fontSize: 15,
-                                                  textColor:
-                                                      getColor(context, "black")
-                                                          .withOpacity(0.65),
+                                                  textColor: getColor(context, "black").withOpacity(0.65),
                                                   maxLines: 1,
                                                 );
                                               }),
@@ -539,39 +484,22 @@ class ObjectiveContainer extends StatelessWidget {
                                       return SizedBox.shrink();
                                     }
                                     return StreamBuilder<int?>(
-                                      stream: database
-                                          .getTotalCountOfTransactionsInObjective(
-                                              objective.objectivePk)
-                                          .$1,
+                                      stream: database.getTotalCountOfTransactionsInObjective(objective.objectivePk).$1,
                                       builder: (context, snapshot) {
-                                        int numberTransactions =
-                                            forcedNumberTransactions ??
-                                                snapshot.data ??
-                                                0;
+                                        int numberTransactions = forcedNumberTransactions ?? snapshot.data ?? 0;
                                         return Padding(
-                                          padding:
-                                              const EdgeInsets.only(bottom: 2),
+                                          padding: const EdgeInsets.only(bottom: 2),
                                           child: TextFont(
                                             textAlign: TextAlign.left,
-                                            text: (objective.type ==
-                                                    ObjectiveType.loan
-                                                ? (objective.income
-                                                    ? "lent".tr()
-                                                    : "borrowed".tr())
-                                                : (numberTransactions
-                                                        .toString() +
+                                            text: (objective.type == ObjectiveType.loan
+                                                ? (objective.income ? "lent".tr() : "borrowed".tr())
+                                                : (numberTransactions.toString() +
                                                     " " +
                                                     (numberTransactions == 1
-                                                        ? "transaction"
-                                                            .tr()
-                                                            .toLowerCase()
-                                                        : "transactions"
-                                                            .tr()
-                                                            .toLowerCase()))),
+                                                        ? "transaction".tr().toLowerCase()
+                                                        : "transactions".tr().toLowerCase()))),
                                             fontSize: 15,
-                                            textColor:
-                                                getColor(context, "black")
-                                                    .withOpacity(0.65),
+                                            textColor: getColor(context, "black").withOpacity(0.65),
                                           ),
                                         );
                                       },
@@ -580,11 +508,9 @@ class ObjectiveContainer extends StatelessWidget {
                                 ),
                               ),
                               Builder(builder: (context) {
-                                String amountSpentLabel =
-                                    getObjectiveAmountSpentLabel(
+                                String amountSpentLabel = getObjectiveAmountSpentLabel(
                                   context: context,
-                                  showTotalSpent: appStateSettings[
-                                      "showTotalSpentForObjective"],
+                                  showTotalSpent: appStateSettings["showTotalSpentForObjective"],
                                   objectiveAmount: objectiveAmount,
                                   totalAmount: totalAmount,
                                   objective: objective,
@@ -596,18 +522,14 @@ class ObjectiveContainer extends StatelessWidget {
                                       fontWeight: FontWeight.bold,
                                       text: amountSpentLabel,
                                       fontSize: 24,
-                                      textColor: objective.type ==
-                                              ObjectiveType.loan
+                                      textColor: objective.type == ObjectiveType.loan
                                           ? totalAmount >= objectiveAmount
                                               ? getColor(context, "black")
                                               : objective.income
-                                                  ? getColor(
-                                                      context, "unPaidUpcoming")
-                                                  : getColor(
-                                                      context, "unPaidOverdue")
+                                                  ? getColor(context, "unPaidUpcoming")
+                                                  : getColor(context, "unPaidOverdue")
                                           : totalAmount >= objectiveAmount
-                                              ? getColor(
-                                                  context, "incomeAmount")
+                                              ? getColor(context, "incomeAmount")
                                               : getColor(context, "black"),
                                     ),
                                     Padding(
@@ -619,8 +541,7 @@ class ObjectiveContainer extends StatelessWidget {
                                           context: context,
                                         ),
                                         fontSize: 15,
-                                        textColor: getColor(context, "black")
-                                            .withOpacity(0.3),
+                                        textColor: getColor(context, "black").withOpacity(0.3),
                                       ),
                                     ),
                                   ],
@@ -632,9 +553,7 @@ class ObjectiveContainer extends StatelessWidget {
                         ]),
                       ),
                       Padding(
-                        padding: objective.endDate == null
-                            ? containerPadding
-                            : const EdgeInsets.symmetric(horizontal: 15),
+                        padding: objective.endDate == null ? containerPadding : const EdgeInsets.symmetric(horizontal: 15),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
@@ -644,21 +563,18 @@ class ObjectiveContainer extends StatelessWidget {
                                 child: TextFont(
                                   textAlign: TextAlign.center,
                                   text: getWordedDateShort(
-                                    objective.dateCreated,
-                                    includeYear: objective.dateCreated.year !=
-                                        DateTime.now().year,
+                                    Jalali.fromDateTime(objective.dateCreated),
+                                    includeYear: objective.dateCreated.year != DateTime.now().year,
                                   ),
                                   fontSize: 12,
-                                  textColor: getColor(context, "black")
-                                      .withOpacity(0.3),
+                                  textColor: getColor(context, "black").withOpacity(0.3),
                                 ),
                               ),
                             Expanded(
                               child: BudgetProgress(
                                 color: HexColor(
                                   objective.colour,
-                                  defaultColor:
-                                      Theme.of(context).colorScheme.primary,
+                                  defaultColor: Theme.of(context).colorScheme.primary,
                                 ),
                                 ghostPercent: 0,
                                 percent: percentageTowardsGoal * 100,
@@ -667,15 +583,10 @@ class ObjectiveContainer extends StatelessWidget {
                                 yourPercent: 0,
                                 padding: EdgeInsets.zero,
                                 enableShake: false,
-                                backgroundColor: (getPlatform() ==
-                                                PlatformOS.isIOS &&
-                                            forceAndroidBubbleDesign ==
-                                                false) ||
+                                backgroundColor: (getPlatform() == PlatformOS.isIOS && forceAndroidBubbleDesign == false) ||
                                         appStateSettings["materialYou"] == false
                                     ? null
-                                    : Theme.of(context)
-                                        .colorScheme
-                                        .secondaryContainer,
+                                    : Theme.of(context).colorScheme.secondaryContainer,
                               ),
                             ),
                             if (objective.endDate != null)
@@ -684,13 +595,11 @@ class ObjectiveContainer extends StatelessWidget {
                                 child: TextFont(
                                   textAlign: TextAlign.center,
                                   text: getWordedDateShort(
-                                    objective.endDate!,
-                                    includeYear: objective.endDate?.year !=
-                                        DateTime.now().year,
+                                    Jalali.fromDateTime(objective.endDate!),
+                                    includeYear: objective.endDate?.year != DateTime.now().year,
                                   ),
                                   fontSize: 12,
-                                  textColor: getColor(context, "black")
-                                      .withOpacity(0.3),
+                                  textColor: getColor(context, "black").withOpacity(0.3),
                                 ),
                               ),
                           ],
@@ -705,8 +614,7 @@ class ObjectiveContainer extends StatelessWidget {
         );
       },
     );
-    if (getPlatform() == PlatformOS.isIOS &&
-        forceAndroidBubbleDesign == false) {
+    if (getPlatform() == PlatformOS.isIOS && forceAndroidBubbleDesign == false) {
       child = Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -761,15 +669,10 @@ class ObjectiveContainerDifferenceLoan extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double borderRadius = rowEntry ||
-            (getPlatform() == PlatformOS.isIOS &&
-                forceAndroidBubbleDesign == false)
-        ? 0
-        : 20;
-    Color containerColor =
-        getPlatform() == PlatformOS.isIOS && forceAndroidBubbleDesign == false
-            ? Theme.of(context).canvasColor
-            : getColor(context, "lightDarkAccentHeavyLight");
+    double borderRadius = rowEntry || (getPlatform() == PlatformOS.isIOS && forceAndroidBubbleDesign == false) ? 0 : 20;
+    Color containerColor = getPlatform() == PlatformOS.isIOS && forceAndroidBubbleDesign == false
+        ? Theme.of(context).canvasColor
+        : getColor(context, "lightDarkAccentHeavyLight");
     Widget child = WatchTotalAndAmountOfObjective(
       objective: objective,
       builder: (objectiveAmount, totalAmount, percentageTowardsGoal) {
@@ -782,9 +685,7 @@ class ObjectiveContainerDifferenceLoan extends StatelessWidget {
         );
         return Container(
           decoration: BoxDecoration(
-            boxShadow: rowEntry ||
-                    (getPlatform() == PlatformOS.isIOS &&
-                        forceAndroidBubbleDesign == false)
+            boxShadow: rowEntry || (getPlatform() == PlatformOS.isIOS && forceAndroidBubbleDesign == false)
                 ? []
                 : boxShadowCheck(boxShadowGeneral(context)),
           ),
@@ -852,27 +753,18 @@ class ObjectiveContainerDifferenceLoan extends StatelessWidget {
                                   ),
                                   SizedBox(height: 1),
                                   StreamBuilder<int?>(
-                                    stream: database
-                                        .getTotalCountOfTransactionsInObjective(
-                                            objective.objectivePk)
-                                        .$1,
+                                    stream: database.getTotalCountOfTransactionsInObjective(objective.objectivePk).$1,
                                     builder: (context, snapshot) {
-                                      int numberTransactions =
-                                          snapshot.data ?? 0;
+                                      int numberTransactions = snapshot.data ?? 0;
                                       return TextFont(
                                         textAlign: TextAlign.left,
                                         text: numberTransactions.toString() +
                                             " " +
                                             (numberTransactions == 1
-                                                ? "transaction"
-                                                    .tr()
-                                                    .toLowerCase()
-                                                : "transactions"
-                                                    .tr()
-                                                    .toLowerCase()),
+                                                ? "transaction".tr().toLowerCase()
+                                                : "transactions".tr().toLowerCase()),
                                         fontSize: 14,
-                                        textColor: getColor(context, "black")
-                                            .withOpacity(0.65),
+                                        textColor: getColor(context, "black").withOpacity(0.65),
                                       );
                                     },
                                   ),
@@ -914,15 +806,12 @@ class ObjectiveContainerDifferenceLoan extends StatelessWidget {
                               textAlign: TextAlign.right,
                               text: percentageTowardsGoal == 1
                                   ? "settled".tr().capitalizeFirst
-                                  : (getDifferenceOfLoan(objective, totalAmount,
-                                                  objectiveAmount) >
-                                              0
+                                  : (getDifferenceOfLoan(objective, totalAmount, objectiveAmount) > 0
                                           ? "to-pay".tr()
                                           : "to-collect".tr())
                                       .capitalizeFirst,
                               fontSize: 14,
-                              textColor:
-                                  getColor(context, "black").withOpacity(0.65),
+                              textColor: getColor(context, "black").withOpacity(0.65),
                             ),
                           ),
                         ],
@@ -936,8 +825,7 @@ class ObjectiveContainerDifferenceLoan extends StatelessWidget {
         );
       },
     );
-    if (getPlatform() == PlatformOS.isIOS &&
-        forceAndroidBubbleDesign == false) {
+    if (getPlatform() == PlatformOS.isIOS && forceAndroidBubbleDesign == false) {
       child = Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -959,38 +847,27 @@ class ObjectiveContainerDifferenceLoan extends StatelessWidget {
   }
 }
 
-String getObjectiveStatus(BuildContext context, Objective objective,
-    double totalAmount, double percentageTowardsGoal, double objectiveAmount,
+String getObjectiveStatus(
+    BuildContext context, Objective objective, double totalAmount, double percentageTowardsGoal, double objectiveAmount,
     {bool addSpendingSavingIndication = false}) {
   String content;
   if (objective.endDate == null) return "";
   int remainingDays = objective.endDate!
           .difference(
-            DateTime(DateTime.now().year, DateTime.now().month,
-                DateTime.now().day, 0, 0),
+            DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, 0, 0),
           )
           .inDays +
       1;
   double amount = ((totalAmount - objectiveAmount) / remainingDays) * -1;
   if (percentageTowardsGoal >= 1) {
-    content = objective.type == ObjectiveType.loan
-        ? "loan-accomplished".tr()
-        : "goal-reached".tr();
+    content = objective.type == ObjectiveType.loan ? "loan-accomplished".tr() : "goal-reached".tr();
   } else if (remainingDays <= 0) {
-    content = objective.type == ObjectiveType.loan
-        ? "loan-overdue".tr()
-        : "goal-overdue".tr();
+    content = objective.type == ObjectiveType.loan ? "loan-overdue".tr() : "goal-overdue".tr();
   } else {
     content = (addSpendingSavingIndication
             ? (objective.income
-                ? (objective.type == ObjectiveType.loan
-                        ? "collect".tr()
-                        : "save".tr()) +
-                    " "
-                : (objective.type == ObjectiveType.loan
-                        ? "pay".tr()
-                        : "spend".tr()) +
-                    " ")
+                ? (objective.type == ObjectiveType.loan ? "collect".tr() : "save".tr()) + " "
+                : (objective.type == ObjectiveType.loan ? "pay".tr() : "spend".tr()) + " ")
             : "") +
         convertToMoney(Provider.of<AllWallets>(context), amount.abs()) +
         "/" +
@@ -1012,11 +889,9 @@ String getObjectiveAmountSpentLabel({
   required double objectiveAmount,
   required double totalAmount,
 }) {
-  double amountSpent =
-      showTotalSpent ? totalAmount : (objectiveAmount - totalAmount);
+  double amountSpent = showTotalSpent ? totalAmount : (objectiveAmount - totalAmount);
   if (getIsDifferenceOnlyLoan(objective)) {
-    amountSpent =
-        getDifferenceOfLoan(objective, totalAmount, objectiveAmount).abs();
+    amountSpent = getDifferenceOfLoan(objective, totalAmount, objectiveAmount).abs();
   } else if (showTotalSpent == false && totalAmount > objectiveAmount) {
     amountSpent = amountSpent.abs();
   }
@@ -1028,49 +903,35 @@ String getObjectiveAmountSpentLabel({
 }
 
 class WatchTotalAndAmountOfObjective extends StatelessWidget {
-  const WatchTotalAndAmountOfObjective(
-      {required this.objective, required this.builder, super.key});
+  const WatchTotalAndAmountOfObjective({required this.objective, required this.builder, super.key});
   final Objective objective;
-  final Widget Function(double objectiveAmount, double totalAmount,
-      double percentageTowardsGoal) builder;
+  final Widget Function(double objectiveAmount, double totalAmount, double percentageTowardsGoal) builder;
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<double?>(
-      stream: database.watchTotalTowardsObjective(
-          Provider.of<AllWallets>(context), objective),
+      stream: database.watchTotalTowardsObjective(Provider.of<AllWallets>(context), objective),
       builder: (context, snapshot) {
         if (objective.type == ObjectiveType.loan) {
           return StreamBuilder<double?>(
-            stream: database.watchTotalAmountObjectiveLoan(
-                Provider.of<AllWallets>(context, listen: true), objective),
+            stream: database.watchTotalAmountObjectiveLoan(Provider.of<AllWallets>(context, listen: true), objective),
             builder: (context, snapshotAmount) {
               double objectiveAmount = (snapshotAmount.data ?? 0);
               if (getIsDifferenceOnlyLoan(objective) == false) {
                 double objectiveAmountConverted = objective.amount *
                     amountRatioToPrimaryCurrency(
                       Provider.of<AllWallets>(context),
-                      Provider.of<AllWallets>(context)
-                          .indexedByPk[objective.walletFk]
-                          ?.currency,
+                      Provider.of<AllWallets>(context).indexedByPk[objective.walletFk]?.currency,
                     );
-                objectiveAmount = objectiveAmount +
-                    (objectiveAmountConverted * (objective.income ? -1 : 1));
+                objectiveAmount = objectiveAmount + (objectiveAmountConverted * (objective.income ? -1 : 1));
               }
-              double totalAmount =
-                  ((snapshot.data ?? 0) - (snapshotAmount.data ?? 0)) * -1;
-              double percentageTowardsGoal =
-                  objectiveAmount == 0 ? 0 : totalAmount / objectiveAmount;
+              double totalAmount = ((snapshot.data ?? 0) - (snapshotAmount.data ?? 0)) * -1;
+              double percentageTowardsGoal = objectiveAmount == 0 ? 0 : totalAmount / objectiveAmount;
               percentageTowardsGoal = absoluteZero(percentageTowardsGoal);
               if (getIsDifferenceOnlyLoan(objective)) {
-                int numberDecimals = Provider.of<AllWallets>(context)
-                        .indexedByPk[appStateSettings["selectedWalletPk"]]
-                        ?.decimals ??
-                    2;
-                if ((double.tryParse(getDifferenceOfLoan(
-                                objective, totalAmount, objectiveAmount)
-                            .abs()
-                            .toStringAsFixed(numberDecimals)) ==
+                int numberDecimals = Provider.of<AllWallets>(context).indexedByPk[appStateSettings["selectedWalletPk"]]?.decimals ?? 2;
+                if ((double.tryParse(
+                            getDifferenceOfLoan(objective, totalAmount, objectiveAmount).abs().toStringAsFixed(numberDecimals)) ==
                         0) &&
                     snapshot.hasData &&
                     snapshotAmount.hasData)
@@ -1079,18 +940,14 @@ class WatchTotalAndAmountOfObjective extends StatelessWidget {
                   percentageTowardsGoal = 0;
               }
               return builder(
-                  objectiveAmount * (objective.income ? -1 : 1),
-                  totalAmount * (objective.income ? -1 : 1),
-                  percentageTowardsGoal);
+                  objectiveAmount * (objective.income ? -1 : 1), totalAmount * (objective.income ? -1 : 1), percentageTowardsGoal);
             },
           );
         } else {
-          double objectiveAmount = objectiveAmountToPrimaryCurrency(
-              Provider.of<AllWallets>(context, listen: true), objective);
+          double objectiveAmount = objectiveAmountToPrimaryCurrency(Provider.of<AllWallets>(context, listen: true), objective);
           double totalAmount = snapshot.data ?? 0;
           if (objective.income == false) totalAmount = totalAmount * -1;
-          double percentageTowardsGoal =
-              objectiveAmount == 0 ? 0 : totalAmount / objectiveAmount;
+          double percentageTowardsGoal = objectiveAmount == 0 ? 0 : totalAmount / objectiveAmount;
           percentageTowardsGoal = absoluteZero(percentageTowardsGoal);
           return builder(objectiveAmount, totalAmount, percentageTowardsGoal);
         }

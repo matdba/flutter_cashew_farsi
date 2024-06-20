@@ -52,24 +52,17 @@ class _RadioItemsState<T> extends State<RadioItems<T>> {
     for (T item in widget.items) {
       index += 1;
       bool selected = false;
-      if (currentValue == item ||
-          (widget.getSelected != null && widget.getSelected!(item)))
-        selected = true;
+      if (currentValue == item || (widget.getSelected != null && widget.getSelected!(item))) selected = true;
       if (item == null && widget.ifNullSelectNone == true) selected = false;
-      bool noDescription =
-          widget.getDescription == null || widget.getDescription!(item) == "";
+      bool noDescription = widget.getDescription == null || widget.getDescription!(item) == "";
       children.add(
         AnimatedSwitcher(
           duration: Duration(milliseconds: 150),
           child: Tappable(
             key: ValueKey((currentValue == item).toString()),
-            onLongPress: widget.onLongPress != null
-                ? () => widget.onLongPress!(item)
-                : null,
+            onLongPress: widget.onLongPress != null ? () => widget.onLongPress!(item) : null,
             borderRadius: getPlatform() == PlatformOS.isIOS ? 10 : 15,
-            color: selected
-                ? Theme.of(context).colorScheme.secondaryContainer
-                : Colors.transparent,
+            color: selected ? Theme.of(context).colorScheme.secondaryContainer : Colors.transparent,
             onTap: () {
               setState(() {
                 currentValue = item;
@@ -77,8 +70,7 @@ class _RadioItemsState<T> extends State<RadioItems<T>> {
               widget.onChanged(item);
             },
             child: ListTile(
-              contentPadding: EdgeInsets.only(
-                  left: 16, right: widget.getEndInfo == null ? 16 : 7),
+              contentPadding: EdgeInsets.only(left: 16, right: widget.getEndInfo == null ? 16 : 7),
               title: Transform.translate(
                 offset: Offset(-12, 0),
                 child: Row(
@@ -88,35 +80,25 @@ class _RadioItemsState<T> extends State<RadioItems<T>> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          if (widget.itemsAreFonts == true &&
-                              (item != "Avenir" ||
-                                  appStateSettings["font"] != "Avenir"))
+                          if (widget.itemsAreFonts == true && (item != "Avenir" || appStateSettings["font"] != "Avenir"))
                             Text(
-                              widget.displayFilter == null
-                                  ? item.toString()
-                                  : widget.displayFilter!(item),
+                              widget.displayFilter == null ? item.toString() : widget.displayFilter!(item),
                               style: TextStyle(
                                 fontSize: noDescription ? 18 : 16,
                                 fontFamily: item.toString(),
                               ),
                             ),
-                          if (widget.itemsAreFonts == false ||
-                              (item == "Avenir" &&
-                                  appStateSettings["font"] == "Avenir"))
+                          if (widget.itemsAreFonts == false || (item == "Avenir" && appStateSettings["font"] == "Avenir"))
                             TextFont(
                               fontSize: noDescription ? 18 : 16,
-                              text: widget.displayFilter == null
-                                  ? item.toString()
-                                  : widget.displayFilter!(item),
+                              text: widget.displayFilter == null ? item.toString() : widget.displayFilter!(item),
                               maxLines: 3,
                             ),
                           noDescription
                               ? SizedBox.shrink()
                               : TextFont(
                                   fontSize: 14,
-                                  text: widget.getDescription == null
-                                      ? ""
-                                      : widget.getDescription!(item),
+                                  text: widget.getDescription == null ? "" : widget.getDescription!(item),
                                   maxLines: 3,
                                 ),
                         ],
@@ -127,9 +109,7 @@ class _RadioItemsState<T> extends State<RadioItems<T>> {
                         padding: const EdgeInsets.only(left: 3),
                         child: TextFont(
                           fontSize: noDescription ? 18 : 16,
-                          text: widget.getEndInfo == null
-                              ? ""
-                              : widget.getEndInfo!(item),
+                          text: widget.getEndInfo == null ? "" : widget.getEndInfo!(item),
                           maxLines: 3,
                           textAlign: TextAlign.right,
                         ),
@@ -148,10 +128,8 @@ class _RadioItemsState<T> extends State<RadioItems<T>> {
                   });
                   widget.onChanged(item);
                 },
-                fillColor: widget.colorFilter != null &&
-                        widget.colorFilter!(item) != null
-                    ? MaterialStateColor.resolveWith(
-                        (states) => widget.colorFilter!(item)!)
+                fillColor: widget.colorFilter != null && widget.colorFilter!(item) != null
+                    ? MaterialStateColor.resolveWith((states) => widget.colorFilter!(item)!)
                     : null,
                 activeColor: Theme.of(context).colorScheme.primary,
               ),
@@ -173,12 +151,8 @@ class CheckItems<T> extends StatefulWidget {
   final String Function(T item, int itemIndex)? displayFilter;
   final Color? Function(T item)? colorFilter;
   final Function(T item)? onLongPress;
-  final Widget Function(
-      List<T> currentValues,
-      T item,
-      bool selected,
-      void Function(T item) addItem,
-      void Function(T item) removeItem)? buildSuffix;
+  final Widget Function(List<T> currentValues, T item, bool selected, void Function(T item) addItem, void Function(T item) removeItem)?
+      buildSuffix;
   final double? minVerticalPadding;
   final bool allSelected;
   final bool syncWithInitial;
@@ -251,13 +225,10 @@ class _CheckItemsState<T> extends State<CheckItems<T>> {
       T item = widget.items[itemIndex];
       bool selected = false;
       if (currentValues.contains(item) || widget.allSelected) selected = true;
-      bool isAfterSelected =
-          widget.allSelected && itemIndex != widget.items.length - 1 ||
-              nullIfIndexOutOfRange(widget.items, itemIndex + 1) != null &&
-                  currentValues.contains(widget.items[itemIndex + 1]);
+      bool isAfterSelected = widget.allSelected && itemIndex != widget.items.length - 1 ||
+          nullIfIndexOutOfRange(widget.items, itemIndex + 1) != null && currentValues.contains(widget.items[itemIndex + 1]);
       bool isBeforeSelected = widget.allSelected && itemIndex != 0 ||
-          nullIfIndexOutOfRange(widget.items, itemIndex - 1) != null &&
-              currentValues.contains(widget.items[itemIndex - 1]);
+          nullIfIndexOutOfRange(widget.items, itemIndex - 1) != null && currentValues.contains(widget.items[itemIndex - 1]);
       children.add(
         AnimatedSwitcher(
           duration: Duration(milliseconds: 150),
@@ -271,13 +242,9 @@ class _CheckItemsState<T> extends State<CheckItems<T>> {
               ),
             ),
             key: ValueKey(selected.toString()),
-            onLongPress: widget.onLongPress != null
-                ? () => widget.onLongPress!(item)
-                : null,
+            onLongPress: widget.onLongPress != null ? () => widget.onLongPress!(item) : null,
             borderRadius: borderRadius,
-            color: selected
-                ? Theme.of(context).colorScheme.secondaryContainer
-                : Colors.transparent,
+            color: selected ? Theme.of(context).colorScheme.secondaryContainer : Colors.transparent,
             onTap: () {
               setState(() {
                 int index = currentValues.indexOf(item);
@@ -298,15 +265,12 @@ class _CheckItemsState<T> extends State<CheckItems<T>> {
                     Expanded(
                       child: TextFont(
                         fontSize: 18,
-                        text: widget.displayFilter == null
-                            ? item.toString()
-                            : widget.displayFilter!(item, itemIndex),
+                        text: widget.displayFilter == null ? item.toString() : widget.displayFilter!(item, itemIndex),
                         maxLines: 3,
                       ),
                     ),
                     widget.buildSuffix != null
-                        ? widget.buildSuffix!(currentValues, item, selected,
-                            addEntry, removeEntry)
+                        ? widget.buildSuffix!(currentValues, item, selected, addEntry, removeEntry)
                         : SizedBox.shrink()
                   ],
                 ),
@@ -318,15 +282,11 @@ class _CheckItemsState<T> extends State<CheckItems<T>> {
                 child: selected
                     ? Icon(
                         widget.selectedIcon ?? Icons.check_box,
-                        color: widget.colorFilter != null
-                            ? widget.colorFilter!(item)
-                            : null,
+                        color: widget.colorFilter != null ? widget.colorFilter!(item) : null,
                       )
                     : Icon(
                         widget.unSelectedIcon ?? Icons.check_box_outline_blank,
-                        color: widget.colorFilter != null
-                            ? widget.colorFilter!(item)
-                            : null,
+                        color: widget.colorFilter != null ? widget.colorFilter!(item) : null,
                       ),
               ),
             ),

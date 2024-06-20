@@ -12,6 +12,7 @@ import 'package:flutter/src/rendering/flex.dart';
 import 'package:flutter/src/widgets/basic.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:shamsi_date/shamsi_date.dart';
 
 class DateDivider extends StatelessWidget {
   DateDivider({
@@ -33,14 +34,10 @@ class DateDivider extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(
-        horizontal: useHorizontalPaddingConstrained == false
-            ? 0
-            : getHorizontalPaddingConstrained(context),
+        horizontal: useHorizontalPaddingConstrained == false ? 0 : getHorizontalPaddingConstrained(context),
       ),
       child: StickyLabelDivider(
-        info: getWordedDate(date,
-                includeMonthDate: true, includeYearIfNotCurrentYear: true) +
-            afterDate,
+        info: getWordedDate(Jalali.fromDateTime(date), includeMonthDate: true, includeYearIfNotCurrentYear: true) + afterDate,
         extraInfo: info,
         color: color,
         fontSize: 14,

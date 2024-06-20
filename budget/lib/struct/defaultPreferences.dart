@@ -14,6 +14,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/services.dart';
+import 'package:shamsi_date/shamsi_date.dart';
 
 // default settings, defaultSettings, initial settings
 Future<Map<String, dynamic>> getDefaultPreferences() async {
@@ -33,12 +34,9 @@ Future<Map<String, dynamic>> getDefaultPreferences() async {
     "accentSystemColor": await systemColorByDefault(),
     "widgetOpacity": 1,
     "widgetTheme": "system", //system, light, dark
-    "nonCompactTransactions":
-        false, //still in testing, declares a new transaction layout to show more information in lists
-    "fadeTransactionNameOverflows":
-        false, //still in testing, overflow transaction titles use fade instead of "..."
-    "circularProgressRotation":
-        false, // still in testing, offsets the circular progress to align with pie chart sections
+    "nonCompactTransactions": false, //still in testing, declares a new transaction layout to show more information in lists
+    "fadeTransactionNameOverflows": false, //still in testing, overflow transaction titles use fade instead of "..."
+    "circularProgressRotation": false, // still in testing, offsets the circular progress to align with pie chart sections
     "forceFullDarkBackground": false,
     // FullScreen is added if the section has its own preference when full screen (double column)
     "futureTransactionDaysHomePage": 4,
@@ -225,66 +223,57 @@ Future<Map<String, dynamic>> getDefaultPreferences() async {
     "selectedPeriodCycleType": CycleType.allTime.index,
     "cyclePeriodLength": 1,
     "cycleReoccurrence": BudgetReoccurence.monthly.index,
-    "cycleStartDate":
-        DateTime(DateTime.now().year, DateTime.now().month, 1).toString(),
-    "customPeriodStartDate":
-        DateTime(DateTime.now().year, DateTime.now().month, 1).toString(),
-    "customPeriodEndDate": null,
+    "cycleStartDate": Jalali(Jalali.now().year, Jalali.now().month, 1).toDateTime().toString(),
+    "customPeriodStartDate": Jalali(Jalali.now().year, Jalali.now().month, 1).toDateTime().toString(),
+    "customPeriodEndDate": Jalali(Jalali.now().year, Jalali.now().month, 1).addMonths(1).addDays(-1).toDateTime().toString(),
     "customPeriodPastDays": 30,
     // For showing information within a certain cycle for pie chart
     // cycleSettingsExtension = "PieChart"
     "selectedPeriodCycleTypePieChart": CycleType.allTime.index,
     "cyclePeriodLengthPieChart": 1,
     "cycleReoccurrencePieChart": BudgetReoccurence.monthly.index,
-    "cycleStartDatePieChart":
-        DateTime(DateTime.now().year, DateTime.now().month, 1).toString(),
-    "customPeriodStartDatePieChart":
-        DateTime(DateTime.now().year, DateTime.now().month, 1).toString(),
-    "customPeriodEndDatePieChart": null,
+    "cycleStartDatePieChart": Jalali(Jalali.now().year, Jalali.now().month, 1).toDateTime().toString(),
+    "customPeriodStartDatePieChart": Jalali(Jalali.now().year, Jalali.now().month, 1).toDateTime().toString(),
+    "customPeriodEndDatePieChart": Jalali(Jalali.now().year, Jalali.now().month, 1).addMonths(1).addDays(-1).toDateTime().toString(),
     "customPeriodPastDaysPieChart": 30,
     // For showing information within a certain cycle for net worth
     // cycleSettingsExtension = "NetWorth"
     "selectedPeriodCycleTypeNetWorth": CycleType.allTime.index,
     "cyclePeriodLengthNetWorth": 1,
     "cycleReoccurrenceNetWorth": BudgetReoccurence.monthly.index,
-    "cycleStartDateNetWorth":
-        DateTime(DateTime.now().year, DateTime.now().month, 1).toString(),
-    "customPeriodStartDateNetWorth":
-        DateTime(DateTime.now().year, DateTime.now().month, 1).toString(),
-    "customPeriodEndDateNetWorth": null,
+    "cycleStartDateNetWorth": Jalali(Jalali.now().year, Jalali.now().month, 1).toDateTime().toString(),
+    "customPeriodStartDateNetWorth": Jalali(Jalali.now().year, Jalali.now().month, 1).toDateTime().toString(),
+    "customPeriodEndDateNetWorth": Jalali(Jalali.now().year, Jalali.now().month, 1).addMonths(1).addDays(-1).toDateTime().toString(),
     "customPeriodPastDaysNetWorth": 30,
     // For showing information within a certain cycle for income and expenses (allSpendingSummary)
     // cycleSettingsExtension = "AllSpendingSummary"
     "selectedPeriodCycleTypeAllSpendingSummary": CycleType.allTime.index,
     "cyclePeriodLengthAllSpendingSummary": 1,
     "cycleReoccurrenceAllSpendingSummary": BudgetReoccurence.monthly.index,
-    "cycleStartDateAllSpendingSummary":
-        DateTime(DateTime.now().year, DateTime.now().month, 1).toString(),
-    "customPeriodStartDateAllSpendingSummary":
-        DateTime(DateTime.now().year, DateTime.now().month, 1).toString(),
-    "customPeriodEndDateAllSpendingSummary": null,
+    "cycleStartDateAllSpendingSummary": Jalali(Jalali.now().year, Jalali.now().month, 1).toDateTime().toString(),
+    "customPeriodStartDateAllSpendingSummary": Jalali(Jalali.now().year, Jalali.now().month, 1).toDateTime().toString(),
+    "customPeriodEndDateAllSpendingSummary":
+        Jalali(Jalali.now().year, Jalali.now().month, 1).addMonths(1).addDays(-1).toDateTime().toString(),
     "customPeriodPastDaysAllSpendingSummary": 30,
     // For showing information within a certain cycle for overdue and upcoming (overdueUpcoming)
     // cycleSettingsExtension = "OverdueUpcoming"
     "selectedPeriodCycleTypeOverdueUpcoming": CycleType.allTime.index,
     "cyclePeriodLengthOverdueUpcoming": 1,
     "cycleReoccurrenceOverdueUpcoming": BudgetReoccurence.monthly.index,
-    "cycleStartDateOverdueUpcoming":
-        DateTime(DateTime.now().year, DateTime.now().month, 1).toString(),
-    "customPeriodStartDateOverdueUpcoming":
-        DateTime(DateTime.now().year, DateTime.now().month, 1).toString(),
-    "customPeriodEndDateOverdueUpcoming": null,
+    "cycleStartDateOverdueUpcoming": Jalali(Jalali.now().year, Jalali.now().month, 1).toDateTime().toString(),
+    "customPeriodStartDateOverdueUpcoming": Jalali(Jalali.now().year, Jalali.now().month, 1).toDateTime().toString(),
+    "customPeriodEndDateOverdueUpcoming":
+        Jalali(Jalali.now().year, Jalali.now().month, 1).addMonths(1).addDays(-1).toDateTime().toString(),
     "customPeriodPastDaysOverdueUpcoming": 30,
     // For showing information within a certain cycle for credits and debts (loans) (creditDebts)
     // cycleSettingsExtension = "CreditDebts"
     "selectedPeriodCycleTypeCreditDebts": CycleType.allTime.index,
     "cyclePeriodLengthCreditDebts": 1,
     "cycleReoccurrenceCreditDebts": BudgetReoccurence.monthly.index,
-    "cycleStartDateCreditDebts":
-        DateTime(DateTime.now().year, DateTime.now().month, 1).toString(),
-    "customPeriodStartDateCreditDebts":
-        DateTime(DateTime.now().year, DateTime.now().month, 1).toString(),
-    "customPeriodEndDateCreditDebts": null,
+    "cycleStartDateCreditDebts": Jalali(Jalali.now().year, Jalali.now().month, 1).toDateTime().toString(),
+    "customPeriodStartDateCreditDebts": Jalali(Jalali.now().year, Jalali.now().month, 1).toDateTime().toString(),
+    "customPeriodEndDateCreditDebts":
+        Jalali(Jalali.now().year, Jalali.now().month, 1).addMonths(1).addDays(-1).toDateTime().toString(),
     "customPeriodPastDaysCreditDebts": 30,
     // // For showing information within a certain cycle for wallets homepage section
     // // cycleSettingsExtension = "Wallets"
@@ -323,22 +312,18 @@ Future<Map<String, dynamic>> getDefaultPreferences() async {
 
 Future attemptToMigrateSetLongTermLoansAmountTo0() async {
   try {
-    if (appStateSettings["hasOnboarded"] == true &&
-        appStateSettings["migratedSetLongTermLoansAmountTo0"] != true) {
+    if (appStateSettings["hasOnboarded"] == true && appStateSettings["migratedSetLongTermLoansAmountTo0"] != true) {
       print("Migrating setting long term loans amounts to 0");
       appStateSettings["migratedSetLongTermLoansAmountTo0"] = true;
       List<Objective> objectivesInserting = [];
-      List<Objective> allObjectives =
-          await database.getAllObjectives(objectiveType: ObjectiveType.loan);
+      List<Objective> allObjectives = await database.getAllObjectives(objectiveType: ObjectiveType.loan);
       for (Objective objective in allObjectives) {
-        objectivesInserting.add(objective.copyWith(
-            amount: 0, dateTimeModified: Value(DateTime.now())));
+        objectivesInserting.add(objective.copyWith(amount: 0, dateTimeModified: Value(DateTime.now())));
       }
       await database.updateBatchObjectivesOnly(objectivesInserting);
     }
   } catch (e) {
-    print(
-        "Error migrating setting long term loans amounts to 0 " + e.toString());
+    print("Error migrating setting long term loans amounts to 0 " + e.toString());
   }
 }
 
@@ -370,13 +355,11 @@ attemptToMigrateCustomNumberFormattingSettings() {
       appStateSettings["numberFormatLocale"] = null;
     }
   } catch (e) {
-    print(
-        "Error migrating setting long term loans amounts to 0 " + e.toString());
+    print("Error migrating setting long term loans amounts to 0 " + e.toString());
   }
 }
 
-Map<String, dynamic> attemptToMigrateCyclePreferences(
-    Map<String, dynamic> currentUserSettings, String key) {
+Map<String, dynamic> attemptToMigrateCyclePreferences(Map<String, dynamic> currentUserSettings, String key) {
   try {
     if (
         // This is a setting we need to find a value for
@@ -391,8 +374,7 @@ Map<String, dynamic> attemptToMigrateCyclePreferences(
           currentUserSettings[migrateCyclePreferencesKeys[key]].toString() +
           " from key " +
           migrateCyclePreferencesKeys[key].toString());
-      currentUserSettings[key] =
-          currentUserSettings[migrateCyclePreferencesKeys[key]];
+      currentUserSettings[key] = currentUserSettings[migrateCyclePreferencesKeys[key]];
     }
   } catch (e) {
     print("Error migrating cycle preferences " + e.toString());

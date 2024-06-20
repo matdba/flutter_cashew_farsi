@@ -5,9 +5,9 @@ import 'package:budget/pages/upcomingOverdueTransactionsPage.dart';
 import 'package:budget/widgets/openContainerNavigation.dart';
 import 'package:budget/widgets/tappable.dart';
 import 'package:budget/widgets/textWidgets.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:budget/widgets/countNumber.dart';
+import 'package:persian_number_utility/persian_number_utility.dart';
 import 'package:provider/provider.dart';
 
 // If you just added an upcoming transaction and mark it as paid, it will not show up here
@@ -42,8 +42,7 @@ class TransactionsAmountBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration:
-          BoxDecoration(boxShadow: boxShadowCheck(boxShadowGeneral(context))),
+      decoration: BoxDecoration(boxShadow: boxShadowCheck(boxShadowGeneral(context))),
       child: OpenContainerNavigation(
         closedColor: getColor(context, "lightDarkAccentHeavyLight"),
         openPage: openPage ?? SizedBox.shrink(),
@@ -59,8 +58,7 @@ class TransactionsAmountBox extends StatelessWidget {
             },
             child: Container(
               child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 15, vertical: 17),
+                padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 17),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   mainAxisSize: MainAxisSize.min,
@@ -77,8 +75,7 @@ class TransactionsAmountBox extends StatelessWidget {
                       builder: (context, snapshot) {
                         double totalSpent = snapshot.data?.total ?? 0;
                         int totalCount = snapshot.data?.count ?? 0;
-                        double finalAmount = snapshot.hasData == false ||
-                                snapshot.data == null
+                        double finalAmount = snapshot.hasData == false || snapshot.data == null
                             ? 0
                             : absolute == true
                                 ? (totalSpent).abs()
@@ -91,14 +88,9 @@ class TransactionsAmountBox extends StatelessWidget {
                               initialCount: (0),
                               textBuilder: (number) {
                                 return TextFont(
-                                  text: convertToMoney(
-                                      Provider.of<AllWallets>(context), number,
-                                      currencyKey: currencyKey,
-                                      addCurrencyName: currencyKey != null,
-                                      finalNumber: finalAmount),
-                                  textColor: getTextColor != null
-                                      ? getTextColor!(totalSpent)
-                                      : textColor,
+                                  text: convertToMoney(Provider.of<AllWallets>(context), number,
+                                      currencyKey: currencyKey, addCurrencyName: currencyKey != null, finalNumber: finalAmount),
+                                  textColor: getTextColor != null ? getTextColor!(totalSpent) : textColor,
                                   fontWeight: FontWeight.bold,
                                   autoSizeText: true,
                                   fontSize: 21,
@@ -110,11 +102,7 @@ class TransactionsAmountBox extends StatelessWidget {
                             ),
                             SizedBox(height: 6),
                             TextFont(
-                              text: totalCount.toString() +
-                                  " " +
-                                  (totalCount == 1
-                                      ? "transaction".tr().toLowerCase()
-                                      : "transactions".tr().toLowerCase()),
+                              text: "تعداد تراکنش ها" + " " + totalCount.toString().toPersianDigit(),
                               fontSize: 13,
                               textColor: getColor(context, "textLight"),
                             ),

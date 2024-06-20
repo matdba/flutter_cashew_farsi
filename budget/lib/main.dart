@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/material.dart' as material;
 import 'package:budget/functions.dart';
 import 'package:budget/pages/autoTransactionsPageEmail.dart';
 import 'package:budget/struct/iconObjects.dart';
@@ -53,16 +54,13 @@ void main() async {
   database = await constructDb('db');
   notificationPayload = await initializeNotifications();
   entireAppLoaded = false;
-  currenciesJSON = await json.decode(
-      await rootBundle.loadString('assets/static/generated/currencies.json'));
-  languageNamesJSON = await json
-      .decode(await rootBundle.loadString('assets/static/language-names.json'));
+  currenciesJSON = await json.decode(await rootBundle.loadString('assets/static/generated/currencies.json'));
+  languageNamesJSON = await json.decode(await rootBundle.loadString('assets/static/language-names.json'));
   await initializeSettings();
   tz.initializeTimeZones();
   final String? locationName = await FlutterNativeTimezone.getLocalTimezone();
   tz.setLocalLocation(tz.getLocation(locationName ?? "America/New_York"));
-  iconObjects.sort((a, b) => (a.mostLikelyCategoryName ?? a.icon)
-      .compareTo((b.mostLikelyCategoryName ?? b.icon)));
+  iconObjects.sort((a, b) => (a.mostLikelyCategoryName ?? a.icon).compareTo((b.mostLikelyCategoryName ?? b.icon)));
   setHighRefreshRate();
   runApp(
     DevicePreview(
@@ -90,8 +88,7 @@ late bool entireAppLoaded;
 late PackageInfo packageInfoGlobal;
 
 GlobalKey<_InitializeAppState> appStateKey = GlobalKey();
-GlobalKey<PageNavigationFrameworkState> pageNavigationFrameworkKey =
-    GlobalKey();
+GlobalKey<PageNavigationFrameworkState> pageNavigationFrameworkKey = GlobalKey();
 
 class InitializeApp extends StatefulWidget {
   InitializeApp({Key? key}) : super(key: key);
@@ -126,8 +123,8 @@ class App extends StatelessWidget {
       showPerformanceOverlay: kProfileMode,
       localizationsDelegates: context.localizationDelegates,
       supportedLocales: context.supportedLocales,
-      locale:
-          enableDevicePreview ? DevicePreview.locale(context) : context.locale,
+      debugShowCheckedModeBanner: false,
+      locale: enableDevicePreview ? DevicePreview.locale(context) : context.locale,
       // localeListResolutionCallback: (systemLocales, supportedLocales) {
       //   print("LOCALE:" + context.locale.toString());
       //   print("LOCALE:" + Platform.localeName);
@@ -144,34 +141,33 @@ class App extends StatelessWidget {
       darkTheme: getDarkTheme(),
       scrollBehavior: ScrollBehaviorOverride(),
       themeMode: getSettingConstants(appStateSettings)["theme"],
-      home: AnimatedSwitcher(
-          duration: Duration(milliseconds: 1200),
-          switchInCurve: Curves.easeInOutCubic,
-          switchOutCurve: Curves.easeInOutCubic,
-          transitionBuilder: (Widget child, Animation<double> animation) {
-            final inAnimation =
-                Tween<Offset>(begin: Offset(-1.0, 0.0), end: Offset(0.0, 0.0))
-                    .animate(animation);
-            final outAnimation =
-                Tween<Offset>(begin: Offset(1.0, 0.0), end: Offset(0.0, 0.0))
-                    .animate(animation);
+      home: Directionality(
+        textDirection: material.TextDirection.rtl,
+        child: AnimatedSwitcher(
+            duration: Duration(milliseconds: 1200),
+            switchInCurve: Curves.easeInOutCubic,
+            switchOutCurve: Curves.easeInOutCubic,
+            transitionBuilder: (Widget child, Animation<double> animation) {
+              final inAnimation = Tween<Offset>(begin: Offset(-1.0, 0.0), end: Offset(0.0, 0.0)).animate(animation);
+              final outAnimation = Tween<Offset>(begin: Offset(1.0, 0.0), end: Offset(0.0, 0.0)).animate(animation);
 
-            if (child.key == ValueKey("Onboarding")) {
-              return ClipRect(
-                child: SlideTransition(
-                  position: inAnimation,
-                  child: child,
-                ),
-              );
-            } else {
-              return ClipRect(
-                child: SlideTransition(position: outAnimation, child: child),
-              );
-            }
-          },
-          child: appStateSettings["hasOnboarded"] != true
-              ? OnBoardingPage(key: ValueKey("Onboarding"))
-              : PageNavigationFramework(key: pageNavigationFrameworkKey)),
+              if (child.key == ValueKey("Onboarding")) {
+                return ClipRect(
+                  child: SlideTransition(
+                    position: inAnimation,
+                    child: child,
+                  ),
+                );
+              } else {
+                return ClipRect(
+                  child: SlideTransition(position: outAnimation, child: child),
+                );
+              }
+            },
+            child: appStateSettings["hasOnboarded"] != true
+                ? OnBoardingPage(key: ValueKey("Onboarding"))
+                : PageNavigationFramework(key: pageNavigationFrameworkKey)),
+      ),
       builder: (context, child) {
         if (kReleaseMode) {
           ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
@@ -194,55 +190,37 @@ class App extends StatelessWidget {
                         Row(
                           children: [
                             AnimatedContainer(
-                              duration: getIsFullScreen(context)
-                                  ? Duration(milliseconds: 1500)
-                                  : Duration.zero,
+                              duration: getIsFullScreen(context) ? Duration(milliseconds: 1500) : Duration.zero,
                               curve: Curves.easeInOutCubicEmphasized,
                               width: getWidthNavigationSidebar(context),
                               color: Theme.of(context).canvasColor,
                             ),
                             Expanded(
                               child: Builder(builder: (context) {
-                                double rightPaddingSafeArea =
-                                    MediaQuery.paddingOf(context).right;
-                                bool hasRightSafeArea =
-                                    rightPaddingSafeArea > 0;
-                                double leftPaddingSafeArea =
-                                    MediaQuery.paddingOf(context).left;
-                                bool hasLeftSafeArea =
-                                    leftPaddingSafeArea > 0 &&
-                                        getIsFullScreen(context) == false;
+                                double rightPaddingSafeArea = MediaQuery.paddingOf(context).right;
+                                bool hasRightSafeArea = rightPaddingSafeArea > 0;
+                                double leftPaddingSafeArea = MediaQuery.paddingOf(context).left;
+                                bool hasLeftSafeArea = leftPaddingSafeArea > 0 && getIsFullScreen(context) == false;
                                 // Only enable left safe area if no navigation sidebar
                                 return Stack(
                                   children: [
                                     hasRightSafeArea || hasLeftSafeArea
                                         ? Container(
-                                            color:
-                                                Theme.of(context).canvasColor,
+                                            color: Theme.of(context).canvasColor,
                                           )
                                         : SizedBox.shrink(),
                                     hasRightSafeArea || hasLeftSafeArea
                                         ? Padding(
                                             padding: EdgeInsets.only(
-                                              right: hasRightSafeArea
-                                                  ? rightPaddingSafeArea
-                                                  : 0,
-                                              left: hasLeftSafeArea
-                                                  ? leftPaddingSafeArea
-                                                  : 0,
+                                              right: hasRightSafeArea ? rightPaddingSafeArea : 0,
+                                              left: hasLeftSafeArea ? leftPaddingSafeArea : 0,
                                             ),
                                             child: ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.horizontal(
-                                                  right: hasRightSafeArea
-                                                      ? Radius.circular(25)
-                                                      : Radius.circular(0),
-                                                  left: hasLeftSafeArea
-                                                      ? Radius.circular(25)
-                                                      : Radius.circular(0),
+                                                borderRadius: BorderRadius.horizontal(
+                                                  right: hasRightSafeArea ? Radius.circular(25) : Radius.circular(0),
+                                                  left: hasLeftSafeArea ? Radius.circular(25) : Radius.circular(0),
                                                 ),
-                                                child:
-                                                    child ?? SizedBox.shrink()),
+                                                child: child ?? SizedBox.shrink()),
                                           )
                                         : child ?? SizedBox.shrink(),
                                     GlobalSnackbar(key: snackbarKey),
@@ -252,8 +230,7 @@ class App extends StatelessWidget {
                                             alignment: Alignment.centerRight,
                                             child: Container(
                                               width: rightPaddingSafeArea,
-                                              color:
-                                                  Theme.of(context).canvasColor,
+                                              color: Theme.of(context).canvasColor,
                                             ),
                                           )
                                         : SizedBox.shrink(),
@@ -262,8 +239,7 @@ class App extends StatelessWidget {
                                             alignment: Alignment.centerLeft,
                                             child: Container(
                                               width: leftPaddingSafeArea,
-                                              color:
-                                                  Theme.of(context).canvasColor,
+                                              color: Theme.of(context).canvasColor,
                                             ),
                                           )
                                         : SizedBox.shrink(),
@@ -302,8 +278,7 @@ class App extends StatelessWidget {
                         ),
                         NavigationSidebar(key: sidebarStateKey),
                         // The persistent global Widget stack (stays on navigation change)
-                        GlobalLoadingIndeterminate(
-                            key: loadingIndeterminateKey),
+                        GlobalLoadingIndeterminate(key: loadingIndeterminateKey),
                         GlobalLoadingProgress(key: loadingProgressKey),
                       ],
                     ),
@@ -315,8 +290,7 @@ class App extends StatelessWidget {
         );
 
         if (kIsWeb) {
-          return FadeIn(
-              duration: Duration(milliseconds: 1000), child: mainWidget);
+          return FadeIn(duration: Duration(milliseconds: 1000), child: mainWidget);
         } else {
           return mainWidget;
         }

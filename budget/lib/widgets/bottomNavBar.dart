@@ -18,8 +18,7 @@ import 'package:budget/widgets/framework/pageFramework.dart';
 import 'package:budget/widgets/outlinedButtonStacked.dart';
 import 'package:budget/widgets/framework/navigation_bar/navigation_bar.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/material.dart'
-    hide NavigationDestination, NavigationBar;
+import 'package:flutter/material.dart' hide NavigationDestination, NavigationBar;
 import 'package:budget/colors.dart';
 import 'package:flutter/services.dart';
 
@@ -40,13 +39,9 @@ class BottomNavBarState extends State<BottomNavBar> {
     try {
       // Index 1 and 2 can be customized
       if (index == 1) {
-        navigationIndex =
-            navBarIconsData[appStateSettings["customNavBarShortcut1"]]!
-                .navigationIndexedStackIndex;
+        navigationIndex = navBarIconsData[appStateSettings["customNavBarShortcut1"]]!.navigationIndexedStackIndex;
       } else if (index == 2) {
-        navigationIndex =
-            navBarIconsData[appStateSettings["customNavBarShortcut2"]]!
-                .navigationIndexedStackIndex;
+        navigationIndex = navBarIconsData[appStateSettings["customNavBarShortcut2"]]!.navigationIndexedStackIndex;
       }
     } catch (e) {
       print(e.toString() + " Problem accessing the navigation index");
@@ -54,21 +49,14 @@ class BottomNavBarState extends State<BottomNavBar> {
 
     if (index == selectedIndex && allowReApply == false) {
       if (index == 0) homePageStateKey.currentState?.scrollToTop();
-      if (navigationIndex == 1)
-        transactionsListPageStateKey.currentState?.scrollToTop();
-      if (navigationIndex == 2)
-        budgetsListPageStateKey.currentState?.scrollToTop();
+      if (navigationIndex == 1) transactionsListPageStateKey.currentState?.scrollToTop();
+      if (navigationIndex == 2) budgetsListPageStateKey.currentState?.scrollToTop();
       if (index == 3) settingsPageStateKey.currentState?.scrollToTop();
-      if (navigationIndex == 5)
-        subscriptionsPageStateKey.currentState?.scrollToTop();
-      if (navigationIndex == 7)
-        walletDetailsAllSpendingPageStateKey.currentState?.scrollToTop();
-      if (navigationIndex == 14)
-        objectivesListPageStateKey.currentState?.scrollToTop();
-      if (navigationIndex == 16)
-        upcomingOverdueTransactionsStateKey.currentState?.scrollToTop();
-      if (navigationIndex == 17)
-        creditDebtTransactionsKey.currentState?.scrollToTop();
+      if (navigationIndex == 5) subscriptionsPageStateKey.currentState?.scrollToTop();
+      if (navigationIndex == 7) walletDetailsAllSpendingPageStateKey.currentState?.scrollToTop();
+      if (navigationIndex == 14) objectivesListPageStateKey.currentState?.scrollToTop();
+      if (navigationIndex == 16) upcomingOverdueTransactionsStateKey.currentState?.scrollToTop();
+      if (navigationIndex == 17) creditDebtTransactionsKey.currentState?.scrollToTop();
     } else {
       // We need to change to the navigation index, however the selectedIndex remains unchanged
       // Since the selectedIndex is the index of the selected navigation bar entry
@@ -183,10 +171,8 @@ class BottomNavBarState extends State<BottomNavBar> {
             lightDarkAccent: getColor(context, "lightDarkAccent"),
           ),
           surfaceTintColor: Colors.transparent,
-          indicatorColor: appStateSettings["materialYou"]
-              ? dynamicPastel(context, Theme.of(context).colorScheme.primary,
-                  amount: 0.6)
-              : null,
+          indicatorColor:
+              appStateSettings["materialYou"] ? dynamicPastel(context, Theme.of(context).colorScheme.primary, amount: 0.6) : null,
           labelTextStyle: MaterialStateProperty.resolveWith((states) {
             if (states.contains(MaterialState.selected)) {
               return TextStyle(
@@ -217,7 +203,7 @@ class BottomNavBarState extends State<BottomNavBar> {
               },
               child: NavigationDestination(
                 icon: Icon(navBarIconsData["home"]!.iconData),
-                label: navBarIconsData["home"]!.label.tr(),
+                label: navBarIconsData["home"]!.label,
                 tooltip: "",
               ),
             ),
@@ -229,8 +215,7 @@ class BottomNavBarState extends State<BottomNavBar> {
               navigationBarIconBuilder: (NavBarIconData iconData) {
                 return NavigationDestination(
                   icon: Icon(iconData.iconData, size: iconData.iconSize),
-                  label: iconData.label.tr().length > 15 &&
-                          iconData.labelShort != null
+                  label: iconData.label.tr().length > 15 && iconData.labelShort != null
                       ? (iconData.labelShort ?? "").tr()
                       : iconData.label.tr(),
                   tooltip: "",
@@ -245,8 +230,7 @@ class BottomNavBarState extends State<BottomNavBar> {
               navigationBarIconBuilder: (NavBarIconData iconData) {
                 return NavigationDestination(
                   icon: Icon(iconData.iconData, size: iconData.iconSize),
-                  label: iconData.label.tr().length > 15 &&
-                          iconData.labelShort != null
+                  label: iconData.label.tr().length > 15 && iconData.labelShort != null
                       ? (iconData.labelShort ?? "").tr()
                       : iconData.label.tr(),
                   tooltip: "",
@@ -300,15 +284,13 @@ class CustomizableNavigationBarIcon extends StatelessWidget {
           afterSet();
         }
       },
-      child: navigationBarIconBuilder(
-          navBarIconsData[appStateSettings[shortcutAppSettingKey]]!),
+      child: navigationBarIconBuilder(navBarIconsData[appStateSettings[shortcutAppSettingKey]]!),
     );
   }
 }
 
 class SelectNavBarShortcutPopup extends StatelessWidget {
-  const SelectNavBarShortcutPopup(
-      {required this.shortcutAppSettingKey, super.key});
+  const SelectNavBarShortcutPopup({required this.shortcutAppSettingKey, super.key});
   final String shortcutAppSettingKey;
   @override
   Widget build(BuildContext context) {
@@ -416,8 +398,7 @@ class NavBarShortcutSelection extends StatelessWidget {
         children: [
           Expanded(
             child: OutlinedButtonStacked(
-              filled:
-                  appStateSettings[shortcutAppSettingKey] == navBarIconDataKey,
+              filled: appStateSettings[shortcutAppSettingKey] == navBarIconDataKey,
               alignLeft: true,
               alignBeside: true,
               padding: onSettings == null
@@ -432,8 +413,7 @@ class NavBarShortcutSelection extends StatelessWidget {
               iconData: iconData.iconData,
               iconScale: iconData.iconScale,
               onTap: () async {
-                await updateSettings(shortcutAppSettingKey, navBarIconDataKey,
-                    updateGlobalState: false);
+                await updateSettings(shortcutAppSettingKey, navBarIconDataKey, updateGlobalState: false);
                 Navigator.pop(context, true);
               },
               infoButton: onSettings == null
@@ -442,9 +422,7 @@ class NavBarShortcutSelection extends StatelessWidget {
                       padding: EdgeInsets.all(15),
                       onPressed: onSettings,
                       icon: Icon(
-                        appStateSettings["outlinedIcons"]
-                            ? Icons.settings_outlined
-                            : Icons.settings_rounded,
+                        appStateSettings["outlinedIcons"] ? Icons.settings_outlined : Icons.settings_rounded,
                       ),
                     ),
             ),
@@ -485,10 +463,7 @@ class NavBarIcon extends StatelessWidget {
                     shape: BoxShape.circle,
                     color: Theme.of(context).brightness == Brightness.dark
                         ? Theme.of(context).colorScheme.secondaryContainer
-                        : Theme.of(context)
-                            .colorScheme
-                            .secondary
-                            .withOpacity(0.3),
+                        : Theme.of(context).colorScheme.secondary.withOpacity(0.3),
                   ),
                   height: 52,
                   width: 52,
@@ -503,9 +478,7 @@ class NavBarIcon extends StatelessWidget {
               ),
         IconButton(
           padding: EdgeInsets.all(15),
-          color: selected
-              ? Theme.of(context).colorScheme.onSecondaryContainer
-              : null,
+          color: selected ? Theme.of(context).colorScheme.onSecondaryContainer : null,
           icon: Transform.scale(
             scale: customIconScale,
             child: Icon(

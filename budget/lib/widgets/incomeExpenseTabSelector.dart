@@ -48,12 +48,10 @@ class IncomeExpenseTabSelector extends StatefulWidget {
   });
 
   @override
-  _IncomeExpenseTabSelectorState createState() =>
-      _IncomeExpenseTabSelectorState();
+  _IncomeExpenseTabSelectorState createState() => _IncomeExpenseTabSelectorState();
 }
 
-class _IncomeExpenseTabSelectorState extends State<IncomeExpenseTabSelector>
-    with SingleTickerProviderStateMixin {
+class _IncomeExpenseTabSelectorState extends State<IncomeExpenseTabSelector> with SingleTickerProviderStateMixin {
   late TabController _incomeTabController;
   bool selectedIncome = false;
 
@@ -65,16 +63,15 @@ class _IncomeExpenseTabSelectorState extends State<IncomeExpenseTabSelector>
         TabController(
           length: 2,
           vsync: this,
-          initialIndex: selectedIncome ? 1 : 0,
+          initialIndex: selectedIncome ? 0 : 1,
         );
-    if (widget.tabController != null)
-      _incomeTabController.addListener(onControllerTabSwitch);
+    if (widget.tabController != null) _incomeTabController.addListener(onControllerTabSwitch);
   }
 
   @override
   void didUpdateWidget(covariant IncomeExpenseTabSelector oldWidget) {
     if (widget.syncWithInitial) {
-      _incomeTabController.animateTo(widget.initialTabIsIncome ? 1 : 0);
+      _incomeTabController.animateTo(widget.initialTabIsIncome ? 0 : 1);
       setState(() {
         selectedIncome = widget.initialTabIsIncome;
       });
@@ -91,29 +88,24 @@ class _IncomeExpenseTabSelectorState extends State<IncomeExpenseTabSelector>
   @override
   void dispose() {
     if (widget.tabController == null) _incomeTabController.dispose();
-    if (widget.tabController != null)
-      _incomeTabController.removeListener(onControllerTabSwitch);
+    if (widget.tabController != null) _incomeTabController.removeListener(onControllerTabSwitch);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     Widget tabSelector = ClipRRect(
-      borderRadius: widget.hasBorderRadius
-          ? BorderRadius.circular(getPlatform() == PlatformOS.isIOS ? 10 : 15)
-          : BorderRadius.zero,
+      borderRadius: widget.hasBorderRadius ? BorderRadius.circular(getPlatform() == PlatformOS.isIOS ? 10 : 15) : BorderRadius.zero,
       child: Material(
         color: widget.unselectedColor == null
             ? appStateSettings["materialYou"]
                 ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
                 : Theme.of(context).brightness == Brightness.dark
-                    ? getColor(context, "lightDarkAccentHeavyLight")
-                        .withOpacity(0.5)
+                    ? getColor(context, "lightDarkAccentHeavyLight").withOpacity(0.5)
                     : Colors.black.withOpacity(0.03)
             : widget.unselectedColor,
         child: TabBar(
-          splashFactory:
-              getPlatform() == PlatformOS.isIOS ? NoSplash.splashFactory : null,
+          splashFactory: getPlatform() == PlatformOS.isIOS ? NoSplash.splashFactory : null,
           controller: _incomeTabController,
           dividerColor: Colors.transparent,
           indicatorColor: Colors.transparent,
@@ -128,26 +120,14 @@ class _IncomeExpenseTabSelectorState extends State<IncomeExpenseTabSelector>
                         : Theme.of(context).colorScheme.secondaryContainer),
           ),
           labelColor: getColor(context, "black"),
-          unselectedLabelColor: widget.unselectedLabelColor ??
-              getColor(context, "black").withOpacity(0.3),
+          unselectedLabelColor: widget.unselectedLabelColor ?? getColor(context, "black").withOpacity(0.3),
           onTap: (value) {
-            widget.onTabChanged(value == 1);
+            widget.onTabChanged(value == 0);
             setState(() {
-              selectedIncome = value == 1;
+              selectedIncome = value == 0;
             });
           },
           tabs: [
-            Tab(
-              child: ExpenseIncomeSelectorLabel(
-                selectedIncome: selectedIncome,
-                showIcons: widget.showIcons,
-                label: widget.expenseLabel,
-                isIncome: false,
-                customIcon: widget.expenseCustomIcon,
-                tabController: _incomeTabController,
-                customColor: widget.expenseIconColor,
-              ),
-            ),
             Tab(
               child: ExpenseIncomeSelectorLabel(
                 selectedIncome: selectedIncome,
@@ -157,6 +137,17 @@ class _IncomeExpenseTabSelectorState extends State<IncomeExpenseTabSelector>
                 customIcon: widget.incomeCustomIcon,
                 tabController: _incomeTabController,
                 customColor: widget.incomeIconColor,
+              ),
+            ),
+            Tab(
+              child: ExpenseIncomeSelectorLabel(
+                selectedIncome: selectedIncome,
+                showIcons: widget.showIcons,
+                label: widget.expenseLabel,
+                isIncome: false,
+                customIcon: widget.expenseCustomIcon,
+                tabController: _incomeTabController,
+                customColor: widget.expenseIconColor,
               ),
             ),
           ],
@@ -202,17 +193,11 @@ class ExpenseIncomeSelectorLabel extends StatelessWidget {
             if (showIcons)
               AnimatedOpacity(
                 duration: Duration(milliseconds: 300),
-                opacity: (isIncome && selectedIncome) ||
-                        (isIncome == false && selectedIncome == false)
-                    ? 1
-                    : 0.5,
+                opacity: (isIncome && selectedIncome) || (isIncome == false && selectedIncome == false) ? 0.5 : 1,
                 child: IncomeOutcomeArrow(
                   width: 19,
                   isIncome: isIncome,
-                  color: customColor ??
-                      (isIncome
-                          ? getColor(context, "incomeAmount")
-                          : getColor(context, "expenseAmount")),
+                  color: customColor ?? (isIncome ? getColor(context, "incomeAmount") : getColor(context, "expenseAmount")),
                 ),
               ),
             if (customIcon != null)
@@ -238,18 +223,14 @@ class ExpenseIncomeSelectorLabel extends StatelessWidget {
     return tabController == null
         ? AnimatedOpacity(
             duration: Duration(milliseconds: 300),
-            opacity: (isIncome && selectedIncome) ||
-                    (isIncome == false && selectedIncome == false)
-                ? 1
-                : 0.5,
+            opacity: (isIncome && selectedIncome) || (isIncome == false && selectedIncome == false) ? .5 : 1,
             child: content,
           )
         : AnimatedBuilder(
             animation: tabController!.animation!,
             builder: (BuildContext context, Widget? child) {
-              double animationProgress = isIncome
-                  ? 0.5 + tabController!.animation!.value * 0.5
-                  : 0.5 + (1 - tabController!.animation!.value) * 0.5;
+              double animationProgress =
+                  !isIncome ? 0.5 + tabController!.animation!.value * 0.5 : 0.5 + (1 - tabController!.animation!.value) * 0.5;
               return AnimatedOpacity(
                 duration: Duration(milliseconds: 300),
                 opacity: clampDouble(animationProgress, 0, 1),
@@ -261,17 +242,14 @@ class ExpenseIncomeSelectorLabel extends StatelessWidget {
 }
 
 class IncomeExpenseButtonSelector extends StatefulWidget {
-  const IncomeExpenseButtonSelector(
-      {required this.setSelectedIncome, super.key});
+  const IncomeExpenseButtonSelector({required this.setSelectedIncome, super.key});
   final Function(bool?) setSelectedIncome;
 
   @override
-  State<IncomeExpenseButtonSelector> createState() =>
-      _IncomeExpenseButtonSelectorState();
+  State<IncomeExpenseButtonSelector> createState() => _IncomeExpenseButtonSelectorState();
 }
 
-class _IncomeExpenseButtonSelectorState
-    extends State<IncomeExpenseButtonSelector> {
+class _IncomeExpenseButtonSelectorState extends State<IncomeExpenseButtonSelector> {
   bool? selectedIncome;
 
   @override

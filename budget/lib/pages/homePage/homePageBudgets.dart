@@ -2,21 +2,16 @@ import 'package:budget/colors.dart';
 import 'package:budget/database/tables.dart';
 import 'package:budget/functions.dart';
 import 'package:budget/pages/addBudgetPage.dart';
-import 'package:budget/pages/addCategoryPage.dart';
-import 'package:budget/pages/addObjectivePage.dart';
 import 'package:budget/pages/editBudgetPage.dart';
-import 'package:budget/pages/editHomePage.dart';
 import 'package:budget/struct/databaseGlobal.dart';
 import 'package:budget/struct/settings.dart';
 import 'package:budget/widgets/framework/popupFramework.dart';
 import 'package:budget/widgets/util/keepAliveClientMixin.dart';
 import 'package:budget/widgets/budgetContainer.dart';
-import 'package:budget/widgets/navigationSidebar.dart';
 import 'package:budget/widgets/openBottomSheet.dart';
 import 'package:budget/widgets/openPopup.dart';
 import 'package:budget/widgets/selectItems.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../widgets/util/widgetSize.dart';
@@ -53,7 +48,7 @@ class _HomePageBudgetsState extends State<HomePageBudgets> {
                 height: 160,
                 width: null,
                 margin: const EdgeInsets.only(left: 13, right: 13, bottom: 13),
-                labelUnder: "budget".tr(),
+                labelUnder: "بودجه",
                 icon: Icons.format_list_bulleted_add,
               );
             }
@@ -92,7 +87,7 @@ class _HomePageBudgetsState extends State<HomePageBudgets> {
                   height: null,
                   width: null,
                   margin: EdgeInsets.all(0),
-                  labelUnder: "budget".tr(),
+                  labelUnder: "بودجه",
                   icon: Icons.format_list_bulleted_add,
                 ),
               ),
@@ -174,8 +169,7 @@ class _HomePageBudgetsState extends State<HomePageBudgets> {
 }
 
 class EditHomePagePinnedBudgetsPopup extends StatelessWidget {
-  const EditHomePagePinnedBudgetsPopup(
-      {super.key, required this.showBudgetsTotalLabelSetting});
+  const EditHomePagePinnedBudgetsPopup({super.key, required this.showBudgetsTotalLabelSetting});
   final bool showBudgetsTotalLabelSetting;
 
   @override
@@ -185,15 +179,12 @@ class EditHomePagePinnedBudgetsPopup extends StatelessWidget {
         builder: (context, snapshot) {
           List<Budget> allBudgets = snapshot.data ?? [];
           return PopupFramework(
-            title: "select-budgets".tr(),
+            title: "انتخاب بودجه",
             outsideExtraWidget: IconButton(
               iconSize: 25,
-              padding:
-                  EdgeInsets.all(getPlatform() == PlatformOS.isIOS ? 15 : 20),
+              padding: EdgeInsets.all(getPlatform() == PlatformOS.isIOS ? 15 : 20),
               icon: Icon(
-                appStateSettings["outlinedIcons"]
-                    ? Icons.edit_outlined
-                    : Icons.edit_rounded,
+                appStateSettings["outlinedIcons"] ? Icons.edit_outlined : Icons.edit_rounded,
               ),
               onPressed: () async {
                 pushRoute(context, EditBudgetPage());
@@ -208,8 +199,8 @@ class EditHomePagePinnedBudgetsPopup extends StatelessWidget {
                   ),
                 if (allBudgets.length <= 0)
                   NoResultsCreate(
-                    message: "no-budgets-found".tr(),
-                    buttonLabel: "create-budget".tr(),
+                    message: "بودجه ای پیدا نشد",
+                    buttonLabel: "ساخت بودجه",
                     route: AddBudgetPage(
                       routesToPopAfterDelete: RoutesToPopAfterDelete.None,
                     ),
@@ -218,15 +209,11 @@ class EditHomePagePinnedBudgetsPopup extends StatelessWidget {
                   syncWithInitial: true,
                   checkboxCustomIconSelected: Icons.push_pin_rounded,
                   checkboxCustomIconUnselected: Icons.push_pin_outlined,
-                  items: [
-                    for (Budget budget in allBudgets) budget.budgetPk.toString()
-                  ],
+                  items: [for (Budget budget in allBudgets) budget.budgetPk.toString()],
                   getColor: (budgetPk, selected) {
                     for (Budget budget in allBudgets)
                       if (budget.budgetPk.toString() == budgetPk.toString()) {
-                        return HexColor(budget.colour,
-                                defaultColor:
-                                    Theme.of(context).colorScheme.primary)
+                        return HexColor(budget.colour, defaultColor: Theme.of(context).colorScheme.primary)
                             .withOpacity(selected == true ? 0.7 : 0.5);
                       }
                     return null;
@@ -243,10 +230,8 @@ class EditHomePagePinnedBudgetsPopup extends StatelessWidget {
                       if (budget.pinned) budget.budgetPk.toString()
                   ],
                   onChangedSingleItem: (value) async {
-                    Budget budget = allBudgets[allBudgets
-                        .indexWhere((item) => item.budgetPk == value)];
-                    Budget budgetToUpdate =
-                        await database.getBudgetInstance(budget.budgetPk);
+                    Budget budget = allBudgets[allBudgets.indexWhere((item) => item.budgetPk == value)];
+                    Budget budgetToUpdate = await database.getBudgetInstance(budget.budgetPk);
                     await database.createOrUpdateBudget(
                       budgetToUpdate.copyWith(pinned: !budgetToUpdate.pinned),
                       updateSharedEntry: false,
@@ -279,8 +264,7 @@ class EditHomePagePinnedBudgetsPopup extends StatelessWidget {
                     ),
                     afterOpenPage: () {
                       Future.delayed(Duration(milliseconds: 100), () {
-                        bottomSheetControllerGlobalCustomAssigned
-                            ?.snapToExtent(0);
+                        bottomSheetControllerGlobalCustomAssigned?.snapToExtent(0);
                       });
                     },
                   ),

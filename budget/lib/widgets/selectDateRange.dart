@@ -1,11 +1,11 @@
 import 'package:budget/functions.dart';
 import 'package:budget/widgets/animatedExpanded.dart';
 import 'package:budget/widgets/iconButtonScaled.dart';
-import 'package:budget/widgets/periodCyclePicker.dart';
 import 'package:budget/widgets/tappableTextEntry.dart';
 import 'package:budget/widgets/util/showDatePicker.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:shamsi_date/shamsi_date.dart';
 
 class SelectDateRange extends StatefulWidget {
   const SelectDateRange({
@@ -42,16 +42,14 @@ class _SelectDateRangeState extends State<SelectDateRange> {
               Flexible(
                 child: TappableTextEntry(
                   title: getWordedDateShortMore(
-                    selectedStartDate ?? DateTime.now(),
+                    selectedStartDate != null ? Jalali.fromDateTime(selectedStartDate!) : Jalali.now(),
                     includeYear: selectedStartDate?.year != DateTime.now().year,
                   ),
                   placeholder: "",
                   onTap: () async {
-                    final DateTime? picked = await showCustomDatePicker(
-                        context, selectedStartDate ?? DateTime.now());
+                    final DateTime? picked = await showCustomDatePicker(context, selectedStartDate ?? DateTime.now());
                     selectedStartDate = picked ?? selectedStartDate;
-                    if (selectedStartDate != null &&
-                        selectedEndDate?.isBefore(selectedStartDate!) == true) {
+                    if (selectedStartDate != null && selectedEndDate?.isBefore(selectedStartDate!) == true) {
                       widget.onSelectedStartDate(selectedEndDate);
                       selectedStartDate = selectedEndDate;
                       widget.onSelectedEndDate(picked ?? selectedStartDate);
@@ -63,8 +61,7 @@ class _SelectDateRangeState extends State<SelectDateRange> {
                   },
                   fontSize: 25,
                   fontWeight: FontWeight.bold,
-                  internalPadding:
-                      EdgeInsets.symmetric(vertical: 5, horizontal: 4),
+                  internalPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 4),
                   padding: EdgeInsets.symmetric(vertical: 3, horizontal: 5),
                 ),
               ),
@@ -92,18 +89,14 @@ class _SelectDateRangeState extends State<SelectDateRange> {
                 child: TappableTextEntry(
                   title: selectedEndDate == null
                       ? ""
-                      : getWordedDateShortMore(
-                          selectedEndDate ?? DateTime.now(),
-                          includeYear:
-                              selectedEndDate?.year != DateTime.now().year),
-                  placeholder: "until-forever".tr(),
+                      : getWordedDateShortMore(selectedEndDate != null ? Jalali.fromDateTime(selectedEndDate!) : Jalali.now(),
+                          includeYear: selectedEndDate?.year != DateTime.now().year),
+                  placeholder: "تا همیشه",
                   showPlaceHolderWhenTextEquals: "",
                   onTap: () async {
-                    final DateTime? picked = await showCustomDatePicker(
-                        context, selectedEndDate ?? DateTime.now());
+                    final DateTime? picked = await showCustomDatePicker(context, selectedEndDate ?? DateTime.now());
                     selectedEndDate = picked ?? selectedEndDate;
-                    if (selectedStartDate != null &&
-                        selectedEndDate?.isBefore(selectedStartDate!) == true) {
+                    if (selectedStartDate != null && selectedEndDate?.isBefore(selectedStartDate!) == true) {
                       widget.onSelectedEndDate(selectedStartDate);
                       selectedEndDate = selectedStartDate;
                       widget.onSelectedStartDate(picked ?? selectedStartDate);
@@ -115,8 +108,7 @@ class _SelectDateRangeState extends State<SelectDateRange> {
                   },
                   fontSize: 25,
                   fontWeight: FontWeight.bold,
-                  internalPadding:
-                      EdgeInsets.symmetric(vertical: 5, horizontal: 4),
+                  internalPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 4),
                   padding: EdgeInsets.symmetric(vertical: 3, horizontal: 5),
                 ),
               ),

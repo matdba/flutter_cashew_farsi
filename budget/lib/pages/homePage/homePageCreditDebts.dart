@@ -1,17 +1,13 @@
 import 'package:budget/colors.dart';
 import 'package:budget/database/tables.dart';
 import 'package:budget/pages/creditDebtTransactionsPage.dart';
-import 'package:budget/pages/editHomePage.dart';
 import 'package:budget/struct/databaseGlobal.dart';
-import 'package:budget/struct/settings.dart';
 import 'package:budget/widgets/framework/popupFramework.dart';
 import 'package:budget/widgets/navigationFramework.dart';
 import 'package:budget/widgets/openBottomSheet.dart';
 import 'package:budget/widgets/periodCyclePicker.dart';
 import 'package:budget/widgets/util/keepAliveClientMixin.dart';
-import 'package:budget/widgets/navigationSidebar.dart';
 import 'package:budget/widgets/transactionsAmountBox.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -29,7 +25,7 @@ class HomePageCreditDebts extends StatelessWidget {
           children: [
             Expanded(
               child: TransactionsAmountBox(
-                label: "lent".tr(),
+                label: "وام های داده شده",
                 absolute: false,
                 invertSign: true,
                 totalWithCountStream: database.watchTotalWithCountOfCreditDebt(
@@ -39,8 +35,7 @@ class HomePageCreditDebts extends StatelessWidget {
                   cycleSettingsExtension: "CreditDebts",
                   selectedTab: null,
                 ),
-                totalWithCountStream2:
-                    database.watchTotalWithCountOfCreditDebtLongTermLoansOffset(
+                totalWithCountStream2: database.watchTotalWithCountOfCreditDebtLongTermLoansOffset(
                   allWallets: Provider.of<AllWallets>(context),
                   isCredit: true,
                   followCustomPeriodCycle: true,
@@ -58,7 +53,7 @@ class HomePageCreditDebts extends StatelessWidget {
             SizedBox(width: 13),
             Expanded(
               child: TransactionsAmountBox(
-                label: "borrowed".tr(),
+                label: "وام های گرفته شده",
                 absolute: false,
                 totalWithCountStream: database.watchTotalWithCountOfCreditDebt(
                   allWallets: Provider.of<AllWallets>(context),
@@ -67,8 +62,7 @@ class HomePageCreditDebts extends StatelessWidget {
                   followCustomPeriodCycle: true,
                   selectedTab: null,
                 ),
-                totalWithCountStream2:
-                    database.watchTotalWithCountOfCreditDebtLongTermLoansOffset(
+                totalWithCountStream2: database.watchTotalWithCountOfCreditDebtLongTermLoansOffset(
                   allWallets: Provider.of<AllWallets>(context),
                   isCredit: false,
                   cycleSettingsExtension: "CreditDebts",
@@ -94,8 +88,8 @@ Future openCreditDebtsSettings(BuildContext context) {
   return openBottomSheet(
     context,
     PopupFramework(
-      title: "loans".tr(),
-      subtitle: "applies-to-homepage".tr(),
+      title: "وام ها",
+      subtitle: "این تنظیمات در صفحه خانه اعمال می شود",
       child: PeriodCyclePicker(cycleSettingsExtension: "CreditDebts"),
     ),
   );

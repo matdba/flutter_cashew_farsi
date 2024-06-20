@@ -40,6 +40,7 @@ import 'package:googleapis/drive/v3.dart' as drive;
 import 'package:googleapis/gmail/v1.dart' as gMail;
 import 'package:google_sign_in/google_sign_in.dart' as signIn;
 import 'package:http/http.dart' as http;
+import 'package:shamsi_date/shamsi_date.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:universal_html/html.dart' as html;
 import 'dart:io';
@@ -88,9 +89,7 @@ Future<bool> signInGoogle(
   if (appStateSettings["emailScanning"] == false) gMailPermissions = false;
 
   try {
-    if (gMailPermissions == true &&
-        googleUser != null &&
-        !(await testIfHasGmailAccess())) {
+    if (gMailPermissions == true && googleUser != null && !(await testIfHasGmailAccess())) {
       await signOutGoogle();
       googleSignIn = null;
       settingsPageStateKey.currentState?.refreshState();
@@ -116,21 +115,16 @@ Future<bool> signInGoogle(
     if (googleUser == null) {
       List<String> scopes = [
         ...(drivePermissions == true ? [drive.DriveApi.driveAppdataScope] : []),
-        ...(drivePermissionsAttachments == true
-            ? [drive.DriveApi.driveFileScope]
-            : []),
+        ...(drivePermissionsAttachments == true ? [drive.DriveApi.driveFileScope] : []),
         ...(gMailPermissions == true
             ? [
                 gMail.GmailApi.gmailReadonlyScope,
-                gMail.GmailApi
-                    .gmailModifyScope //We do this so the emails can be marked read
+                gMail.GmailApi.gmailModifyScope //We do this so the emails can be marked read
               ]
             : [])
       ];
       googleSignIn = getPlatform() == PlatformOS.isIOS
-          ? signIn.GoogleSignIn(
-              clientId: DefaultFirebaseOptions.currentPlatform.iosClientId,
-              scopes: scopes)
+          ? signIn.GoogleSignIn(clientId: DefaultFirebaseOptions.currentPlatform.iosClientId, scopes: scopes)
           : signIn.GoogleSignIn.standard(scopes: scopes);
       // googleSignIn?.currentUser?.clearAuthCache();
 
@@ -158,8 +152,7 @@ Future<bool> signInGoogle(
           "currentUserEmail",
           googleUser?.email ?? "",
           updateGlobalState: true,
-          forceGlobalStateUpdate:
-              context == null || getIsFullScreen(context) ? true : false,
+          forceGlobalStateUpdate: context == null || getIsFullScreen(context) ? true : false,
         );
         accountsPageStateKey.currentState?.refreshState();
         settingsPageStateKey.currentState?.refreshState();
@@ -167,8 +160,7 @@ Future<bool> signInGoogle(
         throw ("Login failed");
       }
     }
-    if (waitForCompletion == true && context != null)
-      Navigator.of(context).pop();
+    if (waitForCompletion == true && context != null) Navigator.of(context).pop();
     if (next != null) next();
 
     if (appStateSettings["hasSignedIn"] == false) {
@@ -178,15 +170,12 @@ Future<bool> signInGoogle(
     return true;
   } catch (e) {
     print(e);
-    if (waitForCompletion == true && context != null)
-      Navigator.of(context).pop();
+    if (waitForCompletion == true && context != null) Navigator.of(context).pop();
     openSnackbar(
       SnackbarMessage(
         title: "sign-in-error".tr(),
         description: "sign-in-error-description".tr(),
-        icon: appStateSettings["outlinedIcons"]
-            ? Icons.error_outlined
-            : Icons.error_rounded,
+        icon: appStateSettings["outlinedIcons"] ? Icons.error_outlined : Icons.error_rounded,
         timeout: Duration(milliseconds: 3400),
       ),
     );
@@ -206,8 +195,7 @@ Future<bool> testIfHasGmailAccess() async {
     final authHeaders = await googleUser!.authHeaders;
     final authenticateClient = GoogleAuthClient(authHeaders);
     gMail.GmailApi gmailApi = gMail.GmailApi(authenticateClient);
-    gMail.ListMessagesResponse results = await gmailApi.users.messages
-        .list(googleUser!.id.toString(), maxResults: 1);
+    gMail.ListMessagesResponse results = await gmailApi.users.messages.list(googleUser!.id.toString(), maxResults: 1);
   } catch (e) {
     print(e.toString());
     print("NO GMAIL");
@@ -231,16 +219,12 @@ Future<bool> refreshGoogleSignIn() async {
   return true;
 }
 
-Future<bool> signInAndSync(BuildContext context,
-    {required dynamic Function() next}) async {
+Future<bool> signInAndSync(BuildContext context, {required dynamic Function() next}) async {
   dynamic result = true;
-  if (getPlatform() == PlatformOS.isIOS &&
-      navigatorKey.currentContext != null) {
+  if (getPlatform() == PlatformOS.isIOS && navigatorKey.currentContext != null) {
     result = await openPopup(
       navigatorKey.currentContext!,
-      icon: appStateSettings["outlinedIcons"]
-          ? Icons.badge_outlined
-          : Icons.badge_rounded,
+      icon: appStateSettings["outlinedIcons"] ? Icons.badge_outlined : Icons.badge_rounded,
       title: "backups".tr(),
       description: "google-drive-backup-disclaimer".tr(),
       onSubmitLabel: "continue".tr(),
@@ -264,8 +248,7 @@ Future<bool> signInAndSync(BuildContext context,
       next: next,
     );
     if (appStateSettings["username"] == "" && googleUser != null) {
-      updateSettings("username", googleUser?.displayName ?? "",
-          pagesNeedingRefresh: [0], updateGlobalState: false);
+      updateSettings("username", googleUser?.displayName ?? "", pagesNeedingRefresh: [0], updateGlobalState: false);
     }
     if (googleUser != null) {
       loadingIndeterminateKey.currentState?.setVisibility(true);
@@ -301,20 +284,14 @@ Future<void> createBackupInBackground(context) async {
   // if (entireAppLoaded == false || entireAppLoaded) {
   if (appStateSettings["autoBackups"] == true) {
     DateTime lastUpdate = DateTime.parse(appStateSettings["lastBackup"]);
-    DateTime nextPlannedBackup = lastUpdate
-        .add(Duration(days: appStateSettings["autoBackupsFrequency"]));
+    DateTime nextPlannedBackup = lastUpdate.add(Duration(days: appStateSettings["autoBackupsFrequency"]));
     print("next backup planned on " + nextPlannedBackup.toString());
-    if (DateTime.now().millisecondsSinceEpoch >=
-        nextPlannedBackup.millisecondsSinceEpoch) {
+    if (DateTime.now().millisecondsSinceEpoch >= nextPlannedBackup.millisecondsSinceEpoch) {
       print("auto backing up");
 
       bool hasSignedIn = false;
       if (googleUser == null) {
-        hasSignedIn = await signInGoogle(
-            context: context,
-            gMailPermissions: false,
-            waitForCompletion: false,
-            silentSignIn: true);
+        hasSignedIn = await signInGoogle(context: context, gMailPermissions: false, waitForCompletion: false, silentSignIn: true);
       } else {
         hasSignedIn = true;
       }
@@ -345,9 +322,7 @@ bool openDatabaseCorruptedPopup(BuildContext context) {
   if (isDatabaseCorrupted) {
     openPopup(
       context,
-      icon: appStateSettings["outlinedIcons"]
-          ? Icons.heart_broken_outlined
-          : Icons.heart_broken_rounded,
+      icon: appStateSettings["outlinedIcons"] ? Icons.heart_broken_outlined : Icons.heart_broken_rounded,
       title: "database-corrupted".tr(),
       description: "database-corrupted-description".tr(),
       barrierDismissible: false,
@@ -400,18 +375,12 @@ Future<void> createBackup(
       Navigator.of(context).maybePop();
     }
     openSnackbar(
-      SnackbarMessage(
-          title: e.toString(),
-          icon: appStateSettings["outlinedIcons"]
-              ? Icons.error_outlined
-              : Icons.error_rounded),
+      SnackbarMessage(title: e.toString(), icon: appStateSettings["outlinedIcons"] ? Icons.error_outlined : Icons.error_rounded),
     );
   }
 
   try {
-    if (deleteOldBackups)
-      await deleteRecentBackups(context, appStateSettings["backupLimit"],
-          silentDelete: true);
+    if (deleteOldBackups) await deleteRecentBackups(context, appStateSettings["backupLimit"], silentDelete: true);
 
     DBFileInfo currentDBFileInfo = await getCurrentDBFileInfo();
 
@@ -419,18 +388,13 @@ Future<void> createBackup(
     final authenticateClient = GoogleAuthClient(authHeaders);
     final driveApi = drive.DriveApi(authenticateClient);
 
-    var media = new drive.Media(
-        currentDBFileInfo.mediaStream, currentDBFileInfo.dbFileBytes.length);
+    var media = new drive.Media(currentDBFileInfo.mediaStream, currentDBFileInfo.dbFileBytes.length);
 
     var driveFile = new drive.File();
-    final timestamp =
-        DateFormat("yyyy-MM-dd-hhmmss").format(DateTime.now().toUtc());
+    final timestamp = DateFormat("yyyy-MM-dd-hhmmss").format(DateTime.now().toUtc());
     // -$timestamp
-    driveFile.name =
-        "db-v$schemaVersionGlobal-${getCurrentDeviceName()}.sqlite";
-    if (clientIDForSync != null)
-      driveFile.name =
-          getCurrentDeviceSyncBackupFileName(clientIDForSync: clientIDForSync);
+    driveFile.name = "db-v$schemaVersionGlobal-${getCurrentDeviceName()}.sqlite";
+    if (clientIDForSync != null) driveFile.name = getCurrentDeviceSyncBackupFileName(clientIDForSync: clientIDForSync);
     driveFile.modifiedTime = DateTime.now().toUtc();
     driveFile.parents = ["appDataFolder"];
 
@@ -441,14 +405,11 @@ Future<void> createBackup(
         SnackbarMessage(
           title: "backup-created".tr(),
           description: driveFile.name,
-          icon: appStateSettings["outlinedIcons"]
-              ? Icons.backup_outlined
-              : Icons.backup_rounded,
+          icon: appStateSettings["outlinedIcons"] ? Icons.backup_outlined : Icons.backup_rounded,
         ),
       );
     if (clientIDForSync == null)
-      updateSettings("lastBackup", DateTime.now().toString(),
-          pagesNeedingRefresh: [], updateGlobalState: false);
+      updateSettings("lastBackup", DateTime.now().toString(), pagesNeedingRefresh: [], updateGlobalState: false);
 
     if (silentBackup == false || silentBackup == null) {
       loadingIndeterminateKey.currentState?.setVisibility(false);
@@ -463,18 +424,13 @@ Future<void> createBackup(
       await refreshGoogleSignIn();
     } else {
       openSnackbar(
-        SnackbarMessage(
-            title: e.toString(),
-            icon: appStateSettings["outlinedIcons"]
-                ? Icons.error_outlined
-                : Icons.error_rounded),
+        SnackbarMessage(title: e.toString(), icon: appStateSettings["outlinedIcons"] ? Icons.error_outlined : Icons.error_rounded),
       );
     }
   }
 }
 
-Future<void> deleteRecentBackups(context, amountToKeep,
-    {bool? silentDelete}) async {
+Future<void> deleteRecentBackups(context, amountToKeep, {bool? silentDelete}) async {
   try {
     if (silentDelete == false || silentDelete == null) {
       loadingIndeterminateKey.currentState?.setVisibility(true);
@@ -513,11 +469,7 @@ Future<void> deleteRecentBackups(context, amountToKeep,
       loadingIndeterminateKey.currentState?.setVisibility(false);
     }
     openSnackbar(
-      SnackbarMessage(
-          title: e.toString(),
-          icon: appStateSettings["outlinedIcons"]
-              ? Icons.error_outlined
-              : Icons.error_rounded),
+      SnackbarMessage(title: e.toString(), icon: appStateSettings["outlinedIcons"] ? Icons.error_outlined : Icons.error_rounded),
     );
   }
 }
@@ -530,10 +482,7 @@ Future<void> deleteBackup(drive.DriveApi driveApi, String fileId) async {
   }
 }
 
-Future<void> chooseBackup(context,
-    {bool isManaging = false,
-    bool isClientSync = false,
-    bool hideDownloadButton = false}) async {
+Future<void> chooseBackup(context, {bool isManaging = false, bool isClientSync = false, bool hideDownloadButton = false}) async {
   try {
     openBottomSheet(
       context,
@@ -546,25 +495,19 @@ Future<void> chooseBackup(context,
   } catch (e) {
     Navigator.of(context).pop();
     openSnackbar(
-      SnackbarMessage(
-          title: e.toString(),
-          icon: appStateSettings["outlinedIcons"]
-              ? Icons.error_outlined
-              : Icons.error_rounded),
+      SnackbarMessage(title: e.toString(), icon: appStateSettings["outlinedIcons"] ? Icons.error_outlined : Icons.error_rounded),
     );
   }
 }
 
-Future<void> loadBackup(
-    BuildContext context, drive.DriveApi driveApi, drive.File file) async {
+Future<void> loadBackup(BuildContext context, drive.DriveApi driveApi, drive.File file) async {
   try {
     openLoadingPopup(context);
 
     await cancelAndPreventSyncOperation();
 
     List<int> dataStore = [];
-    dynamic response = await driveApi.files
-        .get(file.id ?? "", downloadOptions: drive.DownloadOptions.fullMedia);
+    dynamic response = await driveApi.files.get(file.id ?? "", downloadOptions: drive.DownloadOptions.fullMedia);
     response.stream.listen(
       (data) {
         print("Data: ${data.length}");
@@ -577,22 +520,18 @@ Future<void> loadBackup(
         // await database.close();
         Navigator.of(context).pop();
         resetLanguageToSystem(context);
-        await updateSettings("databaseJustImported", true,
-            pagesNeedingRefresh: [], updateGlobalState: false);
+        await updateSettings("databaseJustImported", true, pagesNeedingRefresh: [], updateGlobalState: false);
         print(appStateSettings);
         openSnackbar(
           SnackbarMessage(
               title: "backup-restored".tr(),
-              icon: appStateSettings["outlinedIcons"]
-                  ? Icons.settings_backup_restore_outlined
-                  : Icons.settings_backup_restore_rounded),
+              icon:
+                  appStateSettings["outlinedIcons"] ? Icons.settings_backup_restore_outlined : Icons.settings_backup_restore_rounded),
         );
         Navigator.pop(context);
         restartAppPopup(
           context,
-          description: kIsWeb
-              ? "refresh-required-to-load-backup".tr()
-              : "restart-required-to-load-backup".tr(),
+          description: kIsWeb ? "refresh-required-to-load-backup".tr() : "restart-required-to-load-backup".tr(),
           // codeBlock: file.name.toString() +
           //     (file.modifiedTime == null
           //         ? ""
@@ -607,21 +546,14 @@ Future<void> loadBackup(
       onError: (error) {
         openSnackbar(
           SnackbarMessage(
-              title: error.toString(),
-              icon: appStateSettings["outlinedIcons"]
-                  ? Icons.error_outlined
-                  : Icons.error_rounded),
+              title: error.toString(), icon: appStateSettings["outlinedIcons"] ? Icons.error_outlined : Icons.error_rounded),
         );
       },
     );
   } catch (e) {
     Navigator.of(context).pop();
     openSnackbar(
-      SnackbarMessage(
-          title: e.toString(),
-          icon: appStateSettings["outlinedIcons"]
-              ? Icons.error_outlined
-              : Icons.error_rounded),
+      SnackbarMessage(title: e.toString(), icon: appStateSettings["outlinedIcons"] ? Icons.error_outlined : Icons.error_rounded),
     );
   }
 }
@@ -642,16 +574,13 @@ class GoogleAccountLoginButton extends StatefulWidget {
   final String? forceButtonName;
 
   @override
-  State<GoogleAccountLoginButton> createState() =>
-      _GoogleAccountLoginButtonState();
+  State<GoogleAccountLoginButton> createState() => _GoogleAccountLoginButtonState();
 }
 
 class _GoogleAccountLoginButtonState extends State<GoogleAccountLoginButton> {
   loginWithSync() {
     signInAndSync(
-      widget.navigationSidebarButton
-          ? navigatorKey.currentContext ?? context
-          : context,
+      widget.navigationSidebarButton ? navigatorKey.currentContext ?? context : context,
       next: () {
         setState(() {});
         if (widget.navigationSidebarButton) {
@@ -737,9 +666,7 @@ class _GoogleAccountLoginButtonState extends State<GoogleAccountLoginButton> {
                       loginWithSync();
                     },
                     title: widget.forceButtonName ?? "login".tr(),
-                    icon: widget.forceButtonName == null
-                        ? MoreIcons.google
-                        : MoreIcons.google_drive,
+                    icon: widget.forceButtonName == null ? MoreIcons.google : MoreIcons.google_drive,
                     iconScale: widget.forceButtonName == null ? 1 : 0.87,
                   ),
           )
@@ -771,9 +698,7 @@ Future<(drive.DriveApi? driveApi, List<drive.File>?)> getDriveFiles() async {
     final authenticateClient = GoogleAuthClient(authHeaders);
     drive.DriveApi driveApi = drive.DriveApi(authenticateClient);
 
-    drive.FileList fileList = await driveApi.files.list(
-        spaces: 'appDataFolder',
-        $fields: 'files(id, name, modifiedTime, size)');
+    drive.FileList fileList = await driveApi.files.list(spaces: 'appDataFolder', $fields: 'files(id, name, modifiedTime, size)');
     return (driveApi, fileList.files);
   } catch (e) {
     if (e is DetailedApiRequestError && e.status == 401) {
@@ -784,11 +709,7 @@ Future<(drive.DriveApi? driveApi, List<drive.File>?)> getDriveFiles() async {
       return await getDriveFiles();
     } else {
       openSnackbar(
-        SnackbarMessage(
-            title: e.toString(),
-            icon: appStateSettings["outlinedIcons"]
-                ? Icons.error_outlined
-                : Icons.error_rounded),
+        SnackbarMessage(title: e.toString(), icon: appStateSettings["outlinedIcons"] ? Icons.error_outlined : Icons.error_rounded),
       );
     }
   }
@@ -848,17 +769,13 @@ class _BackupManagementState extends State<BackupManagement> {
     if (widget.isClientSync) {
       if (filesState.length > 0) {
         print(appStateSettings["devicesHaveBeenSynced"]);
-        filesState =
-            filesState.where((file) => isSyncBackupFile(file.name)).toList();
-        updateSettings("devicesHaveBeenSynced", filesState.length,
-            updateGlobalState: false);
+        filesState = filesState.where((file) => isSyncBackupFile(file.name)).toList();
+        updateSettings("devicesHaveBeenSynced", filesState.length, updateGlobalState: false);
       }
     } else {
       if (filesState.length > 0) {
-        filesState =
-            filesState.where((file) => !isSyncBackupFile(file.name)).toList();
-        updateSettings("numBackups", filesState.length,
-            updateGlobalState: false);
+        filesState = filesState.where((file) => !isSyncBackupFile(file.name)).toList();
+        updateSettings("numBackups", filesState.length, updateGlobalState: false);
       }
     }
     Iterable<MapEntry<int, drive.File>> filesMap = filesState.asMap().entries;
@@ -871,9 +788,7 @@ class _BackupManagementState extends State<BackupManagement> {
       subtitle: widget.isClientSync
           ? "manage-syncing-info".tr()
           : widget.isManaging
-              ? appStateSettings["backupLimit"].toString() +
-                  " " +
-                  "stored-backups".tr()
+              ? appStateSettings["backupLimit"].toString() + " " + "stored-backups".tr()
               : "overwrite-warning".tr(),
       child: Column(
         children: [
@@ -902,8 +817,7 @@ class _BackupManagementState extends State<BackupManagement> {
               ? SettingsContainerSwitch(
                   enableBorderRadius: true,
                   onSwitched: (value) {
-                    updateSettings("autoBackups", value,
-                        pagesNeedingRefresh: [], updateGlobalState: false);
+                    updateSettings("autoBackups", value, pagesNeedingRefresh: [], updateGlobalState: false);
                     setState(() {
                       autoBackups = value;
                     });
@@ -911,9 +825,7 @@ class _BackupManagementState extends State<BackupManagement> {
                   initialValue: appStateSettings["autoBackups"],
                   title: "auto-backups".tr(),
                   description: "auto-backups-description".tr(),
-                  icon: appStateSettings["outlinedIcons"]
-                      ? Icons.cloud_done_outlined
-                      : Icons.cloud_done_rounded,
+                  icon: appStateSettings["outlinedIcons"] ? Icons.cloud_done_outlined : Icons.cloud_done_rounded,
                 )
               : SizedBox.shrink(),
           widget.isClientSync
@@ -921,9 +833,7 @@ class _BackupManagementState extends State<BackupManagement> {
                   enableBorderRadius: true,
                   onSwitched: (value) {
                     // Only update global is the sidebar is shown
-                    updateSettings("backupSync", value,
-                        pagesNeedingRefresh: [],
-                        updateGlobalState: getIsFullScreen(context));
+                    updateSettings("backupSync", value, pagesNeedingRefresh: [], updateGlobalState: getIsFullScreen(context));
                     setState(() {
                       backupSync = value;
                     });
@@ -934,9 +844,7 @@ class _BackupManagementState extends State<BackupManagement> {
                   initialValue: appStateSettings["backupSync"],
                   title: "sync-data".tr(),
                   description: "sync-data-description".tr(),
-                  icon: appStateSettings["outlinedIcons"]
-                      ? Icons.cloud_sync_outlined
-                      : Icons.cloud_sync_rounded,
+                  icon: appStateSettings["outlinedIcons"] ? Icons.cloud_sync_outlined : Icons.cloud_sync_rounded,
                 )
               : SizedBox.shrink(),
           // Only allow sync on every change for web
@@ -947,19 +855,14 @@ class _BackupManagementState extends State<BackupManagement> {
                   child: SettingsContainerSwitch(
                     enableBorderRadius: true,
                     onSwitched: (value) {
-                      updateSettings("syncEveryChange", value,
-                          pagesNeedingRefresh: [], updateGlobalState: false);
+                      updateSettings("syncEveryChange", value, pagesNeedingRefresh: [], updateGlobalState: false);
                     },
                     initialValue: appStateSettings["syncEveryChange"],
                     title: "sync-every-change".tr(),
                     descriptionWithValue: (value) {
-                      return value
-                          ? "sync-every-change-description1".tr()
-                          : "sync-every-change-description2".tr();
+                      return value ? "sync-every-change-description1".tr() : "sync-every-change-description2".tr();
                     },
-                    icon: appStateSettings["outlinedIcons"]
-                        ? Icons.all_inbox_outlined
-                        : Icons.all_inbox_rounded,
+                    icon: appStateSettings["outlinedIcons"] ? Icons.all_inbox_outlined : Icons.all_inbox_rounded,
                   ),
                 )
               : SizedBox.shrink(),
@@ -970,22 +873,16 @@ class _BackupManagementState extends State<BackupManagement> {
                     enableBorderRadius: true,
                     items: ["1", "2", "3", "7", "10", "14"],
                     onChanged: (value) {
-                      updateSettings("autoBackupsFrequency", int.parse(value),
-                          pagesNeedingRefresh: [], updateGlobalState: false);
+                      updateSettings("autoBackupsFrequency", int.parse(value), pagesNeedingRefresh: [], updateGlobalState: false);
                     },
-                    initial:
-                        appStateSettings["autoBackupsFrequency"].toString(),
+                    initial: appStateSettings["autoBackupsFrequency"].toString(),
                     title: "backup-frequency".tr(),
                     description: "number-of-days".tr(),
-                    icon: appStateSettings["outlinedIcons"]
-                        ? Icons.event_repeat_outlined
-                        : Icons.event_repeat_rounded,
+                    icon: appStateSettings["outlinedIcons"] ? Icons.event_repeat_outlined : Icons.event_repeat_rounded,
                   ),
                 )
               : SizedBox.shrink(),
-          widget.isManaging &&
-                  widget.isClientSync == false &&
-                  appStateSettings["showBackupLimit"]
+          widget.isManaging && widget.isClientSync == false && appStateSettings["showBackupLimit"]
               ? SettingsContainerDropdown(
                   enableBorderRadius: true,
                   key: dropDownKey,
@@ -998,14 +895,11 @@ class _BackupManagementState extends State<BackupManagement> {
                     if (int.parse(value) < appStateSettings["backupLimit"]) {
                       openPopup(
                         context,
-                        icon: appStateSettings["outlinedIcons"]
-                            ? Icons.delete_outlined
-                            : Icons.delete_rounded,
+                        icon: appStateSettings["outlinedIcons"] ? Icons.delete_outlined : Icons.delete_rounded,
                         title: "change-limit".tr(),
                         description: "change-limit-warning".tr(),
                         onSubmit: () async {
-                          updateSettings("backupLimit", int.parse(value),
-                              updateGlobalState: false);
+                          updateSettings("backupLimit", int.parse(value), updateGlobalState: false);
                           Navigator.pop(context);
                         },
                         onSubmitLabel: "change".tr(),
@@ -1018,26 +912,19 @@ class _BackupManagementState extends State<BackupManagement> {
                         onCancelLabel: "cancel".tr(),
                       );
                     } else {
-                      updateSettings("backupLimit", int.parse(value),
-                          updateGlobalState: false);
+                      updateSettings("backupLimit", int.parse(value), updateGlobalState: false);
                     }
                   },
                 )
               : SizedBox.shrink(),
-          if ((widget.isManaging == false && widget.isClientSync == false) ==
-              false)
-            SizedBox(height: 10),
+          if ((widget.isManaging == false && widget.isClientSync == false) == false) SizedBox(height: 10),
           isLoading
               ? Column(
                   children: [
                     for (int i = 0;
-                        i <
-                            (widget.isClientSync
-                                ? appStateSettings["devicesHaveBeenSynced"]
-                                : appStateSettings["numBackups"]);
+                        i < (widget.isClientSync ? appStateSettings["devicesHaveBeenSynced"] : appStateSettings["numBackups"]);
                         i++)
-                      LoadingShimmerDriveFiles(
-                          isManaging: widget.isManaging, i: i),
+                      LoadingShimmerDriveFiles(isManaging: widget.isManaging, i: i),
                   ],
                 )
               : SizedBox.shrink(),
@@ -1057,32 +944,25 @@ class _BackupManagementState extends State<BackupManagement> {
                                   context,
                                   title: "load-backup".tr(),
                                   subtitle: getWordedDateShortMore(
-                                        (file.value.modifiedTime ??
-                                                DateTime.now())
-                                            .toLocal(),
+                                        (file.value.modifiedTime != null
+                                            ? Jalali.fromDateTime(file.value.modifiedTime!)
+                                            : Jalali.now()),
                                         includeTime: true,
                                         includeYear: true,
                                         showTodayTomorrow: false,
                                       ) +
                                       "\n" +
-                                      getWordedTime(
-                                          navigatorKey.currentContext?.locale
-                                              .toString(),
-                                          (file.value.modifiedTime ??
-                                                  DateTime.now())
-                                              .toLocal()),
+                                      getWordedTime(navigatorKey.currentContext?.locale.toString(),
+                                          (file.value.modifiedTime ?? DateTime.now()).toLocal()),
                                   beforeDescriptionWidget: Padding(
                                     padding: const EdgeInsets.only(
                                       top: 8,
                                       bottom: 5,
                                     ),
-                                    child: CodeBlock(
-                                        text: (file.value.name ?? "No name")),
+                                    child: CodeBlock(text: (file.value.name ?? "No name")),
                                   ),
                                   description: "load-backup-warning".tr(),
-                                  icon: appStateSettings["outlinedIcons"]
-                                      ? Icons.warning_outlined
-                                      : Icons.warning_rounded,
+                                  icon: appStateSettings["outlinedIcons"] ? Icons.warning_outlined : Icons.warning_rounded,
                                   onSubmit: () async {
                                     Navigator.pop(context, true);
                                   },
@@ -1092,9 +972,7 @@ class _BackupManagementState extends State<BackupManagement> {
                                     Navigator.pop(context);
                                   },
                                 );
-                                if (result == true)
-                                  loadBackup(
-                                      context, driveApiState, file.value);
+                                if (result == true) loadBackup(context, driveApiState, file.value);
                               }
                               // else {
                               //   await openPopup(
@@ -1114,22 +992,13 @@ class _BackupManagementState extends State<BackupManagement> {
                               // }
                             },
                             borderRadius: 15,
-                            color: widget.isClientSync &&
-                                    isCurrentDeviceSyncBackupFile(
-                                        file.value.name)
-                                ? Theme.of(context)
-                                    .colorScheme
-                                    .primary
-                                    .withOpacity(0.4)
+                            color: widget.isClientSync && isCurrentDeviceSyncBackupFile(file.value.name)
+                                ? Theme.of(context).colorScheme.primary.withOpacity(0.4)
                                 : appStateSettings["materialYou"]
-                                    ? Theme.of(context)
-                                        .colorScheme
-                                        .secondaryContainer
-                                    : getColor(
-                                        context, "lightDarkAccentHeavyLight"),
+                                    ? Theme.of(context).colorScheme.secondaryContainer
+                                    : getColor(context, "lightDarkAccentHeavyLight"),
                             child: Container(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 15),
+                              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                               child: Row(
                                 children: [
                                   Expanded(
@@ -1137,46 +1006,34 @@ class _BackupManagementState extends State<BackupManagement> {
                                       children: [
                                         Icon(
                                           widget.isClientSync
-                                              ? appStateSettings[
-                                                      "outlinedIcons"]
+                                              ? appStateSettings["outlinedIcons"]
                                                   ? Icons.devices_outlined
                                                   : Icons.devices_rounded
-                                              : appStateSettings[
-                                                      "outlinedIcons"]
+                                              : appStateSettings["outlinedIcons"]
                                                   ? Icons.description_outlined
                                                   : Icons.description_rounded,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .secondary,
+                                          color: Theme.of(context).colorScheme.secondary,
                                           size: 30,
                                         ),
-                                        SizedBox(
-                                            width:
-                                                widget.isClientSync ? 17 : 13),
+                                        SizedBox(width: widget.isClientSync ? 17 : 13),
                                         Expanded(
                                           child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               TextFont(
                                                 text: getTimeAgo(
-                                                  (file.value.modifiedTime ??
-                                                          DateTime.now())
-                                                      .toLocal(),
+                                                  (file.value.modifiedTime != null
+                                                      ? Jalali.fromDateTime(file.value.modifiedTime!)
+                                                      : Jalali.now()),
                                                 ).capitalizeFirst,
                                                 fontSize: 18,
                                                 fontWeight: FontWeight.bold,
                                                 maxLines: 2,
                                               ),
                                               TextFont(
-                                                text: (isSyncBackupFile(
-                                                        file.value.name)
-                                                    ? getDeviceFromSyncBackupFileName(
-                                                            file.value.name) +
-                                                        " " +
-                                                        "sync"
-                                                    : file.value.name ??
-                                                        "No name"),
+                                                text: (isSyncBackupFile(file.value.name)
+                                                    ? getDeviceFromSyncBackupFileName(file.value.name) + " " + "sync"
+                                                    : file.value.name ?? "No name"),
                                                 fontSize: 14,
                                                 maxLines: 2,
                                               ),
@@ -1207,167 +1064,95 @@ class _BackupManagementState extends State<BackupManagement> {
                                             widget.hideDownloadButton
                                                 ? SizedBox.shrink()
                                                 : Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
+                                                    padding: const EdgeInsets.only(
                                                       left: 8.0,
                                                     ),
-                                                    child: Builder(
-                                                        builder: (boxContext) {
+                                                    child: Builder(builder: (boxContext) {
                                                       return ButtonIcon(
-                                                        color: appStateSettings[
-                                                                "materialYou"]
-                                                            ? Theme.of(context)
-                                                                .colorScheme
-                                                                .onSecondaryContainer
-                                                                .withOpacity(
-                                                                    0.08)
-                                                            : getColor(context,
-                                                                    "lightDarkAccentHeavy")
-                                                                .withOpacity(
-                                                                    0.7),
+                                                        color: appStateSettings["materialYou"]
+                                                            ? Theme.of(context).colorScheme.onSecondaryContainer.withOpacity(0.08)
+                                                            : getColor(context, "lightDarkAccentHeavy").withOpacity(0.7),
                                                         onTap: () {
                                                           saveDriveFileToDevice(
-                                                            boxContext:
-                                                                boxContext,
-                                                            driveApi:
-                                                                driveApiState,
-                                                            fileToSave:
-                                                                file.value,
+                                                            boxContext: boxContext,
+                                                            driveApi: driveApiState,
+                                                            fileToSave: file.value,
                                                           );
                                                         },
-                                                        icon: Icons
-                                                            .download_rounded,
+                                                        icon: Icons.download_rounded,
                                                       );
                                                     }),
                                                   ),
                                             Padding(
-                                              padding: const EdgeInsets.only(
-                                                  left: 5),
+                                              padding: const EdgeInsets.only(left: 5),
                                               child: ButtonIcon(
-                                                color: appStateSettings[
-                                                        "materialYou"]
-                                                    ? Theme.of(context)
-                                                        .colorScheme
-                                                        .onSecondaryContainer
-                                                        .withOpacity(0.08)
-                                                    : getColor(context,
-                                                            "lightDarkAccentHeavy")
-                                                        .withOpacity(0.7),
+                                                color: appStateSettings["materialYou"]
+                                                    ? Theme.of(context).colorScheme.onSecondaryContainer.withOpacity(0.08)
+                                                    : getColor(context, "lightDarkAccentHeavy").withOpacity(0.7),
                                                 onTap: () {
                                                   openPopup(
                                                     context,
-                                                    icon: appStateSettings[
-                                                            "outlinedIcons"]
+                                                    icon: appStateSettings["outlinedIcons"]
                                                         ? Icons.delete_outlined
                                                         : Icons.delete_rounded,
                                                     title: "delete-backup".tr(),
-                                                    subtitle:
-                                                        getWordedDateShortMore(
-                                                              (file.value.modifiedTime ??
-                                                                      DateTime
-                                                                          .now())
-                                                                  .toLocal(),
-                                                              includeTime: true,
-                                                              includeYear: true,
-                                                              showTodayTomorrow:
-                                                                  false,
-                                                            ) +
-                                                            "\n" +
-                                                            getWordedTime(
-                                                                navigatorKey
-                                                                    .currentContext
-                                                                    ?.locale
-                                                                    .toString(),
-                                                                (file.value.modifiedTime ??
-                                                                        DateTime
-                                                                            .now())
-                                                                    .toLocal()),
-                                                    beforeDescriptionWidget:
-                                                        Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
+                                                    subtitle: getWordedDateShortMore(
+                                                          (file.value.modifiedTime != null
+                                                              ? Jalali.fromDateTime(file.value.modifiedTime!)
+                                                              : Jalali.now()),
+                                                          includeTime: true,
+                                                          includeYear: true,
+                                                          showTodayTomorrow: false,
+                                                        ) +
+                                                        "\n" +
+                                                        getWordedTime(navigatorKey.currentContext?.locale.toString(),
+                                                            (file.value.modifiedTime ?? DateTime.now()).toLocal()),
+                                                    beforeDescriptionWidget: Padding(
+                                                      padding: const EdgeInsets.only(
                                                         top: 8,
                                                         bottom: 5,
                                                       ),
                                                       child: CodeBlock(
-                                                        text: (file.value
-                                                                    .name ??
-                                                                "No name") +
+                                                        text: (file.value.name ?? "No name") +
                                                             "\n" +
-                                                            convertBytesToMB(file
-                                                                        .value
-                                                                        .size ??
-                                                                    "0")
-                                                                .toStringAsFixed(
-                                                                    2) +
+                                                            convertBytesToMB(file.value.size ?? "0").toStringAsFixed(2) +
                                                             " MB",
                                                       ),
                                                     ),
-                                                    description: (widget
-                                                            .isClientSync
-                                                        ? "delete-sync-backup-warning"
-                                                            .tr()
-                                                        : null),
+                                                    description: (widget.isClientSync ? "delete-sync-backup-warning".tr() : null),
                                                     onSubmit: () async {
                                                       Navigator.pop(context);
-                                                      loadingIndeterminateKey
-                                                          .currentState!
-                                                          .setVisibility(true);
-                                                      await deleteBackup(
-                                                          driveApiState,
-                                                          file.value.id ?? "");
+                                                      loadingIndeterminateKey.currentState!.setVisibility(true);
+                                                      await deleteBackup(driveApiState, file.value.id ?? "");
                                                       openSnackbar(
                                                         SnackbarMessage(
-                                                            title:
-                                                                "deleted-backup"
-                                                                    .tr(),
-                                                            description: (file
-                                                                    .value
-                                                                    .name ??
-                                                                "No name"),
-                                                            icon: Icons
-                                                                .delete_rounded),
+                                                            title: "deleted-backup".tr(),
+                                                            description: (file.value.name ?? "No name"),
+                                                            icon: Icons.delete_rounded),
                                                       );
                                                       setState(() {
-                                                        deletedIndices
-                                                            .add(file.key);
+                                                        deletedIndices.add(file.key);
                                                       });
                                                       // bottomSheetControllerGlobal
                                                       //     .snapToExtent(0);
                                                       if (widget.isClientSync)
                                                         updateSettings(
-                                                            "devicesHaveBeenSynced",
-                                                            appStateSettings[
-                                                                    "devicesHaveBeenSynced"] -
-                                                                1,
-                                                            updateGlobalState:
-                                                                false);
+                                                            "devicesHaveBeenSynced", appStateSettings["devicesHaveBeenSynced"] - 1,
+                                                            updateGlobalState: false);
                                                       if (widget.isManaging) {
-                                                        updateSettings(
-                                                            "numBackups",
-                                                            appStateSettings[
-                                                                    "numBackups"] -
-                                                                1,
-                                                            updateGlobalState:
-                                                                false);
+                                                        updateSettings("numBackups", appStateSettings["numBackups"] - 1,
+                                                            updateGlobalState: false);
                                                       }
-                                                      loadingIndeterminateKey
-                                                          .currentState!
-                                                          .setVisibility(false);
+                                                      loadingIndeterminateKey.currentState!.setVisibility(false);
                                                     },
-                                                    onSubmitLabel:
-                                                        "delete".tr(),
+                                                    onSubmitLabel: "delete".tr(),
                                                     onCancel: () {
                                                       Navigator.pop(context);
                                                     },
-                                                    onCancelLabel:
-                                                        "cancel".tr(),
+                                                    onCancelLabel: "cancel".tr(),
                                                   );
                                                 },
-                                                icon: appStateSettings[
-                                                        "outlinedIcons"]
-                                                    ? Icons.close_outlined
-                                                    : Icons.close_rounded,
+                                                icon: appStateSettings["outlinedIcons"] ? Icons.close_outlined : Icons.close_rounded,
                                               ),
                                             ),
                                           ],
@@ -1411,8 +1196,7 @@ class LoadingShimmerDriveFiles extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Shimmer.fromColors(
-      period:
-          Duration(milliseconds: (1000 + randomDouble[i % 10] * 520).toInt()),
+      period: Duration(milliseconds: (1000 + randomDouble[i % 10] * 520).toInt()),
       baseColor: appStateSettings["materialYou"]
           ? Theme.of(context).colorScheme.secondaryContainer
           : getColor(context, "lightDarkAccentHeavyLight"),
@@ -1425,10 +1209,7 @@ class LoadingShimmerDriveFiles extends StatelessWidget {
           onTap: () {},
           borderRadius: 15,
           color: appStateSettings["materialYou"]
-              ? Theme.of(context)
-                  .colorScheme
-                  .secondaryContainer
-                  .withOpacity(0.5)
+              ? Theme.of(context).colorScheme.secondaryContainer.withOpacity(0.5)
               : getColor(context, "lightDarkAccentHeavy").withOpacity(0.5),
           child: Container(
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
@@ -1438,9 +1219,7 @@ class LoadingShimmerDriveFiles extends StatelessWidget {
                     child: Row(
                       children: [
                         Icon(
-                          appStateSettings["outlinedIcons"]
-                              ? Icons.description_outlined
-                              : Icons.description_rounded,
+                          appStateSettings["outlinedIcons"] ? Icons.description_outlined : Icons.description_rounded,
                           color: Theme.of(context).colorScheme.secondary,
                           size: 30,
                         ),
@@ -1451,8 +1230,7 @@ class LoadingShimmerDriveFiles extends StatelessWidget {
                             children: [
                               Container(
                                 decoration: BoxDecoration(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(5)),
+                                  borderRadius: BorderRadius.all(Radius.circular(5)),
                                   color: Colors.white,
                                 ),
                                 height: 20,
@@ -1461,8 +1239,7 @@ class LoadingShimmerDriveFiles extends StatelessWidget {
                               SizedBox(height: 6),
                               Container(
                                 decoration: BoxDecoration(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(5)),
+                                  borderRadius: BorderRadius.all(Radius.circular(5)),
                                   color: Colors.white,
                                 ),
                                 height: 14,
@@ -1479,16 +1256,10 @@ class LoadingShimmerDriveFiles extends StatelessWidget {
                       ? Row(
                           children: [
                             ButtonIcon(
-                                onTap: () {},
-                                icon: appStateSettings["outlinedIcons"]
-                                    ? Icons.close_outlined
-                                    : Icons.close_rounded),
+                                onTap: () {}, icon: appStateSettings["outlinedIcons"] ? Icons.close_outlined : Icons.close_rounded),
                             SizedBox(width: 5),
                             ButtonIcon(
-                                onTap: () {},
-                                icon: appStateSettings["outlinedIcons"]
-                                    ? Icons.close_outlined
-                                    : Icons.close_rounded),
+                                onTap: () {}, icon: appStateSettings["outlinedIcons"] ? Icons.close_outlined : Icons.close_rounded),
                           ],
                         )
                       : SizedBox.shrink(),
@@ -1506,14 +1277,12 @@ Future<bool> saveDriveFileToDevice({
   required drive.File fileToSave,
 }) async {
   List<int> dataStore = [];
-  dynamic response = await driveApi.files
-      .get(fileToSave.id!, downloadOptions: drive.DownloadOptions.fullMedia);
+  dynamic response = await driveApi.files.get(fileToSave.id!, downloadOptions: drive.DownloadOptions.fullMedia);
   await for (var data in response.stream) {
     dataStore.insertAll(dataStore.length, data);
   }
   String fileName = "cashew-" +
-      ((fileToSave.name ?? "") +
-              (fileToSave.modifiedTime ?? DateTime.now()).toString())
+      ((fileToSave.name ?? "") + (fileToSave.modifiedTime ?? DateTime.now()).toString())
           .replaceAll(".sqlite", "")
           .replaceAll(".", "-")
           .replaceAll("-", "-")
@@ -1532,8 +1301,7 @@ Future<bool> saveDriveFileToDevice({
 }
 
 bool openBackupReminderPopupCheck(BuildContext context) {
-  if ((appStateSettings["currentUserEmail"] == null ||
-          appStateSettings["currentUserEmail"] == "") &&
+  if ((appStateSettings["currentUserEmail"] == null || appStateSettings["currentUserEmail"] == "") &&
       ((appStateSettings["numLogins"] + 1) % 7 == 0) &&
       appStateSettings["canShowBackupReminderPopup"] == true) {
     openPopup(
@@ -1541,9 +1309,7 @@ bool openBackupReminderPopupCheck(BuildContext context) {
       icon: MoreIcons.google_drive,
       iconScale: 0.9,
       title: "backup-your-data-reminder".tr(),
-      description: "backup-your-data-reminder-description".tr() +
-          " " +
-          "google-drive".tr(),
+      description: "backup-your-data-reminder-description".tr() + " " + "google-drive".tr(),
       onSubmitLabel: "backup".tr().capitalizeFirst,
       onSubmit: () async {
         Navigator.pop(context);
@@ -1552,8 +1318,7 @@ bool openBackupReminderPopupCheck(BuildContext context) {
       onCancelLabel: "never".tr().capitalizeFirst,
       onCancel: () {
         Navigator.pop(context);
-        updateSettings("canShowBackupReminderPopup", false,
-            updateGlobalState: false);
+        updateSettings("canShowBackupReminderPopup", false, updateGlobalState: false);
       },
       onExtraLabel: "later".tr().capitalizeFirst,
       onExtra: () {

@@ -77,16 +77,12 @@ class PageNavigationFramework extends StatefulWidget {
   const PageNavigationFramework({Key? key}) : super(key: key);
 
   //PageNavigationFramework.changePage(context, 0);
-  static void changePage(BuildContext context, page,
-      {bool switchNavbar = false}) {
-    context
-        .findAncestorStateOfType<PageNavigationFrameworkState>()!
-        .changePage(page, switchNavbar: switchNavbar);
+  static void changePage(BuildContext context, page, {bool switchNavbar = false}) {
+    context.findAncestorStateOfType<PageNavigationFrameworkState>()!.changePage(page, switchNavbar: switchNavbar);
   }
 
   @override
-  State<PageNavigationFramework> createState() =>
-      PageNavigationFrameworkState();
+  State<PageNavigationFramework> createState() => PageNavigationFrameworkState();
 }
 
 //can also do GlobalKey<dynamic> for private state classes, but bad practice and no autocomplete
@@ -94,37 +90,31 @@ GlobalKey<HomePageState> homePageStateKey = GlobalKey();
 GlobalKey<TransactionsListPageState> transactionsListPageStateKey = GlobalKey();
 GlobalKey<BudgetsListPageState> budgetsListPageStateKey = GlobalKey();
 GlobalKey<MoreActionsPageState> settingsPageStateKey = GlobalKey();
-GlobalKey<SettingsPageFrameworkState> settingsPageFrameworkStateKey =
-    GlobalKey();
+GlobalKey<SettingsPageFrameworkState> settingsPageFrameworkStateKey = GlobalKey();
 GlobalKey<SubscriptionsPageState> subscriptionsPageStateKey = GlobalKey();
-GlobalKey<WalletDetailsPageState> walletDetailsAllSpendingPageStateKey =
-    GlobalKey();
+GlobalKey<WalletDetailsPageState> walletDetailsAllSpendingPageStateKey = GlobalKey();
 GlobalKey<ObjectivesListPageState> objectivesListPageStateKey = GlobalKey();
-GlobalKey<UpcomingOverdueTransactionsState>
-    upcomingOverdueTransactionsStateKey = GlobalKey();
+GlobalKey<UpcomingOverdueTransactionsState> upcomingOverdueTransactionsStateKey = GlobalKey();
 GlobalKey<CreditDebtTransactionsState> creditDebtTransactionsKey = GlobalKey();
 GlobalKey<ProductsState> purchasesStateKey = GlobalKey();
 GlobalKey<AccountsPageState> accountsPageStateKey = GlobalKey();
 GlobalKey<BottomNavBarState> navbarStateKey = GlobalKey();
 GlobalKey<NavigationSidebarState> sidebarStateKey = GlobalKey();
 GlobalKey<GlobalLoadingProgressState> loadingProgressKey = GlobalKey();
-GlobalKey<GlobalLoadingIndeterminateState> loadingIndeterminateKey =
-    GlobalKey();
+GlobalKey<GlobalLoadingIndeterminateState> loadingIndeterminateKey = GlobalKey();
 GlobalKey<GlobalSnackbarState> snackbarKey = GlobalKey();
 GlobalKey<RenderHomePageWidgetsState> renderHomePageWidgetsKey = GlobalKey();
 
 bool runningCloudFunctions = false;
 bool errorSigningInDuringCloud = false;
-Future<bool> runAllCloudFunctions(BuildContext context,
-    {bool forceSignIn = false}) async {
+Future<bool> runAllCloudFunctions(BuildContext context, {bool forceSignIn = false}) async {
   print("Running All Cloud Functions");
   runningCloudFunctions = true;
   errorSigningInDuringCloud = false;
   try {
     loadingIndeterminateKey.currentState?.setVisibility(true);
     await syncData(context);
-    if (appStateSettings["emailScanningPullToRefresh"] ||
-        entireAppLoaded == false) {
+    if (appStateSettings["emailScanningPullToRefresh"] || entireAppLoaded == false) {
       loadingIndeterminateKey.currentState?.setVisibility(true);
       await parseEmailsInBackground(context, forceParse: true);
     }
@@ -141,10 +131,7 @@ Future<bool> runAllCloudFunctions(BuildContext context,
     loadingIndeterminateKey.currentState?.setVisibility(false);
     runningCloudFunctions = false;
     canSyncData = true;
-    if (e is DetailedApiRequestError &&
-            e.status == 401 &&
-            forceSignIn == true ||
-        e is PlatformException) {
+    if (e is DetailedApiRequestError && e.status == 401 && forceSignIn == true || e is PlatformException) {
       // Request had invalid authentication credentials. Try logging out and back in.
       // This stems from silent sign-in not providing the credentials for GDrive API for e.g.
       await refreshGoogleSignIn();
@@ -188,9 +175,8 @@ class PageNavigationFrameworkState extends State<PageNavigationFramework> {
 
     // Functions to run after entire UI loaded
     Future.delayed(Duration.zero, () async {
-      SystemChrome.setSystemUIOverlayStyle(getSystemUiOverlayStyle(
-          Theme.of(context).extension<AppColors>(),
-          Theme.of(context).brightness));
+      SystemChrome.setSystemUIOverlayStyle(
+          getSystemUiOverlayStyle(Theme.of(context).extension<AppColors>(), Theme.of(context).brightness));
 
       bool isDatabaseCorruptedPopupShown = openDatabaseCorruptedPopup(context);
       if (isDatabaseCorruptedPopupShown) return;
@@ -208,8 +194,7 @@ class PageNavigationFrameworkState extends State<PageNavigationFramework> {
       runNotificationPayLoads(context);
       runQuickActionsPayLoads(context);
       initializeLocalizedMonthNames();
-      initializeStoreAndPurchases(
-          context: context, popRouteWithPurchase: false);
+      initializeStoreAndPurchases(context: context, popRouteWithPurchase: false);
 
       if (entireAppLoaded == false) {
         await runAllCloudFunctions(context);
@@ -258,30 +243,24 @@ class PageNavigationFrameworkState extends State<PageNavigationFramework> {
     pages = [
       HomePage(key: homePageStateKey), // 0
       TransactionsListPage(key: transactionsListPageStateKey), //1
-      BudgetsListPage(
-          key: budgetsListPageStateKey, enableBackButton: false), //2
+      BudgetsListPage(key: budgetsListPageStateKey, enableBackButton: false), //2
       MoreActionsPage(key: settingsPageStateKey), //3
     ];
     pagesExtended = [
       MoreActionsPage(), //4
       SubscriptionsPage(key: subscriptionsPageStateKey), //5
       NotificationsPage(), //6
-      WalletDetailsPage(
-          key: walletDetailsAllSpendingPageStateKey, wallet: null), //7
+      WalletDetailsPage(key: walletDetailsAllSpendingPageStateKey, wallet: null), //7
       AccountsPage(key: accountsPageStateKey), // 8
       EditWalletsPage(), //9
       EditBudgetPage(), //10
       EditCategoriesPage(), //11
       EditAssociatedTitlesPage(), //12
       AboutPage(), //13
-      ObjectivesListPage(
-          key: objectivesListPageStateKey, backButton: false), //14
+      ObjectivesListPage(key: objectivesListPageStateKey, backButton: false), //14
       EditObjectivesPage(objectiveType: ObjectiveType.goal), //15
-      UpcomingOverdueTransactions(
-          key: upcomingOverdueTransactionsStateKey,
-          overdueTransactions: null), //16
-      CreditDebtTransactions(
-          key: creditDebtTransactionsKey, isCredit: null), //17
+      UpcomingOverdueTransactions(key: upcomingOverdueTransactionsStateKey, overdueTransactions: null), //16
+      CreditDebtTransactions(key: creditDebtTransactionsKey, isCredit: null), //17
     ];
 
     // SchedulerBinding.instance.addPostFrameCallback((Duration duration) {
@@ -344,11 +323,11 @@ class PageNavigationFrameworkState extends State<PageNavigationFramework> {
           ),
         ),
         Align(
-          alignment: Alignment.bottomRight,
+          alignment: Alignment.bottomLeft,
           child: Padding(
             padding: EdgeInsets.only(
               bottom: getHeightNavigationSidebar(context) + 15,
-              right: 15,
+              left: 15,
             ),
             child: Stack(
               children: [
@@ -494,11 +473,7 @@ class AddMoreThingsPopup extends StatelessWidget {
           ),
           widgetAfter: SelectChips(
             padding: EdgeInsets.symmetric(horizontal: 13),
-            items: [
-              if (Provider.of<AllWallets>(context).list.length > 1)
-                "transfer-balance",
-              "correct-total-balance"
-            ],
+            items: [if (Provider.of<AllWallets>(context).list.length > 1) "transfer-balance", "correct-total-balance"],
             getSelected: (_) {
               return false;
             },
@@ -510,18 +485,13 @@ class AddMoreThingsPopup extends StatelessWidget {
                   fullSnap: true,
                   TransferBalancePopup(
                     allowEditWallet: true,
-                    wallet: Provider.of<AllWallets>(context, listen: false)
-                        .indexedByPk[appStateSettings["selectedWalletPk"]]!,
+                    wallet: Provider.of<AllWallets>(context, listen: false).indexedByPk[appStateSettings["selectedWalletPk"]]!,
                   ),
                 );
               } else if (selection == "correct-total-balance") {
                 TransactionWallet? wallet =
-                    Provider.of<AllWallets>(context, listen: false)
-                        .indexedByPk[appStateSettings["selectedWalletPk"]];
-                if (Provider.of<AllWallets>(context, listen: false)
-                        .list
-                        .length >
-                    1) {
+                    Provider.of<AllWallets>(context, listen: false).indexedByPk[appStateSettings["selectedWalletPk"]];
+                if (Provider.of<AllWallets>(context, listen: false).list.length > 1) {
                   wallet = await selectWalletPopup(
                     context,
                     allowEditWallet: true,
@@ -560,38 +530,30 @@ class AddMoreThingsPopup extends StatelessWidget {
         StreamBuilder<Map<String, TransactionCategory>>(
           stream: database.watchAllCategoriesIndexed(),
           builder: (context, snapshotCategories) {
-            Map<String, TransactionCategory> categoriesIndexed =
-                snapshotCategories.data ?? {};
+            Map<String, TransactionCategory> categoriesIndexed = snapshotCategories.data ?? {};
             return StreamBuilder<List<TransactionWithCount>>(
               stream: database.getCommonTransactions(),
               builder: (context, snapshot) {
-                List<TransactionWithCount> commonTransactions =
-                    snapshot.data ?? [];
+                List<TransactionWithCount> commonTransactions = snapshot.data ?? [];
                 if (commonTransactions.length <= 0) {
                   return AddThing(
                     iconData: navBarIconsData["transactions"]!.iconData,
                     title: "transaction".tr(),
-                    openPage: AddTransactionPage(
-                        routesToPopAfterDelete: RoutesToPopAfterDelete.None),
+                    openPage: AddTransactionPage(routesToPopAfterDelete: RoutesToPopAfterDelete.None),
                   );
                 }
                 return AddThing(
                   infoButton: IconButtonScaled(
-                    iconData: appStateSettings["outlinedIcons"]
-                        ? Icons.info_outlined
-                        : Icons.info_outline_rounded,
+                    iconData: appStateSettings["outlinedIcons"] ? Icons.info_outlined : Icons.info_outline_rounded,
                     iconSize: 14,
                     scale: 1.8,
                     padding: EdgeInsets.all(5),
                     onTap: () {
                       openPopup(
                         context,
-                        icon: appStateSettings["outlinedIcons"]
-                            ? Icons.dynamic_feed_outlined
-                            : Icons.dynamic_feed_rounded,
+                        icon: appStateSettings["outlinedIcons"] ? Icons.dynamic_feed_outlined : Icons.dynamic_feed_rounded,
                         title: "most-common-transactions".tr(),
-                        description:
-                            "most-common-transactions-description".tr(),
+                        description: "most-common-transactions-description".tr(),
                         onSubmit: () {
                           Navigator.pop(context);
                         },
@@ -601,16 +563,14 @@ class AddMoreThingsPopup extends StatelessWidget {
                   ),
                   iconData: navBarIconsData["transactions"]!.iconData,
                   title: "transaction".tr(),
-                  openPage: AddTransactionPage(
-                      routesToPopAfterDelete: RoutesToPopAfterDelete.None),
+                  openPage: AddTransactionPage(routesToPopAfterDelete: RoutesToPopAfterDelete.None),
                   widgetAfter: SelectChips(
                     padding: EdgeInsets.symmetric(horizontal: 13),
                     items: commonTransactions,
                     getSelected: (_) {
                       return false;
                     },
-                    onLongPress:
-                        (TransactionWithCount transactionWithCount) async {
+                    onLongPress: (TransactionWithCount transactionWithCount) async {
                       double amount = await openBottomSheet(
                         context,
                         fullSnap: true,
@@ -624,8 +584,7 @@ class AddMoreThingsPopup extends StatelessWidget {
                           ),
                         ),
                       );
-                      amount = amount.abs() *
-                          (transactionWithCount.transaction.income ? 1 : -1);
+                      amount = amount.abs() * (transactionWithCount.transaction.income ? 1 : -1);
                       createTransactionFromCommon(
                         context: context,
                         transactionWithCount: transactionWithCount,
@@ -633,8 +592,7 @@ class AddMoreThingsPopup extends StatelessWidget {
                         customAmount: amount,
                       );
                     },
-                    onSelected:
-                        (TransactionWithCount transactionWithCount) async {
+                    onSelected: (TransactionWithCount transactionWithCount) async {
                       createTransactionFromCommon(
                         context: context,
                         transactionWithCount: transactionWithCount,
@@ -642,37 +600,29 @@ class AddMoreThingsPopup extends StatelessWidget {
                       );
                     },
                     getLabel: (TransactionWithCount transactionWithCount) {
-                      double amountInPrimary =
-                          transactionWithCount.transaction.amount *
-                              (amountRatioToPrimaryCurrencyGivenPk(
-                                  Provider.of<AllWallets>(context),
-                                  transactionWithCount.transaction.walletFk));
+                      double amountInPrimary = transactionWithCount.transaction.amount *
+                          (amountRatioToPrimaryCurrencyGivenPk(
+                              Provider.of<AllWallets>(context), transactionWithCount.transaction.walletFk));
                       return getTransactionLabelSync(
                             transactionWithCount.transaction,
-                            categoriesIndexed[
-                                transactionWithCount.transaction.categoryFk],
+                            categoriesIndexed[transactionWithCount.transaction.categoryFk],
                           ) +
                           " " +
                           "(" +
                           convertToMoney(
                             Provider.of<AllWallets>(context),
                             amountInPrimary,
-                            currencyKey: Provider.of<AllWallets>(context)
-                                .indexedByPk[
-                                    transactionWithCount.transaction.walletFk]
-                                ?.currency,
+                            currencyKey:
+                                Provider.of<AllWallets>(context).indexedByPk[transactionWithCount.transaction.walletFk]?.currency,
                           ) +
                           ")";
                     },
-                    getCustomBorderColor:
-                        (TransactionWithCount transactionWithCount) {
+                    getCustomBorderColor: (TransactionWithCount transactionWithCount) {
                       return dynamicPastel(
                         context,
                         lightenPastel(
                           HexColor(
-                            categoriesIndexed[
-                                    transactionWithCount.transaction.categoryFk]
-                                ?.colour,
+                            categoriesIndexed[transactionWithCount.transaction.categoryFk]?.colour,
                             defaultColor: Theme.of(context).colorScheme.primary,
                           ),
                           amount: 0.3,
@@ -684,8 +634,7 @@ class AddMoreThingsPopup extends StatelessWidget {
                       return LayoutBuilder(builder: (context, constraints) {
                         return CategoryIcon(
                           categoryPk: "-1",
-                          category: categoriesIndexed[
-                              transactionWithCount.transaction.categoryFk],
+                          category: categoriesIndexed[transactionWithCount.transaction.categoryFk],
                           emojiSize: constraints.maxWidth * 0.73,
                           emojiScale: 1.2,
                           size: constraints.maxWidth,
@@ -797,9 +746,7 @@ class AddMoreThingsPopup extends StatelessWidget {
             getAvatar: (String selection) {
               return LayoutBuilder(builder: (context2, constraints) {
                 return Icon(
-                  appStateSettings["outlinedIcons"]
-                      ? Icons.punch_clock_outlined
-                      : Icons.punch_clock_rounded,
+                  appStateSettings["outlinedIcons"] ? Icons.punch_clock_outlined : Icons.punch_clock_rounded,
                   color: Theme.of(context).colorScheme.primary,
                   size: constraints.maxWidth,
                 );
@@ -876,9 +823,7 @@ class AddThing extends StatelessWidget {
                 }
               },
               afterWidget: widgetAfter,
-              afterWidgetPadding: widgetAfter != null
-                  ? EdgeInsets.only(bottom: 8)
-                  : EdgeInsets.zero,
+              afterWidgetPadding: widgetAfter != null ? EdgeInsets.only(bottom: 8) : EdgeInsets.zero,
               infoButton: infoButton,
             ),
           ),
@@ -1018,10 +963,8 @@ class FadeIndexedStack extends StatefulWidget {
   FadeIndexedStackState createState() => FadeIndexedStackState();
 }
 
-class FadeIndexedStackState extends State<FadeIndexedStack>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _controller =
-      AnimationController(vsync: this, duration: widget.duration);
+class FadeIndexedStackState extends State<FadeIndexedStack> with SingleTickerProviderStateMixin {
+  late final AnimationController _controller = AnimationController(vsync: this, duration: widget.duration);
 
   @override
   void didUpdateWidget(FadeIndexedStack oldWidget) {

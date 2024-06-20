@@ -60,9 +60,7 @@ class HomePageUsername extends StatelessWidget {
           builder: (_, child) {
             return Transform.scale(
               alignment: Alignment.bottomLeft,
-              scale: animationControllerHeader.value < 0.5
-                  ? 0.5 * 0.4 + 0.6
-                  : (animationControllerHeader.value) * 0.4 + 0.6,
+              scale: animationControllerHeader.value < 0.5 ? 0.5 * 0.4 + 0.6 : (animationControllerHeader.value) * 0.4 + 0.6,
               child: Tappable(
                 color: Colors.transparent,
                 onTap: () {
@@ -84,9 +82,7 @@ class HomePageUsername extends StatelessWidget {
                 size: 28,
                 enabled: !showUsername,
                 child: TextFont(
-                  text: !showUsername
-                      ? "home".tr()
-                      : appStateSettings["username"] ?? "",
+                  text: !showUsername ? "خانه" : appStateSettings["username"] ?? "",
                   fontWeight: FontWeight.bold,
                   fontSize: 33,
                   textColor: Theme.of(context).colorScheme.onPrimaryContainer,
@@ -121,8 +117,7 @@ class HomePageWelcomeBannerSmall extends StatelessWidget {
 }
 
 class PartyHat extends StatelessWidget {
-  const PartyHat(
-      {required this.child, this.enabled = true, this.size = 25, super.key});
+  const PartyHat({required this.child, this.enabled = true, this.size = 25, super.key});
   final Widget child;
   final double size;
   final bool enabled;

@@ -29,11 +29,8 @@ Future deletePreviewData({bool resetOnboard = false}) async {
   }
 
   try {
-    List<Transaction> transactionsToDelete =
-        await database.getAllPreviewTransactions();
-    List<String> transactionPks = transactionsToDelete
-        .map((transaction) => transaction.transactionPk)
-        .toList();
+    List<Transaction> transactionsToDelete = await database.getAllPreviewTransactions();
+    List<String> transactionPks = transactionsToDelete.map((transaction) => transaction.transactionPk).toList();
     await database.deleteTransactions(transactionPks, updateSharedEntry: false);
   } catch (e) {
     print(e.toString());
@@ -82,7 +79,7 @@ Future generatePreviewData() async {
   await database.createOrUpdateWallet(
     TransactionWallet(
       walletPk: "0",
-      name: "Bank",
+      name: "بانک",
       colour: null,
       iconName: null,
       dateCreated: DateTime.now(),
@@ -289,8 +286,7 @@ Future generatePreviewData() async {
         note: "Extra fees",
         categoryFk: "6",
         walletFk: "0",
-        dateCreated:
-            tripStart.add(Duration(days: 2)).subtract(Duration(minutes: 41)),
+        dateCreated: tripStart.add(Duration(days: 2)).subtract(Duration(minutes: 41)),
         dateTimeModified: null,
         income: false,
         periodLength: 1,
@@ -313,8 +309,7 @@ Future generatePreviewData() async {
       note: "",
       categoryFk: "1",
       walletFk: "10",
-      dateCreated:
-          tripStart.add(Duration(days: 2)).subtract(Duration(minutes: 39)),
+      dateCreated: tripStart.add(Duration(days: 2)).subtract(Duration(minutes: 39)),
       dateTimeModified: null,
       income: false,
       periodLength: 1,
@@ -338,8 +333,7 @@ Future generatePreviewData() async {
       note: "",
       categoryFk: "1",
       walletFk: "10",
-      dateCreated:
-          tripStart.add(Duration(days: 4)).subtract(Duration(minutes: 34)),
+      dateCreated: tripStart.add(Duration(days: 4)).subtract(Duration(minutes: 34)),
       dateTimeModified: null,
       income: false,
       periodLength: 1,
@@ -363,8 +357,7 @@ Future generatePreviewData() async {
       note: "",
       categoryFk: "1",
       walletFk: "10",
-      dateCreated:
-          tripStart.add(Duration(days: 1)).subtract(Duration(minutes: 27)),
+      dateCreated: tripStart.add(Duration(days: 1)).subtract(Duration(minutes: 27)),
       dateTimeModified: null,
       income: false,
       periodLength: 1,
@@ -388,8 +381,7 @@ Future generatePreviewData() async {
       note: "",
       categoryFk: "2",
       walletFk: "10",
-      dateCreated:
-          tripStart.add(Duration(days: 4)).subtract(Duration(minutes: 23)),
+      dateCreated: tripStart.add(Duration(days: 4)).subtract(Duration(minutes: 23)),
       dateTimeModified: null,
       income: false,
       periodLength: 1,
@@ -413,8 +405,7 @@ Future generatePreviewData() async {
       note: "",
       categoryFk: "4",
       walletFk: "10",
-      dateCreated:
-          tripStart.add(Duration(days: 3)).subtract(Duration(minutes: 8)),
+      dateCreated: tripStart.add(Duration(days: 3)).subtract(Duration(minutes: 8)),
       dateTimeModified: null,
       income: false,
       periodLength: 1,
@@ -435,9 +426,7 @@ Future generatePreviewData() async {
         name: "Monthly Spending",
         amount: 500.0,
         colour: null,
-        startDate: DateTime(DateTime.now().year, DateTime.now().month,
-                monthlySpendingDayStart)
-            .subtract(Duration(minutes: 19)),
+        startDate: DateTime(DateTime.now().year, DateTime.now().month, monthlySpendingDayStart).subtract(Duration(minutes: 19)),
         endDate: DateTime.now(),
         categoryFks: null,
         addedTransactionsOnly: false,
@@ -470,8 +459,7 @@ Future generatePreviewData() async {
       note: "",
       categoryFk: "11",
       walletFk: "0",
-      dateCreated: DateTime(DateTime.now().year, DateTime.now().month - 2, 1)
-          .subtract(Duration(minutes: 17)),
+      dateCreated: DateTime(DateTime.now().year, DateTime.now().month - 2, 1).subtract(Duration(minutes: 17)),
       dateTimeModified: null,
       income: true,
       periodLength: 1,
@@ -494,8 +482,7 @@ Future generatePreviewData() async {
       note: "",
       categoryFk: "11",
       walletFk: "0",
-      dateCreated: DateTime(DateTime.now().year, DateTime.now().month - 1, 1)
-          .subtract(Duration(minutes: 13)),
+      dateCreated: DateTime(DateTime.now().year, DateTime.now().month - 1, 1).subtract(Duration(minutes: 13)),
       dateTimeModified: null,
       income: true,
       periodLength: 1,
@@ -518,8 +505,7 @@ Future generatePreviewData() async {
       note: "",
       categoryFk: "11",
       walletFk: "0",
-      dateCreated: DateTime(DateTime.now().year, DateTime.now().month, 1)
-          .subtract(Duration(minutes: 35)),
+      dateCreated: DateTime(DateTime.now().year, DateTime.now().month, 1).subtract(Duration(minutes: 35)),
       dateTimeModified: null,
       income: true,
       periodLength: 1,
@@ -542,9 +528,7 @@ Future generatePreviewData() async {
       note: "",
       categoryFk: "11",
       walletFk: "11",
-      dateCreated: DateTime(DateTime.now().year, DateTime.now().month,
-              DateTime.now().day - 20)
-          .subtract(Duration(minutes: 40)),
+      dateCreated: DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day - 20).subtract(Duration(minutes: 40)),
       dateTimeModified: null,
       income: true,
       periodLength: 1,
@@ -567,9 +551,7 @@ Future generatePreviewData() async {
       note: "Department store",
       categoryFk: "3",
       walletFk: "0",
-      dateCreated: DateTime.now()
-          .subtract(Duration(days: 5))
-          .subtract(Duration(minutes: 30)),
+      dateCreated: DateTime.now().subtract(Duration(days: 5)).subtract(Duration(minutes: 30)),
       dateTimeModified: null,
       income: false,
       periodLength: 1,
@@ -592,9 +574,7 @@ Future generatePreviewData() async {
       note: "",
       categoryFk: "1",
       walletFk: "0",
-      dateCreated: DateTime.now()
-          .subtract(Duration(days: 9))
-          .subtract(Duration(minutes: 5)),
+      dateCreated: DateTime.now().subtract(Duration(days: 9)).subtract(Duration(minutes: 5)),
       dateTimeModified: null,
       income: false,
       periodLength: 1,
@@ -617,9 +597,7 @@ Future generatePreviewData() async {
       note: "",
       categoryFk: "1",
       walletFk: "0",
-      dateCreated: DateTime.now()
-          .subtract(Duration(days: 11))
-          .subtract(Duration(minutes: 10)),
+      dateCreated: DateTime.now().subtract(Duration(days: 11)).subtract(Duration(minutes: 10)),
       dateTimeModified: null,
       income: false,
       periodLength: 1,
@@ -642,8 +620,7 @@ Future generatePreviewData() async {
       note: "",
       categoryFk: "5",
       walletFk: "0",
-      dateCreated:
-          DateTime.now().add(Duration(days: 2)).subtract(Duration(minutes: 20)),
+      dateCreated: DateTime.now().add(Duration(days: 2)).subtract(Duration(minutes: 20)),
       dateTimeModified: null,
       income: false,
       periodLength: 1,
@@ -714,16 +691,12 @@ Future generatePreviewData() async {
         note: "",
         categoryFk: (Random().nextInt(2) == 0
                 ? Random().nextInt(2) == 0
-                    ? moreCommonCategories[
-                        Random().nextInt(moreCommonCommonCategories.length)]
-                    : moreCommonCategories[
-                        Random().nextInt(moreCommonCategories.length)]
+                    ? moreCommonCategories[Random().nextInt(moreCommonCommonCategories.length)]
+                    : moreCommonCategories[Random().nextInt(moreCommonCategories.length)]
                 : Random().nextInt(11) + 1)
             .toString(),
         walletFk: "0",
-        dateCreated: DateTime.now()
-            .subtract(Duration(days: i))
-            .subtract(Duration(minutes: i * 13)),
+        dateCreated: DateTime.now().subtract(Duration(days: i)).subtract(Duration(minutes: i * 13)),
         income: false,
         paid: true,
         skipPaid: true,
@@ -745,16 +718,12 @@ Future generatePreviewData() async {
         note: "",
         categoryFk: (Random().nextInt(2) == 0
                 ? Random().nextInt(2) == 0
-                    ? moreCommonCategories[
-                        Random().nextInt(moreCommonCommonCategories.length)]
-                    : moreCommonCategories[
-                        Random().nextInt(moreCommonCategories.length)]
+                    ? moreCommonCategories[Random().nextInt(moreCommonCommonCategories.length)]
+                    : moreCommonCategories[Random().nextInt(moreCommonCategories.length)]
                 : Random().nextInt(11) + 1)
             .toString(),
         walletFk: "0",
-        dateCreated: DateTime.now()
-            .subtract(Duration(days: i))
-            .subtract(Duration(minutes: i * 2)),
+        dateCreated: DateTime.now().subtract(Duration(days: i)).subtract(Duration(minutes: i * 2)),
         income: false,
         paid: true,
         skipPaid: true,
@@ -776,9 +745,7 @@ Future generatePreviewData() async {
         note: "",
         categoryFk: (Random().nextInt(2) == 0 ? 6 : 10).toString(),
         walletFk: "0",
-        dateCreated: DateTime.now()
-            .subtract(Duration(days: i))
-            .subtract(Duration(minutes: i * 2)),
+        dateCreated: DateTime.now().subtract(Duration(days: i)).subtract(Duration(minutes: i * 2)),
         income: true,
         paid: true,
         skipPaid: true,
@@ -838,15 +805,13 @@ class PreviewDemoWarning extends StatelessWidget {
   Widget build(BuildContext context) {
     return appStateSettings["previewDemo"] == true
         ? Padding(
-            padding:
-                EdgeInsets.only(bottom: MediaQuery.viewPaddingOf(context).top),
+            padding: EdgeInsets.only(bottom: MediaQuery.viewPaddingOf(context).top),
             child: Tappable(
               onTap: () async {
                 deletePreviewData(resetOnboard: true);
               },
               child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 child: TextFont(
                   text: "preview-demo-warning".tr(),
                   textColor: Theme.of(context).colorScheme.onError,
@@ -907,9 +872,7 @@ Future<bool> checkLockedFeatureIfInDemoMode(BuildContext? context) async {
   if (appStateSettings["previewDemo"] == true) {
     await openPopup(
       context!,
-      icon: appStateSettings["outlinedIcons"]
-          ? Icons.warning_outlined
-          : Icons.warning_rounded,
+      icon: appStateSettings["outlinedIcons"] ? Icons.warning_outlined : Icons.warning_rounded,
       title: "not-available-in-preview-demo".tr(),
       description: "not-available-in-preview-demo-description".tr(),
       onCancel: () {

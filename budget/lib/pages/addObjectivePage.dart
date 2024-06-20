@@ -46,6 +46,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:budget/colors.dart';
 import 'package:provider/provider.dart';
+import 'package:shamsi_date/shamsi_date.dart';
 
 import '../widgets/listItem.dart';
 import '../widgets/outlinedButtonStacked.dart';
@@ -73,8 +74,7 @@ class AddObjectivePage extends StatefulWidget {
   _AddObjectivePageState createState() => _AddObjectivePageState();
 }
 
-class _AddObjectivePageState extends State<AddObjectivePage>
-    with SingleTickerProviderStateMixin {
+class _AddObjectivePageState extends State<AddObjectivePage> with SingleTickerProviderStateMixin {
   bool? canAddObjective;
 
   String? selectedTitle;
@@ -90,11 +90,9 @@ class _AddObjectivePageState extends State<AddObjectivePage>
   bool isDifferenceOnlyLoan = false;
 
   FocusNode _titleFocusNode = FocusNode();
-  late TabController _incomeTabController =
-      TabController(length: 2, vsync: this);
+  late TabController _incomeTabController = TabController(length: 2, vsync: this);
 
-  late ObjectiveType objectiveType =
-      widget.objective?.type ?? widget.objectiveType;
+  late ObjectiveType objectiveType = widget.objective?.type ?? widget.objectiveType;
 
   setSelectedWalletPk(String walletPkPassed) {
     setState(() {
@@ -156,8 +154,7 @@ class _AddObjectivePageState extends State<AddObjectivePage>
     return;
   }
 
-  Future<void> selectAmount(BuildContext context,
-      {bool allowZero = false}) async {
+  Future<void> selectAmount(BuildContext context, {bool allowZero = false}) async {
     openBottomSheet(
       context,
       fullSnap: true,
@@ -196,14 +193,12 @@ class _AddObjectivePageState extends State<AddObjectivePage>
   }
 
   Future<void> selectStartDate(BuildContext context) async {
-    final DateTime? picked =
-        await showCustomDatePicker(context, selectedStartDate);
-    setSelectedStartDate(picked);
+    final DateTime? picked = await showCustomDatePicker(context, selectedStartDate);
+    setSelectedStartDate(picked != null ? picked : null);
   }
 
   Future<void> selectEndDate(BuildContext context) async {
-    final DateTime? picked =
-        await showCustomDatePicker(context, selectedEndDate ?? DateTime.now());
+    final DateTime? picked = await showCustomDatePicker(context, selectedEndDate != null ? selectedEndDate! : DateTime.now());
     if (picked != null) setSelectedEndDate(picked);
   }
 
@@ -219,7 +214,7 @@ class _AddObjectivePageState extends State<AddObjectivePage>
   setSelectedEndDate(DateTime? date) {
     if (date != selectedEndDate) {
       setState(() {
-        selectedEndDate = date;
+        selectedEndDate = date != null ? date : null;
       });
     }
     determineBottomButton();
@@ -227,9 +222,7 @@ class _AddObjectivePageState extends State<AddObjectivePage>
 
   Future addObjective() async {
     MainAndSubcategory? mainAndSubcategory;
-    if (widget.objective == null &&
-        widget.objectiveType == ObjectiveType.loan &&
-        isDifferenceOnlyLoan == false) {
+    if (widget.objective == null && widget.objectiveType == ObjectiveType.loan && isDifferenceOnlyLoan == false) {
       mainAndSubcategory = await selectCategorySequence(
         context,
         selectedCategory: null,
@@ -245,15 +238,11 @@ class _AddObjectivePageState extends State<AddObjectivePage>
     }
 
     print("Added objective");
-    int rowId = await database.createOrUpdateObjective(
-        insert: widget.objective == null, await createObjective());
+    int rowId = await database.createOrUpdateObjective(insert: widget.objective == null, await createObjective());
 
     // Create the initial transaction if it is a loan
-    if (widget.objective == null &&
-        widget.objectiveType == ObjectiveType.loan &&
-        isDifferenceOnlyLoan == false) {
-      final Objective objectiveJustAdded =
-          await database.getObjectiveFromRowId(rowId);
+    if (widget.objective == null && widget.objectiveType == ObjectiveType.loan && isDifferenceOnlyLoan == false) {
+      final Objective objectiveJustAdded = await database.getObjectiveFromRowId(rowId);
       if (mainAndSubcategory?.main != null) {
         await database.createOrUpdateTransaction(
           insert: true,
@@ -279,28 +268,21 @@ class _AddObjectivePageState extends State<AddObjectivePage>
   }
 
   Future<Objective> createObjective() async {
-    int numberOfObjectives = (await database.getTotalCountOfObjectives(
-            objectiveType: objectiveType))[0] ??
-        0;
-    if (selectedEndDate != null &&
-        selectedStartDate.isAfter(selectedEndDate!)) {
+    int numberOfObjectives = (await database.getTotalCountOfObjectives(objectiveType: objectiveType))[0] ?? 0;
+    if (selectedEndDate != null && selectedStartDate.isAfter(selectedEndDate!)) {
       selectedEndDate = null;
     }
     return Objective(
-      objectivePk:
-          widget.objective != null ? widget.objective!.objectivePk : "-1",
+      objectivePk: widget.objective != null ? widget.objective!.objectivePk : "-1",
       name: selectedTitle ?? "",
       colour: toHexString(selectedColor),
       dateCreated: selectedStartDate,
       endDate: selectedEndDate,
       dateTimeModified: null,
-      order: widget.objective != null
-          ? widget.objective!.order
-          : numberOfObjectives,
+      order: widget.objective != null ? widget.objective!.order : numberOfObjectives,
       emojiIconName: selectedEmoji,
       iconName: selectedImage,
-      amount: isDifferenceOnlyLoan == true &&
-              appStateSettings["longTermLoansDifferenceFeature"] == true
+      amount: isDifferenceOnlyLoan == true && appStateSettings["longTermLoansDifferenceFeature"] == true
           // This defines what a difference only loan can be
           ? -1
           // Set to zero if adding a new long term loan, otherwise keep its amount because of the total offset
@@ -319,8 +301,7 @@ class _AddObjectivePageState extends State<AddObjectivePage>
 
   void showDiscardChangesPopupIfNotEditing() async {
     Objective objectiveCreated = await createObjective();
-    objectiveCreated =
-        objectiveCreated.copyWith(dateCreated: objectiveInitial?.dateCreated);
+    objectiveCreated = objectiveCreated.copyWith(dateCreated: objectiveInitial?.dateCreated);
     if (objectiveCreated != objectiveInitial && widget.objective == null) {
       discardChangesPopup(context, forceShow: true);
     } else {
@@ -337,9 +318,7 @@ class _AddObjectivePageState extends State<AddObjectivePage>
       //Outside of future.delayed because of textinput when in web mode initial value
       selectedTitle = widget.objective!.name;
 
-      selectedColor = widget.objective!.colour == null
-          ? null
-          : HexColor(widget.objective!.colour);
+      selectedColor = widget.objective!.colour == null ? null : HexColor(widget.objective!.colour);
       selectedImage = widget.objective!.iconName;
       selectedEmoji = widget.objective!.emojiIconName;
       selectedStartDate = widget.objective!.dateCreated;
@@ -358,8 +337,7 @@ class _AddObjectivePageState extends State<AddObjectivePage>
     } else {
       Future.delayed(Duration.zero, () async {
         if (widget.objective == null) {
-          bool result = await premiumPopupObjectives(context,
-              objectiveType: objectiveType);
+          bool result = await premiumPopupObjectives(context, objectiveType: objectiveType);
           if (result == true && objectiveType != ObjectiveType.loan) {
             openBottomSheet(
               context,
@@ -424,9 +402,7 @@ class _AddObjectivePageState extends State<AddObjectivePage>
           title: objectiveType == ObjectiveType.goal
               ? (widget.objective == null ? "add-goal".tr() : "edit-goal".tr())
               : objectiveType == ObjectiveType.loan
-                  ? (widget.objective == null
-                      ? "add-loan".tr()
-                      : "edit-loan".tr())
+                  ? (widget.objective == null ? "add-loan".tr() : "edit-loan".tr())
                   : "",
           onBackButton: () async {
             if (widget.objective != null) {
@@ -452,21 +428,14 @@ class _AddObjectivePageState extends State<AddObjectivePage>
           },
           actions: [
             CustomPopupMenuButton(
-              showButtons:
-                  widget.objective == null || enableDoubleColumn(context),
+              showButtons: widget.objective == null || enableDoubleColumn(context),
               keepOutFirst: true,
               items: [
-                if (widget.objective != null &&
-                    widget.routesToPopAfterDelete !=
-                        RoutesToPopAfterDelete.PreventDelete)
+                if (widget.objective != null && widget.routesToPopAfterDelete != RoutesToPopAfterDelete.PreventDelete)
                   DropdownItemMenu(
                     id: "delete-goal",
-                    label: widget.objective?.type == ObjectiveType.loan
-                        ? "delete-loan".tr()
-                        : "delete-goal".tr(),
-                    icon: appStateSettings["outlinedIcons"]
-                        ? Icons.delete_outlined
-                        : Icons.delete_rounded,
+                    label: widget.objective?.type == ObjectiveType.loan ? "delete-loan".tr() : "delete-goal".tr(),
+                    icon: appStateSettings["outlinedIcons"] ? Icons.delete_outlined : Icons.delete_rounded,
                     action: () {
                       deleteObjectivePopup(
                         context,
@@ -491,9 +460,7 @@ class _AddObjectivePageState extends State<AddObjectivePage>
                     },
                     disabled: false,
                   )
-                : selectedAmount == 0 &&
-                        widget.objective == null &&
-                        isDifferenceOnlyLoan == false
+                : selectedAmount == 0 && widget.objective == null && isDifferenceOnlyLoan == false
                     ? SaveBottomButton(
                         label: "set-amount".tr(),
                         onTap: () async {
@@ -533,10 +500,7 @@ class _AddObjectivePageState extends State<AddObjectivePage>
                               setSelectedIncome(isIncome);
                             }
                           },
-                          initialTabIsIncome:
-                              objectiveType == ObjectiveType.loan
-                                  ? !selectedIncome
-                                  : selectedIncome,
+                          initialTabIsIncome: objectiveType == ObjectiveType.loan ? !selectedIncome : selectedIncome,
                           syncWithInitial: true,
                           expenseLabel: objectiveType == ObjectiveType.goal
                               ? "expense-goal".tr()
@@ -552,22 +516,18 @@ class _AddObjectivePageState extends State<AddObjectivePage>
                           expenseCustomIcon: objectiveType == ObjectiveType.goal
                               ? null
                               : Icon(
-                                  getTransactionTypeIcon(
-                                      TransactionSpecialType.credit),
+                                  getTransactionTypeIcon(TransactionSpecialType.credit),
                                 ),
                           incomeCustomIcon: objectiveType == ObjectiveType.goal
                               ? null
                               : Icon(
-                                  getTransactionTypeIcon(
-                                      TransactionSpecialType.debt),
+                                  getTransactionTypeIcon(TransactionSpecialType.debt),
                                 ),
                         ),
                       ),
                     ),
-                    if (appStateSettings["longTermLoansDifferenceFeature"] ==
-                            true &&
-                        (widget.objectiveType == ObjectiveType.loan ||
-                            widget.objective?.type == ObjectiveType.loan))
+                    if (appStateSettings["longTermLoansDifferenceFeature"] == true &&
+                        (widget.objectiveType == ObjectiveType.loan || widget.objective?.type == ObjectiveType.loan))
                       Padding(
                         padding: const EdgeInsets.only(left: 7),
                         child: ButtonIcon(
@@ -580,17 +540,9 @@ class _AddObjectivePageState extends State<AddObjectivePage>
                             });
                             determineBottomButton();
                           },
-                          icon: appStateSettings["outlinedIcons"]
-                              ? Icons.hourglass_empty_outlined
-                              : Icons.hourglass_empty_rounded,
-                          color: isDifferenceOnlyLoan == false
-                              ? null
-                              : Theme.of(context).colorScheme.tertiaryContainer,
-                          iconColor: isDifferenceOnlyLoan == false
-                              ? null
-                              : Theme.of(context)
-                                  .colorScheme
-                                  .onTertiaryContainer,
+                          icon: appStateSettings["outlinedIcons"] ? Icons.hourglass_empty_outlined : Icons.hourglass_empty_rounded,
+                          color: isDifferenceOnlyLoan == false ? null : Theme.of(context).colorScheme.tertiaryContainer,
+                          iconColor: isDifferenceOnlyLoan == false ? null : Theme.of(context).colorScheme.onTertiaryContainer,
                         ),
                       ),
                   ],
@@ -610,8 +562,7 @@ class _AddObjectivePageState extends State<AddObjectivePage>
                           child: SelectCategoryImage(
                             setSelectedImage: setSelectedImage,
                             setSelectedEmoji: setSelectedEmoji,
-                            selectedImage:
-                                "assets/categories/" + selectedImage.toString(),
+                            selectedImage: "assets/categories/" + selectedImage.toString(),
                             setSelectedTitle: (String? titleRecommendation) {},
                           ),
                         ),
@@ -628,8 +579,7 @@ class _AddObjectivePageState extends State<AddObjectivePage>
                           AnimatedSwitcher(
                             duration: Duration(milliseconds: 300),
                             child: CategoryIcon(
-                              key: ValueKey((selectedImage ?? "") +
-                                  selectedColor.toString()),
+                              key: ValueKey((selectedImage ?? "") + selectedColor.toString()),
                               categoryPk: "-1",
                               category: TransactionCategory(
                                 categoryPk: "-1",
@@ -699,42 +649,34 @@ class _AddObjectivePageState extends State<AddObjectivePage>
                       padding: const EdgeInsets.symmetric(vertical: 8.0),
                       child: Column(
                         children: [
-                          widget.objective != null &&
-                                  objectiveType == ObjectiveType.loan
+                          widget.objective != null && objectiveType == ObjectiveType.loan
                               ? TipBox(
                                   borderRadius: 0,
                                   onTap: () {
                                     pushRoute(
                                       context,
                                       AddTransactionPage(
-                                        routesToPopAfterDelete:
-                                            RoutesToPopAfterDelete.None,
+                                        routesToPopAfterDelete: RoutesToPopAfterDelete.None,
                                         selectedObjective: widget.objective,
                                         selectedIncome: !selectedIncome,
                                       ),
                                     );
                                   },
-                                  text: selectedIncome
-                                      ? "change-loan-amount-tip-lent".tr()
-                                      : "change-loan-amount-tip-borrowed".tr(),
+                                  text: selectedIncome ? "change-loan-amount-tip-lent".tr() : "change-loan-amount-tip-borrowed".tr(),
                                   settingsString: null,
                                 )
                               : isDifferenceOnlyLoan
                                   ? SizedBox.shrink()
                                   : Wrap(
                                       alignment: WrapAlignment.center,
-                                      crossAxisAlignment:
-                                          WrapCrossAlignment.end,
+                                      crossAxisAlignment: WrapCrossAlignment.end,
                                       children: [
                                         Padding(
-                                          padding:
-                                              const EdgeInsets.only(bottom: 14),
+                                          padding: const EdgeInsets.only(bottom: 14),
                                           child: AnimatedSizeSwitcher(
                                             child: TextFont(
-                                              key: ValueKey(
-                                                  selectedIncome.toString()),
-                                              text: objectiveType ==
-                                                      ObjectiveType.loan
+                                              key: ValueKey(selectedIncome.toString()),
+                                              text: objectiveType == ObjectiveType.loan
                                                   ? selectedIncome
                                                       ? "lent".tr()
                                                       : "borrowed".tr()
@@ -748,40 +690,28 @@ class _AddObjectivePageState extends State<AddObjectivePage>
                                           title: convertToMoney(
                                             Provider.of<AllWallets>(context),
                                             selectedAmount,
-                                            currencyKey: Provider.of<
-                                                        AllWallets>(context,
-                                                    listen: true)
-                                                .indexedByPk[selectedWalletPk]
-                                                ?.currency,
+                                            currencyKey:
+                                                Provider.of<AllWallets>(context, listen: true).indexedByPk[selectedWalletPk]?.currency,
                                           ),
                                           placeholder: convertToMoney(
                                             Provider.of<AllWallets>(context),
                                             0,
-                                            currencyKey: Provider.of<
-                                                        AllWallets>(context,
-                                                    listen: true)
-                                                .indexedByPk[selectedWalletPk]
-                                                ?.currency,
+                                            currencyKey:
+                                                Provider.of<AllWallets>(context, listen: true).indexedByPk[selectedWalletPk]?.currency,
                                           ),
-                                          showPlaceHolderWhenTextEquals:
-                                              convertToMoney(
+                                          showPlaceHolderWhenTextEquals: convertToMoney(
                                             Provider.of<AllWallets>(context),
                                             0,
-                                            currencyKey: Provider.of<
-                                                        AllWallets>(context,
-                                                    listen: true)
-                                                .indexedByPk[selectedWalletPk]
-                                                ?.currency,
+                                            currencyKey:
+                                                Provider.of<AllWallets>(context, listen: true).indexedByPk[selectedWalletPk]?.currency,
                                           ),
                                           onTap: () {
                                             selectAmount(context);
                                           },
                                           fontSize: 32,
                                           fontWeight: FontWeight.bold,
-                                          internalPadding: EdgeInsets.symmetric(
-                                              vertical: 2, horizontal: 4),
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 10, horizontal: 5),
+                                          internalPadding: EdgeInsets.symmetric(vertical: 2, horizontal: 4),
+                                          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
                                         ),
                                       ],
                                     ),
@@ -791,46 +721,33 @@ class _AddObjectivePageState extends State<AddObjectivePage>
                                 child: SelectDateRange(
                                   padding: EdgeInsets.only(bottom: 8),
                                   initialStartDate: selectedStartDate,
-                                  initialEndDate: selectedEndDate,
+                                  initialEndDate: selectedEndDate != null ? selectedEndDate! : null,
                                   onSelectedStartDate: setSelectedStartDate,
                                   onSelectedEndDate: setSelectedEndDate,
                                 ),
                               ),
                             ),
-                          if (widget.objective != null &&
-                              objectiveType == ObjectiveType.loan &&
-                              isDifferenceOnlyLoan == false)
+                          if (widget.objective != null && objectiveType == ObjectiveType.loan && isDifferenceOnlyLoan == false)
                             HorizontalBreakAbove(
                               child: Padding(
                                 padding: const EdgeInsets.all(5.0),
                                 child: Column(
                                   children: [
                                     HeaderWithIconAndInfo(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 20 - 5.0),
-                                      iconData:
-                                          appStateSettings["outlinedIcons"]
-                                              ? Icons.exposure_outlined
-                                              : Icons.exposure_rounded,
+                                      padding: const EdgeInsets.symmetric(horizontal: 20 - 5.0),
+                                      iconData: appStateSettings["outlinedIcons"] ? Icons.exposure_outlined : Icons.exposure_rounded,
                                       iconScale: 1,
                                       text: "total-offset".tr(),
                                       infoButton: IconButtonScaled(
-                                        iconData:
-                                            appStateSettings["outlinedIcons"]
-                                                ? Icons.info_outlined
-                                                : Icons.info_outline_rounded,
+                                        iconData: appStateSettings["outlinedIcons"] ? Icons.info_outlined : Icons.info_outline_rounded,
                                         iconSize: 16,
                                         scale: 1.6,
                                         onTap: () {
                                           openPopup(
                                             context,
                                             title: "total-offset".tr(),
-                                            description:
-                                                "total-offset-description".tr(),
-                                            icon: appStateSettings[
-                                                    "outlinedIcons"]
-                                                ? Icons.exposure_outlined
-                                                : Icons.exposure_rounded,
+                                            description: "total-offset-description".tr(),
+                                            icon: appStateSettings["outlinedIcons"] ? Icons.exposure_outlined : Icons.exposure_rounded,
                                             onSubmit: () {
                                               Navigator.pop(context);
                                             },
@@ -843,103 +760,70 @@ class _AddObjectivePageState extends State<AddObjectivePage>
                                       title: convertToMoney(
                                         Provider.of<AllWallets>(context),
                                         selectedAmount,
-                                        currencyKey: Provider.of<AllWallets>(
-                                                context,
-                                                listen: true)
-                                            .indexedByPk[selectedWalletPk]
-                                            ?.currency,
+                                        currencyKey:
+                                            Provider.of<AllWallets>(context, listen: true).indexedByPk[selectedWalletPk]?.currency,
                                       ),
                                       placeholder: convertToMoney(
                                         Provider.of<AllWallets>(context),
                                         0,
-                                        currencyKey: Provider.of<AllWallets>(
-                                                context,
-                                                listen: true)
-                                            .indexedByPk[selectedWalletPk]
-                                            ?.currency,
+                                        currencyKey:
+                                            Provider.of<AllWallets>(context, listen: true).indexedByPk[selectedWalletPk]?.currency,
                                       ),
-                                      showPlaceHolderWhenTextEquals:
-                                          convertToMoney(
+                                      showPlaceHolderWhenTextEquals: convertToMoney(
                                         Provider.of<AllWallets>(context),
                                         0,
-                                        currencyKey: Provider.of<AllWallets>(
-                                                context,
-                                                listen: true)
-                                            .indexedByPk[selectedWalletPk]
-                                            ?.currency,
+                                        currencyKey:
+                                            Provider.of<AllWallets>(context, listen: true).indexedByPk[selectedWalletPk]?.currency,
                                       ),
                                       onTap: () {
                                         selectAmount(context, allowZero: true);
                                       },
                                       fontSize: 32,
                                       fontWeight: FontWeight.bold,
-                                      internalPadding: EdgeInsets.symmetric(
-                                          vertical: 2, horizontal: 4),
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: 10, horizontal: 5),
+                                      internalPadding: EdgeInsets.symmetric(vertical: 2, horizontal: 4),
+                                      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
                                     ),
                                     Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 8, right: 8, bottom: 8, top: 2),
+                                      padding: const EdgeInsets.only(left: 8, right: 8, bottom: 8, top: 2),
                                       child: StreamBuilder<Objective>(
-                                        stream: database.getObjective(
-                                            widget.objective?.objectivePk ??
-                                                "0"),
+                                        stream: database.getObjective(widget.objective?.objectivePk ?? "0"),
                                         builder: (context, snapshot) {
-                                          if (snapshot.data == null)
-                                            return SizedBox.shrink();
-                                          Objective objective =
-                                              snapshot.data!.copyWith(
+                                          if (snapshot.data == null) return SizedBox.shrink();
+                                          Objective objective = snapshot.data!.copyWith(
                                             income: selectedIncome,
                                             amount: 0,
                                             walletFk: selectedWalletPk,
                                           );
                                           return WatchTotalAndAmountOfObjective(
                                             objective: objective,
-                                            builder: (double objectiveAmount,
-                                                double totalAmount,
-                                                double percentageTowardsGoal) {
-                                              double selectedAmountConverted =
-                                                  selectedAmount *
-                                                      amountRatioToPrimaryCurrency(
-                                                        Provider.of<AllWallets>(
-                                                            context),
-                                                        Provider.of<AllWallets>(
-                                                                context)
-                                                            .indexedByPk[
-                                                                objective
-                                                                    .walletFk]
-                                                            ?.currency,
-                                                      );
+                                            builder: (double objectiveAmount, double totalAmount, double percentageTowardsGoal) {
+                                              double selectedAmountConverted = selectedAmount *
+                                                  amountRatioToPrimaryCurrency(
+                                                    Provider.of<AllWallets>(context),
+                                                    Provider.of<AllWallets>(context).indexedByPk[objective.walletFk]?.currency,
+                                                  );
                                               return TextFont(
-                                                text: (selectedIncome
-                                                        ? "lent".tr()
-                                                        : "borrowed".tr()) +
+                                                text: (selectedIncome ? "lent".tr() : "borrowed".tr()) +
                                                     " " +
                                                     "total".tr() +
                                                     ": " +
                                                     convertToMoney(
-                                                      Provider.of<AllWallets>(
-                                                          context),
+                                                      Provider.of<AllWallets>(context),
                                                       selectedAmountConverted,
                                                     ) +
                                                     " + " +
                                                     convertToMoney(
-                                                      Provider.of<AllWallets>(
-                                                          context),
+                                                      Provider.of<AllWallets>(context),
                                                       objectiveAmount,
                                                     ) +
                                                     " = " +
                                                     convertToMoney(
-                                                      Provider.of<AllWallets>(
-                                                          context),
-                                                      objectiveAmount +
-                                                          selectedAmountConverted,
+                                                      Provider.of<AllWallets>(context),
+                                                      objectiveAmount + selectedAmountConverted,
                                                     ),
                                                 fontSize: 14.5,
                                                 textAlign: TextAlign.center,
-                                                textColor: getColor(
-                                                    context, "textLight"),
+                                                textColor: getColor(context, "textLight"),
                                                 maxLines: 4,
                                               );
                                             },
@@ -987,9 +871,7 @@ class SelectObjectiveTypePopup extends StatelessWidget {
                   alignBeside: true,
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                   text: "savings-goal".tr(),
-                  iconData: appStateSettings["outlinedIcons"]
-                      ? Icons.savings_outlined
-                      : Icons.savings_rounded,
+                  iconData: appStateSettings["outlinedIcons"] ? Icons.savings_outlined : Icons.savings_rounded,
                   onTap: () {
                     setObjectiveIncome(true);
                     Navigator.pop(context);
@@ -1025,9 +907,7 @@ class SelectObjectiveTypePopup extends StatelessWidget {
                   alignBeside: true,
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                   text: "expense-goal".tr(),
-                  iconData: appStateSettings["outlinedIcons"]
-                      ? Icons.request_quote_outlined
-                      : Icons.request_quote_rounded,
+                  iconData: appStateSettings["outlinedIcons"] ? Icons.request_quote_outlined : Icons.request_quote_rounded,
                   onTap: () async {
                     setObjectiveIncome(false);
                     Navigator.pop(context);
@@ -1058,11 +938,9 @@ class SelectObjectiveTypePopup extends StatelessWidget {
   }
 }
 
-Future<bool> startCreatingInstallment(
-    {required BuildContext context, Objective? initialObjective}) async {
-  dynamic objective = initialObjective ??
-      await selectObjectivePopup(context,
-          canSelectNoGoal: false, includeAmount: true, showAddButton: true);
+Future<bool> startCreatingInstallment({required BuildContext context, Objective? initialObjective}) async {
+  dynamic objective =
+      initialObjective ?? await selectObjectivePopup(context, canSelectNoGoal: false, includeAmount: true, showAddButton: true);
   if (objective is Objective) {
     dynamic result = await openBottomSheet(
       context,
@@ -1079,8 +957,7 @@ class InstallmentObjectivePopup extends StatefulWidget {
   final Objective objective;
 
   @override
-  State<InstallmentObjectivePopup> createState() =>
-      _InstallmentObjectivePopupState();
+  State<InstallmentObjectivePopup> createState() => _InstallmentObjectivePopupState();
 }
 
 class _InstallmentObjectivePopupState extends State<InstallmentObjectivePopup> {
@@ -1155,8 +1032,7 @@ class _InstallmentObjectivePopupState extends State<InstallmentObjectivePopup> {
             setState(() {
               amountPerInstallmentPayment = null;
               selectedWalletPk = appStateSettings["selectedWalletPk"];
-              numberOfInstallmentPayments =
-                  amount.toInt() == 0 ? null : amount.toInt();
+              numberOfInstallmentPayments = amount.toInt() == 0 ? null : amount.toInt();
             });
           },
           next: () async {
@@ -1173,9 +1049,7 @@ class _InstallmentObjectivePopupState extends State<InstallmentObjectivePopup> {
     Widget editTransferDetails = Column(
       children: [
         TextInput(
-          icon: appStateSettings["outlinedIcons"]
-              ? Icons.title_outlined
-              : Icons.title_rounded,
+          icon: appStateSettings["outlinedIcons"] ? Icons.title_outlined : Icons.title_rounded,
           autoFocus: false,
           onChanged: (text) async {
             selectedTitle = text;
@@ -1188,14 +1062,12 @@ class _InstallmentObjectivePopupState extends State<InstallmentObjectivePopup> {
           internalPadding: EdgeInsets.only(right: 5),
           initialSelectedDate: selectedDateTime ?? DateTime.now(),
           initialSelectedTime: TimeOfDay(
-              hour: selectedDateTime?.hour ?? TimeOfDay.now().hour,
-              minute: selectedDateTime?.minute ?? TimeOfDay.now().minute),
+              hour: selectedDateTime?.hour ?? TimeOfDay.now().hour, minute: selectedDateTime?.minute ?? TimeOfDay.now().minute),
           setSelectedDate: (date) {
             selectedDateTime = date;
           },
           setSelectedTime: (time) {
-            selectedDateTime = (selectedDateTime ?? DateTime.now())
-                .copyWith(hour: time.hour, minute: time.minute);
+            selectedDateTime = (selectedDateTime ?? DateTime.now()).copyWith(hour: time.hour, minute: time.minute);
           },
         ),
       ],
@@ -1207,8 +1079,7 @@ class _InstallmentObjectivePopupState extends State<InstallmentObjectivePopup> {
           " (" +
           convertToMoney(
               Provider.of<AllWallets>(context),
-              objectiveAmountToPrimaryCurrency(
-                      Provider.of<AllWallets>(context), widget.objective) *
+              objectiveAmountToPrimaryCurrency(Provider.of<AllWallets>(context), widget.objective) *
                   ((widget.objective.income) ? 1 : -1)) +
           ")",
       underTitleSpace: false,
@@ -1231,21 +1102,13 @@ class _InstallmentObjectivePopupState extends State<InstallmentObjectivePopup> {
                     double numberOfInstallmentPaymentsDisplay = results[0];
                     double amountPerInstallmentPaymentDisplay = results[1];
 
-                    String displayNumberOfInstallmentPaymentsDisplay =
-                        numberOfInstallmentPaymentsDisplay == double.infinity
-                            ? "0"
-                            : removeTrailingZeroes(
-                                numberOfInstallmentPaymentsDisplay
-                                    .toStringAsFixed(3));
-                    String displayAmountPerInstallmentPaymentDisplay =
-                        convertToMoney(
+                    String displayNumberOfInstallmentPaymentsDisplay = numberOfInstallmentPaymentsDisplay == double.infinity
+                        ? "0"
+                        : removeTrailingZeroes(numberOfInstallmentPaymentsDisplay.toStringAsFixed(3));
+                    String displayAmountPerInstallmentPaymentDisplay = convertToMoney(
                       Provider.of<AllWallets>(context),
-                      amountPerInstallmentPaymentDisplay == double.infinity
-                          ? 0
-                          : amountPerInstallmentPaymentDisplay,
-                      currencyKey: Provider.of<AllWallets>(context)
-                          .indexedByPk[selectedWalletPk]
-                          ?.currency,
+                      amountPerInstallmentPaymentDisplay == double.infinity ? 0 : amountPerInstallmentPaymentDisplay,
+                      currencyKey: Provider.of<AllWallets>(context).indexedByPk[selectedWalletPk]?.currency,
                     );
                     return Column(
                       children: [
@@ -1255,52 +1118,37 @@ class _InstallmentObjectivePopupState extends State<InstallmentObjectivePopup> {
                           children: [
                             TappableTextEntry(
                               title: displayNumberOfInstallmentPaymentsDisplay,
-                              placeholder: numberOfInstallmentPayments == null
-                                  ? displayNumberOfInstallmentPaymentsDisplay
-                                  : "",
+                              placeholder: numberOfInstallmentPayments == null ? displayNumberOfInstallmentPaymentsDisplay : "",
                               showPlaceHolderWhenTextEquals:
-                                  numberOfInstallmentPayments == null
-                                      ? displayNumberOfInstallmentPaymentsDisplay
-                                      : "",
+                                  numberOfInstallmentPayments == null ? displayNumberOfInstallmentPaymentsDisplay : "",
                               onTap: () {
                                 selectInstallmentLength(context);
                               },
                               fontSize: 23,
                               fontWeight: FontWeight.bold,
-                              internalPadding: EdgeInsets.symmetric(
-                                  vertical: 4, horizontal: 4),
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 0, horizontal: 3),
+                              internalPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+                              padding: EdgeInsets.symmetric(vertical: 0, horizontal: 3),
                             ),
                             Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 3),
+                              padding: const EdgeInsets.symmetric(horizontal: 3),
                               child: TextFont(
-                                text: numberOfInstallmentPayments == 1
-                                    ? "payment-of".tr()
-                                    : "payments-of".tr(),
+                                text: numberOfInstallmentPayments == 1 ? "payment-of".tr() : "payments-of".tr(),
                                 fontSize: 23,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                             TappableTextEntry(
                               title: displayAmountPerInstallmentPaymentDisplay,
-                              placeholder: amountPerInstallmentPayment == null
-                                  ? displayAmountPerInstallmentPaymentDisplay
-                                  : "",
+                              placeholder: amountPerInstallmentPayment == null ? displayAmountPerInstallmentPaymentDisplay : "",
                               showPlaceHolderWhenTextEquals:
-                                  amountPerInstallmentPayment == null
-                                      ? displayAmountPerInstallmentPaymentDisplay
-                                      : "",
+                                  amountPerInstallmentPayment == null ? displayAmountPerInstallmentPaymentDisplay : "",
                               onTap: () {
                                 selectAmountPerInstallment(context);
                               },
                               fontSize: 23,
                               fontWeight: FontWeight.bold,
-                              internalPadding: EdgeInsets.symmetric(
-                                  vertical: 4, horizontal: 4),
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 0, horizontal: 3),
+                              internalPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+                              padding: EdgeInsets.symmetric(vertical: 0, horizontal: 3),
                             ),
                           ],
                         ),
@@ -1340,16 +1188,12 @@ class _InstallmentObjectivePopupState extends State<InstallmentObjectivePopup> {
                             selectPeriodLength(
                               context: context,
                               selectedPeriodLength: selectedPeriodLength,
-                              setSelectedPeriodLength: (period) =>
-                                  setSelectedPeriodLength(
+                              setSelectedPeriodLength: (period) => setSelectedPeriodLength(
                                 period: period,
                                 selectedRecurrence: selectedRecurrence,
-                                setPeriodLength: (selectedPeriodLength,
-                                    selectedRecurrenceDisplay) {
-                                  this.selectedPeriodLength =
-                                      selectedPeriodLength;
-                                  this.selectedRecurrenceDisplay =
-                                      selectedRecurrenceDisplay;
+                                setPeriodLength: (selectedPeriodLength, selectedRecurrenceDisplay) {
+                                  this.selectedPeriodLength = selectedPeriodLength;
+                                  this.selectedRecurrenceDisplay = selectedRecurrenceDisplay;
                                   setState(() {});
                                 },
                               ),
@@ -1357,41 +1201,29 @@ class _InstallmentObjectivePopupState extends State<InstallmentObjectivePopup> {
                           },
                           fontSize: 23,
                           fontWeight: FontWeight.bold,
-                          internalPadding:
-                              EdgeInsets.symmetric(vertical: 4, horizontal: 4),
-                          padding:
-                              EdgeInsets.symmetric(vertical: 0, horizontal: 3),
+                          internalPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+                          padding: EdgeInsets.symmetric(vertical: 0, horizontal: 3),
                         ),
                         TappableTextEntry(
-                          title: selectedRecurrenceDisplay
-                              .toString()
-                              .toLowerCase()
-                              .tr()
-                              .toLowerCase(),
+                          title: selectedRecurrenceDisplay.toString().toLowerCase().tr().toLowerCase(),
                           placeholder: "",
                           onTap: () {
                             selectRecurrence(
                               context: context,
                               selectedRecurrence: selectedRecurrence,
                               selectedPeriodLength: selectedPeriodLength,
-                              onChanged: (selectedRecurrence,
-                                  selectedRecurrenceEnum,
-                                  selectedRecurrenceDisplay) {
+                              onChanged: (selectedRecurrence, selectedRecurrenceEnum, selectedRecurrenceDisplay) {
                                 this.selectedRecurrence = selectedRecurrence;
-                                this.selectedRecurrenceEnum =
-                                    selectedRecurrenceEnum;
-                                this.selectedRecurrenceDisplay =
-                                    selectedRecurrenceDisplay;
+                                this.selectedRecurrenceEnum = selectedRecurrenceEnum;
+                                this.selectedRecurrenceDisplay = selectedRecurrenceDisplay;
                                 setState(() {});
                               },
                             );
                           },
                           fontSize: 23,
                           fontWeight: FontWeight.bold,
-                          internalPadding:
-                              EdgeInsets.symmetric(vertical: 4, horizontal: 4),
-                          padding:
-                              EdgeInsets.symmetric(vertical: 0, horizontal: 3),
+                          internalPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+                          padding: EdgeInsets.symmetric(vertical: 0, horizontal: 3),
                         ),
                       ],
                     )
@@ -1400,10 +1232,7 @@ class _InstallmentObjectivePopupState extends State<InstallmentObjectivePopup> {
               ),
               SizedBox(height: 10),
               HorizontalBreak(
-                color: Theme.of(context)
-                    .colorScheme
-                    .secondaryContainer
-                    .withOpacity(0.5),
+                color: Theme.of(context).colorScheme.secondaryContainer.withOpacity(0.5),
               ),
               SizedBox(height: 4),
               if (selectedCategory != null)
@@ -1430,8 +1259,7 @@ class _InstallmentObjectivePopupState extends State<InstallmentObjectivePopup> {
               if (selectedCategory != null)
                 SelectSubcategoryChips(
                   setSelectedSubCategory: (category) {
-                    if (selectedSubCategory?.categoryPk ==
-                        category.categoryPk) {
+                    if (selectedSubCategory?.categoryPk == category.categoryPk) {
                       selectedSubCategory = null;
                     } else {
                       selectedSubCategory = category;
@@ -1452,18 +1280,13 @@ class _InstallmentObjectivePopupState extends State<InstallmentObjectivePopup> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 18),
                 child: Button(
-                  disabled: selectedCategory == null ||
-                      (amountPerInstallmentPayment == null &&
-                          numberOfInstallmentPayments == null),
+                  disabled: selectedCategory == null || (amountPerInstallmentPayment == null && numberOfInstallmentPayments == null),
                   onDisabled: () {
                     openSnackbar(
                       SnackbarMessage(
                         title: "cannot-create-installment".tr(),
-                        description:
-                            "missing-installment-period-and-amount".tr(),
-                        icon: appStateSettings["outlinedIcons"]
-                            ? Icons.warning_amber_outlined
-                            : Icons.warning_amber_rounded,
+                        description: "missing-installment-period-and-amount".tr(),
+                        icon: appStateSettings["outlinedIcons"] ? Icons.warning_amber_outlined : Icons.warning_amber_rounded,
                       ),
                     );
                   },
@@ -1474,13 +1297,10 @@ class _InstallmentObjectivePopupState extends State<InstallmentObjectivePopup> {
                       transactionPk: "-1",
                       name: selectedTitle,
                       amount: getInstallmentPaymentCalculations(
-                        allWallets:
-                            Provider.of<AllWallets>(context, listen: false),
+                        allWallets: Provider.of<AllWallets>(context, listen: false),
                         objective: widget.objective,
-                        numberOfInstallmentPayments:
-                            numberOfInstallmentPayments,
-                        amountPerInstallmentPayment:
-                            amountPerInstallmentPayment,
+                        numberOfInstallmentPayments: numberOfInstallmentPayments,
+                        amountPerInstallmentPayment: amountPerInstallmentPayment,
                         amountPerInstallmentPaymentWalletPk: selectedWalletPk,
                       )[1],
                       note: "",
@@ -1497,8 +1317,7 @@ class _InstallmentObjectivePopupState extends State<InstallmentObjectivePopup> {
                       reoccurrence: selectedRecurrenceEnum,
                       objectiveFk: widget.objective.objectivePk,
                     );
-                    await database.createOrUpdateTransaction(transaction,
-                        insert: true);
+                    await database.createOrUpdateTransaction(transaction, insert: true);
                     Navigator.maybePop(context, true);
                   },
                 ),

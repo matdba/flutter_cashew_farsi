@@ -1,6 +1,5 @@
 import 'package:budget/colors.dart';
 import 'package:budget/database/tables.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 List<TransactionCategory> defaultCategories() {
@@ -8,7 +7,7 @@ List<TransactionCategory> defaultCategories() {
     // Note "0" categoryPk is reserved for wallet/account total correction category
     TransactionCategory(
       categoryPk: "1",
-      name: "default-category-dining".tr(),
+      name: "رستوران",
       colour: toHexString(Colors.blueGrey),
       iconName: "cutlery.png",
       dateCreated: DateTime.now(),
@@ -18,7 +17,7 @@ List<TransactionCategory> defaultCategories() {
     ),
     TransactionCategory(
       categoryPk: "2",
-      name: "default-category-groceries".tr(),
+      name: "سوپرمارکت",
       colour: toHexString(Colors.green),
       iconName: "groceries.png",
       dateCreated: DateTime.now(),
@@ -28,7 +27,7 @@ List<TransactionCategory> defaultCategories() {
     ),
     TransactionCategory(
       categoryPk: "3",
-      name: "default-category-shopping".tr(),
+      name: "خرید",
       colour: toHexString(Colors.pink),
       iconName: "shopping.png",
       dateCreated: DateTime.now(),
@@ -38,7 +37,7 @@ List<TransactionCategory> defaultCategories() {
     ),
     TransactionCategory(
       categoryPk: "4",
-      name: "default-category-transit".tr(),
+      name: "حمل و نقل",
       colour: toHexString(Colors.yellow),
       iconName: "tram.png",
       dateCreated: DateTime.now(),
@@ -48,7 +47,7 @@ List<TransactionCategory> defaultCategories() {
     ),
     TransactionCategory(
       categoryPk: "5",
-      name: "default-category-entertainment".tr(),
+      name: "سرگرمی",
       colour: toHexString(Colors.blue),
       iconName: "popcorn.png",
       dateCreated: DateTime.now(),
@@ -58,7 +57,7 @@ List<TransactionCategory> defaultCategories() {
     ),
     TransactionCategory(
       categoryPk: "6",
-      name: "default-category-bills-fees".tr(),
+      name: "قبض",
       colour: toHexString(Colors.green),
       iconName: "bills.png",
       dateCreated: DateTime.now(),
@@ -88,7 +87,7 @@ List<TransactionCategory> defaultCategories() {
     // ),
     TransactionCategory(
       categoryPk: "7",
-      name: "default-category-gifts".tr(),
+      name: "هدیه",
       colour: toHexString(Colors.red),
       iconName: "gift.png",
       dateCreated: DateTime.now(),
@@ -98,7 +97,7 @@ List<TransactionCategory> defaultCategories() {
     ),
     TransactionCategory(
       categoryPk: "8",
-      name: "default-category-beauty".tr(),
+      name: "زیبایی",
       colour: toHexString(Colors.purple),
       iconName: "flower.png",
       dateCreated: DateTime.now(),
@@ -108,7 +107,7 @@ List<TransactionCategory> defaultCategories() {
     ),
     TransactionCategory(
       categoryPk: "9",
-      name: "default-category-work".tr(),
+      name: "کار",
       colour: toHexString(Colors.brown),
       iconName: "briefcase.png",
       dateCreated: DateTime.now(),
@@ -118,7 +117,7 @@ List<TransactionCategory> defaultCategories() {
     ),
     TransactionCategory(
       categoryPk: "10",
-      name: "default-category-travel".tr(),
+      name: "مسافرت",
       colour: toHexString(Colors.orange),
       iconName: "plane.png",
       dateCreated: DateTime.now(),
@@ -128,7 +127,7 @@ List<TransactionCategory> defaultCategories() {
     ),
     TransactionCategory(
       categoryPk: "11",
-      name: "default-category-income".tr(),
+      name: "درآمد",
       colour: toHexString(Colors.deepPurple.shade300),
       iconName: "coin.png",
       dateCreated: DateTime.now(),

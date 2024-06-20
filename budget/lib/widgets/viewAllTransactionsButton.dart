@@ -3,7 +3,6 @@ import 'package:budget/struct/settings.dart';
 import 'package:budget/widgets/navigationFramework.dart';
 import 'package:budget/widgets/tappable.dart';
 import 'package:budget/widgets/textWidgets.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:budget/colors.dart';
 
@@ -21,11 +20,10 @@ class ViewAllTransactionsButton extends StatelessWidget {
           PageNavigationFramework.changePage(
             context,
             1,
-            switchNavbar:
-                appStateSettings["customNavBarShortcut1"] == "transactions",
+            switchNavbar: appStateSettings["customNavBarShortcut1"] == "transactions",
           );
       },
-      text: "view-all-transactions".tr(),
+      text: "مشاهده همه تراکنش ها",
     );
   }
 }
@@ -61,8 +59,7 @@ class LowKeyButton extends StatelessWidget {
               text: text,
               textAlign: TextAlign.center,
               fontSize: 14,
-              textColor:
-                  textColor ?? getColor(context, "black").withOpacity(0.5),
+              textColor: textColor ?? getColor(context, "black").withOpacity(0.5),
             ),
             extraWidget ?? SizedBox.shrink(),
           ],

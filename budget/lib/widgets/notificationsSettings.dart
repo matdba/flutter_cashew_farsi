@@ -23,6 +23,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:budget/widgets/timeDigits.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:shamsi_date/shamsi_date.dart';
 import 'package:timezone/timezone.dart' as tz;
 
 bool notificationsGlobalEnabled = kIsWeb == false;
@@ -37,29 +38,20 @@ class DailyNotificationsSettings extends StatefulWidget {
   const DailyNotificationsSettings({super.key});
 
   @override
-  State<DailyNotificationsSettings> createState() =>
-      _DailyNotificationsSettingsState();
+  State<DailyNotificationsSettings> createState() => _DailyNotificationsSettingsState();
 }
 
-class _DailyNotificationsSettingsState
-    extends State<DailyNotificationsSettings> {
+class _DailyNotificationsSettingsState extends State<DailyNotificationsSettings> {
   bool notificationsEnabled = appStateSettings["notifications"];
-  ReminderNotificationType selectedReminderType = ReminderNotificationType
-      .values[appStateSettings["notificationsReminderType"]];
-  TimeOfDay timeOfDay = TimeOfDay(
-      hour: appStateSettings["notificationHour"],
-      minute: appStateSettings["notificationMinute"]);
+  ReminderNotificationType selectedReminderType = ReminderNotificationType.values[appStateSettings["notificationsReminderType"]];
+  TimeOfDay timeOfDay = TimeOfDay(hour: appStateSettings["notificationHour"], minute: appStateSettings["notificationMinute"]);
 
   @override
   Widget build(BuildContext context) {
-    Map<ReminderNotificationType, String> reminderNotificationTypeTranslations =
-        {
-      ReminderNotificationType.IfAppNotOpened:
-          "daily-notification-type-if-not-opened".tr().capitalizeFirst,
-      ReminderNotificationType.DayFromOpen:
-          "daily-notification-type-one-day-from-open".tr().capitalizeFirst,
-      ReminderNotificationType.Everyday:
-          "daily-notification-type-everyday".tr().toLowerCase().capitalizeFirst,
+    Map<ReminderNotificationType, String> reminderNotificationTypeTranslations = {
+      ReminderNotificationType.IfAppNotOpened: "daily-notification-type-if-not-opened".tr().capitalizeFirst,
+      ReminderNotificationType.DayFromOpen: "daily-notification-type-one-day-from-open".tr().capitalizeFirst,
+      ReminderNotificationType.Everyday: "daily-notification-type-everyday".tr().toLowerCase().capitalizeFirst,
     };
 
     return Column(
@@ -67,8 +59,7 @@ class _DailyNotificationsSettingsState
         SettingsContainerSwitch(
           title: "notifications-reminder".tr(),
           onSwitched: (value) async {
-            await updateSettings("notifications", value,
-                updateGlobalState: false);
+            await updateSettings("notifications", value, updateGlobalState: false);
             if (value == true) {
               await initializeNotificationsPlatform();
               await setDailyNotifications(context);
@@ -96,8 +87,7 @@ class _DailyNotificationsSettingsState
                 SettingsContainer(
                   title: "notifications-reminder-type".tr(),
                   description: reminderNotificationTypeTranslations[
-                      ReminderNotificationType.values[
-                          appStateSettings["notificationsReminderType"]]],
+                      ReminderNotificationType.values[appStateSettings["notificationsReminderType"]]],
                   onTap: () {
                     openBottomSheet(
                       context,
@@ -105,17 +95,12 @@ class _DailyNotificationsSettingsState
                         title: "notifications-reminder-type".tr(),
                         child: RadioItems(
                           items: ReminderNotificationType.values,
-                          initial: ReminderNotificationType.values[
-                              appStateSettings["notificationsReminderType"]],
+                          initial: ReminderNotificationType.values[appStateSettings["notificationsReminderType"]],
                           displayFilter: (ReminderNotificationType value) {
-                            return reminderNotificationTypeTranslations[
-                                    value] ??
-                                "";
+                            return reminderNotificationTypeTranslations[value] ?? "";
                           },
                           onChanged: (ReminderNotificationType option) async {
-                            await updateSettings(
-                                "notificationsReminderType", option.index,
-                                updateGlobalState: false);
+                            await updateSettings("notificationsReminderType", option.index, updateGlobalState: false);
                             setState(() {
                               selectedReminderType = option;
                             });
@@ -125,20 +110,17 @@ class _DailyNotificationsSettingsState
                       ),
                     );
                   },
-                  icon: appStateSettings["outlinedIcons"]
-                      ? Icons.notification_important_outlined
-                      : Icons.notification_important_rounded,
+                  icon:
+                      appStateSettings["outlinedIcons"] ? Icons.notification_important_outlined : Icons.notification_important_rounded,
                 ),
                 AnimatedExpanded(
-                  expand: selectedReminderType !=
-                      ReminderNotificationType.DayFromOpen,
+                  expand: selectedReminderType != ReminderNotificationType.DayFromOpen,
                   child: SettingsContainer(
                     key: ValueKey(1),
                     title: "alert-time".tr(),
                     icon: Icons.timer,
                     onTap: () async {
-                      TimeOfDay? newTime =
-                          await showCustomTimePicker(context, timeOfDay);
+                      TimeOfDay? newTime = await showCustomTimePicker(context, timeOfDay);
                       if (newTime != null) {
                         setState(() {
                           timeOfDay = newTime;
@@ -179,14 +161,11 @@ class UpcomingTransactionsNotificationsSettings extends StatefulWidget {
   const UpcomingTransactionsNotificationsSettings({super.key});
 
   @override
-  State<UpcomingTransactionsNotificationsSettings> createState() =>
-      _UpcomingTransactionsNotificationsSettingsState();
+  State<UpcomingTransactionsNotificationsSettings> createState() => _UpcomingTransactionsNotificationsSettingsState();
 }
 
-class _UpcomingTransactionsNotificationsSettingsState
-    extends State<UpcomingTransactionsNotificationsSettings> {
-  bool notificationsEnabled =
-      appStateSettings["notificationsUpcomingTransactions"];
+class _UpcomingTransactionsNotificationsSettingsState extends State<UpcomingTransactionsNotificationsSettings> {
+  bool notificationsEnabled = appStateSettings["notificationsUpcomingTransactions"];
 
   @override
   Widget build(BuildContext context) {
@@ -195,8 +174,7 @@ class _UpcomingTransactionsNotificationsSettingsState
         SettingsContainerSwitch(
           title: "upcoming-transactions".tr(),
           onSwitched: (value) async {
-            updateSettings("notificationsUpcomingTransactions", value,
-                updateGlobalState: false);
+            updateSettings("notificationsUpcomingTransactions", value, updateGlobalState: false);
             if (value == true) {
               await initializeNotificationsPlatform();
               await scheduleUpcomingTransactionsNotification(context);
@@ -209,9 +187,7 @@ class _UpcomingTransactionsNotificationsSettingsState
             return true;
           },
           initialValue: appStateSettings["notificationsUpcomingTransactions"],
-          icon: appStateSettings["outlinedIcons"]
-              ? Icons.calendar_month_outlined
-              : Icons.calendar_month_rounded,
+          icon: appStateSettings["outlinedIcons"] ? Icons.calendar_month_outlined : Icons.calendar_month_rounded,
         ),
         IgnorePointer(
           ignoring: !notificationsEnabled,
@@ -222,17 +198,13 @@ class _UpcomingTransactionsNotificationsSettingsState
               padding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
               margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(
-                    getPlatform() == PlatformOS.isIOS ? 10 : 15),
+                borderRadius: BorderRadius.circular(getPlatform() == PlatformOS.isIOS ? 10 : 15),
                 color: appStateSettings["materialYou"]
-                    ? dynamicPastel(context,
-                        Theme.of(context).colorScheme.secondaryContainer,
-                        amountLight: 0, amountDark: 0.6)
+                    ? dynamicPastel(context, Theme.of(context).colorScheme.secondaryContainer, amountLight: 0, amountDark: 0.6)
                     : getColor(context, "lightDarkAccent"),
               ),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(
-                    getPlatform() == PlatformOS.isIOS ? 10 : 15),
+                borderRadius: BorderRadius.circular(getPlatform() == PlatformOS.isIOS ? 10 : 15),
                 child: StreamBuilder<List<Transaction>>(
                   stream: database.watchAllOverdueUpcomingTransactions(false),
                   builder: (context, snapshot) {
@@ -241,9 +213,7 @@ class _UpcomingTransactionsNotificationsSettingsState
                         children: [
                           for (Transaction transaction in snapshot.data!)
                             StreamBuilder<TransactionCategory>(
-                              stream: database
-                                  .getCategory(transaction.categoryFk)
-                                  .$1,
+                              stream: database.getCategory(transaction.categoryFk).$1,
                               builder: (context, snapshot) {
                                 if (snapshot.hasData) {
                                   return SettingsContainerSwitch(
@@ -252,8 +222,7 @@ class _UpcomingTransactionsNotificationsSettingsState
                                         context,
                                         AddTransactionPage(
                                           transaction: transaction,
-                                          routesToPopAfterDelete:
-                                              RoutesToPopAfterDelete.One,
+                                          routesToPopAfterDelete: RoutesToPopAfterDelete.One,
                                         ),
                                       );
                                     },
@@ -262,34 +231,24 @@ class _UpcomingTransactionsNotificationsSettingsState
                                         context,
                                         AddTransactionPage(
                                           transaction: transaction,
-                                          routesToPopAfterDelete:
-                                              RoutesToPopAfterDelete.One,
+                                          routesToPopAfterDelete: RoutesToPopAfterDelete.One,
                                         ),
                                       );
                                     },
-                                    icon: getTransactionTypeIcon(
-                                        transaction.type),
-                                    title: getTransactionLabelSync(
-                                        transaction, snapshot.data!),
-                                    description: getWordedDateShortMore(
-                                            transaction.dateCreated) +
+                                    icon: getTransactionTypeIcon(transaction.type),
+                                    title: getTransactionLabelSync(transaction, snapshot.data!),
+                                    description: getWordedDateShortMore(Jalali.fromDateTime(transaction.dateCreated)) +
                                         ", " +
-                                        getWordedTime(
-                                            null, transaction.dateCreated),
+                                        getWordedTime(null, transaction.dateCreated),
                                     onSwitched: (value) async {
                                       await database.createOrUpdateTransaction(
-                                          transaction.copyWith(
-                                              upcomingTransactionNotification:
-                                                  Value(value)));
+                                          transaction.copyWith(upcomingTransactionNotification: Value(value)));
                                       await initializeNotificationsPlatform();
-                                      await scheduleUpcomingTransactionsNotification(
-                                          context);
+                                      await scheduleUpcomingTransactionsNotification(context);
                                       return;
                                     },
                                     syncWithInitialValue: false,
-                                    initialValue: transaction
-                                            .upcomingTransactionNotification ??
-                                        true,
+                                    initialValue: transaction.upcomingTransactionNotification ?? true,
                                   );
                                 }
                                 return Container();
@@ -310,20 +269,15 @@ class _UpcomingTransactionsNotificationsSettingsState
   }
 }
 
-List<String> _reminderStrings = [
-  for (int i = 1; i <= 26; i++) "notification-reminder-" + i.toString()
-];
+List<String> _reminderStrings = [for (int i = 1; i <= 26; i++) "notification-reminder-" + i.toString()];
 
-Future<bool> scheduleDailyNotification(
-    BuildContext context, TimeOfDay timeOfDay,
-    {bool scheduleNowDebug = false}) async {
+Future<bool> scheduleDailyNotification(BuildContext context, TimeOfDay timeOfDay, {bool scheduleNowDebug = false}) async {
   // If the app was opened on the day the notification was scheduled it will be
   // cancelled and set to the next day because of _nextInstanceOfSetTime
   // If ReminderNotificationType.Everyday is not true
   await cancelDailyNotification();
 
-  AndroidNotificationDetails androidNotificationDetails =
-      AndroidNotificationDetails(
+  AndroidNotificationDetails androidNotificationDetails = AndroidNotificationDetails(
     'transactionReminders',
     'Transaction Reminders',
     importance: Importance.max,
@@ -331,22 +285,17 @@ Future<bool> scheduleDailyNotification(
     color: Theme.of(context).colorScheme.primary,
   );
 
-  DarwinNotificationDetails darwinNotificationDetails =
-      DarwinNotificationDetails(threadIdentifier: 'transactionReminders');
+  DarwinNotificationDetails darwinNotificationDetails = DarwinNotificationDetails(threadIdentifier: 'transactionReminders');
 
   // schedule 2 weeks worth of notifications
-  for (int i = (ReminderNotificationType
-                  .values[appStateSettings["notificationsReminderType"]] ==
-              ReminderNotificationType.Everyday
+  for (int i = (ReminderNotificationType.values[appStateSettings["notificationsReminderType"]] == ReminderNotificationType.Everyday
           ? 0
           : 1);
       i <= 14;
       i++) {
-    String chosenMessage =
-        _reminderStrings[Random().nextInt(_reminderStrings.length)].tr();
+    String chosenMessage = _reminderStrings[Random().nextInt(_reminderStrings.length)].tr();
     tz.TZDateTime dateTime = _nextInstanceOfSetTime(timeOfDay, dayOffset: i);
-    if (scheduleNowDebug)
-      dateTime = tz.TZDateTime.now(tz.local).add(Duration(seconds: i * 5));
+    if (scheduleNowDebug) dateTime = tz.TZDateTime.now(tz.local).add(Duration(seconds: i * 5));
     NotificationDetails notificationDetails = NotificationDetails(
       android: androidNotificationDetails,
       iOS: darwinNotificationDetails,
@@ -359,20 +308,14 @@ Future<bool> scheduleDailyNotification(
       notificationDetails,
       androidAllowWhileIdle: true,
       payload: 'addTransaction',
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
+      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
       matchDateTimeComponents: DateTimeComponents.dateAndTime,
 
       // If exact time was used, need USE_EXACT_ALARM and SCHEDULE_EXACT_ALARM permissions
       // which are only meant for calendar/reminder based applications
       androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
     );
-    print("Notification " +
-        chosenMessage +
-        " scheduled for " +
-        dateTime.toString() +
-        " with id " +
-        i.toString());
+    print("Notification " + chosenMessage + " scheduled for " + dateTime.toString() + " with id " + i.toString());
   }
 
   // final List<PendingNotificationRequest> pendingNotificationRequests =
@@ -393,8 +336,7 @@ Future<bool> cancelDailyNotification() async {
 Future<bool> scheduleUpcomingTransactionsNotification(context) async {
   await cancelUpcomingTransactionsNotification();
 
-  AndroidNotificationDetails androidNotificationDetails =
-      AndroidNotificationDetails(
+  AndroidNotificationDetails androidNotificationDetails = AndroidNotificationDetails(
     'upcomingTransactions',
     'Upcoming Transactions',
     importance: Importance.max,
@@ -402,15 +344,11 @@ Future<bool> scheduleUpcomingTransactionsNotification(context) async {
     color: Theme.of(context).colorScheme.primary,
   );
 
-  DarwinNotificationDetails darwinNotificationDetails =
-      DarwinNotificationDetails(threadIdentifier: 'upcomingTransactions');
+  DarwinNotificationDetails darwinNotificationDetails = DarwinNotificationDetails(threadIdentifier: 'upcomingTransactions');
 
-  List<Transaction> upcomingTransactions =
-      await database.getAllUpcomingTransactions(
-    startDate: DateTime(
-        DateTime.now().year, DateTime.now().month, DateTime.now().day - 1),
-    endDate: DateTime(
-        DateTime.now().year, DateTime.now().month, DateTime.now().day + 365),
+  List<Transaction> upcomingTransactions = await database.getAllUpcomingTransactions(
+    startDate: DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day - 1),
+    endDate: DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day + 365),
   );
   // print(upcomingTransactions);
   int idStart = 100;
@@ -423,8 +361,7 @@ Future<bool> scheduleUpcomingTransactionsNotification(context) async {
         upcomingTransaction.dateCreated.day == DateTime.now().day &&
         (upcomingTransaction.dateCreated.hour < DateTime.now().hour ||
             (upcomingTransaction.dateCreated.hour == DateTime.now().hour &&
-                upcomingTransaction.dateCreated.minute <=
-                    DateTime.now().minute))) {
+                upcomingTransaction.dateCreated.minute <= DateTime.now().minute))) {
       continue;
     }
     String chosenMessage = await getTransactionLabel(upcomingTransaction);
@@ -449,8 +386,7 @@ Future<bool> scheduleUpcomingTransactionsNotification(context) async {
         notificationDetails,
         androidAllowWhileIdle: true,
         payload: 'upcomingTransaction',
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime,
+        uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
 
         // If exact time was used, need USE_EXACT_ALARM and SCHEDULE_EXACT_ALARM permissions
         // which are only meant for calendar/reminder based applications
@@ -472,12 +408,9 @@ Future<bool> scheduleUpcomingTransactionsNotification(context) async {
 }
 
 Future<bool> cancelUpcomingTransactionsNotification() async {
-  List<Transaction> upcomingTransactions =
-      await database.getAllUpcomingTransactions(
-    startDate: DateTime(
-        DateTime.now().year, DateTime.now().month, DateTime.now().day - 1),
-    endDate: DateTime(
-        DateTime.now().year, DateTime.now().month, DateTime.now().day + 30),
+  List<Transaction> upcomingTransactions = await database.getAllUpcomingTransactions(
+    startDate: DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day - 1),
+    endDate: DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day + 30),
   );
   int idStart = 100;
   for (Transaction upcomingTransaction in upcomingTransactions) {
@@ -497,8 +430,7 @@ tz.TZDateTime _nextInstanceOfSetTime(TimeOfDay timeOfDay, {int dayOffset = 0}) {
   // }
 
   // add one to current day (if app wasn't opened, it will notify)
-  tz.TZDateTime scheduledDate = tz.TZDateTime(tz.local, now.year, now.month,
-      now.day + dayOffset, timeOfDay.hour, timeOfDay.minute);
+  tz.TZDateTime scheduledDate = tz.TZDateTime(tz.local, now.year, now.month, now.day + dayOffset, timeOfDay.hour, timeOfDay.minute);
 
   return scheduledDate;
 }
@@ -518,8 +450,7 @@ Future<bool> initializeNotificationsPlatform() async {
 
 Future<bool> checkNotificationsPermissionIOS() async {
   bool? result = await flutterLocalNotificationsPlugin
-      .resolvePlatformSpecificImplementation<
-          IOSFlutterLocalNotificationsPlugin>()
+      .resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>()
       ?.requestPermissions(
         alert: true,
         badge: true,
@@ -531,8 +462,7 @@ Future<bool> checkNotificationsPermissionIOS() async {
 
 Future<bool> checkNotificationsPermissionAndroid() async {
   bool? result = await flutterLocalNotificationsPlugin
-      .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>()
+      .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
       ?.requestPermission();
   if (result != true) return false;
   return true;

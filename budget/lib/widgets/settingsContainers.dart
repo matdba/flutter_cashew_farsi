@@ -5,13 +5,13 @@ import 'package:budget/widgets/animatedExpanded.dart';
 import 'package:budget/widgets/dropdownSelect.dart';
 import 'package:budget/widgets/editRowEntry.dart';
 import 'package:budget/widgets/fadeIn.dart';
-import 'package:budget/widgets/navigationSidebar.dart';
 import 'package:budget/widgets/openBottomSheet.dart';
 import 'package:budget/widgets/openContainerNavigation.dart';
 import 'package:budget/widgets/tappable.dart';
 import 'package:budget/widgets/textWidgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:persian_number_utility/persian_number_utility.dart';
 
 class SettingsContainerSwitch extends StatefulWidget {
   const SettingsContainerSwitch({
@@ -54,8 +54,7 @@ class SettingsContainerSwitch extends StatefulWidget {
   final double? horizontalPadding;
 
   @override
-  State<SettingsContainerSwitch> createState() =>
-      _SettingsContainerSwitchState();
+  State<SettingsContainerSwitch> createState() => _SettingsContainerSwitchState();
 }
 
 class _SettingsContainerSwitchState extends State<SettingsContainerSwitch> {
@@ -74,6 +73,7 @@ class _SettingsContainerSwitchState extends State<SettingsContainerSwitch> {
   }
 
   @override
+  // ignore: must_call_super
   void didUpdateWidget(Widget oldWidget) {
     if (widget.initialValue != value && widget.syncWithInitialValue) {
       setState(() {
@@ -197,9 +197,7 @@ class SettingsContainerOpenPage extends StatelessWidget {
   Widget build(BuildContext context) {
     ColorScheme colorScheme = Theme.of(context).colorScheme;
     return Padding(
-      padding: isOutlined == false || isOutlined == null
-          ? EdgeInsets.zero
-          : EdgeInsets.only(top: 5, bottom: 5, left: 4, right: 4),
+      padding: isOutlined == false || isOutlined == null ? EdgeInsets.zero : EdgeInsets.only(top: 5, bottom: 5, left: 4, right: 4),
       child: OpenContainerNavigation(
         onClosed: onClosed,
         onOpen: onOpen,
@@ -243,9 +241,7 @@ class SettingsContainerOpenPage extends StatelessWidget {
                     children: [
                       if (afterWidget != null) afterWidget!,
                       Icon(
-                        appStateSettings["outlinedIcons"]
-                            ? Icons.chevron_right_outlined
-                            : Icons.chevron_right_rounded,
+                        appStateSettings["outlinedIcons"] ? Icons.chevron_right_outlined : Icons.chevron_right_rounded,
                         size: isOutlined == true ? 20 : 30,
                         color: colorScheme.secondary,
                       ),
@@ -292,8 +288,7 @@ class SettingsContainerDropdown extends StatefulWidget {
   final Color? backgroundColor;
 
   @override
-  State<SettingsContainerDropdown> createState() =>
-      _SettingsContainerDropdownState();
+  State<SettingsContainerDropdown> createState() => _SettingsContainerDropdownState();
 }
 
 class _SettingsContainerDropdownState extends State<SettingsContainerDropdown> {
@@ -312,13 +307,11 @@ class _SettingsContainerDropdownState extends State<SettingsContainerDropdown> {
         _dropdownKey!.currentState!.openDropdown();
       },
       afterWidget: Padding(
-        padding: const EdgeInsets.only(left: 10),
+        padding: const EdgeInsets.only(right: 10),
         child: DropdownSelect(
           key: _dropdownKey,
           compact: true,
-          initial: widget.items.contains(widget.initial) == false
-              ? widget.items[0]
-              : widget.initial,
+          initial: widget.items.contains(widget.initial) == false ? widget.items[0] : widget.initial,
           items: widget.items,
           onChanged: widget.onChanged,
           backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
@@ -434,10 +427,7 @@ class SettingsContainerOutlined extends StatelessWidget {
                   maxLines: 5,
                   textColor: appStateSettings["increaseTextContrast"]
                       ? getColor(context, "textLight")
-                      : Theme.of(context)
-                          .colorScheme
-                          .secondary
-                          .withOpacity(0.5),
+                      : Theme.of(context).colorScheme.secondary.withOpacity(0.5),
                 ),
               ],
             );
@@ -460,16 +450,12 @@ class SettingsContainerOutlined extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisSize:
-              isExpanded == false ? MainAxisSize.min : MainAxisSize.max,
+          mainAxisSize: isExpanded == false ? MainAxisSize.min : MainAxisSize.max,
           children: [
             icon == null
                 ? SizedBox.shrink()
                 : Padding(
-                    padding: EdgeInsets.only(
-                        right: 8 +
-                            defaultIconSize -
-                            (iconSize ?? defaultIconSize)),
+                    padding: EdgeInsets.only(right: 8 + defaultIconSize - (iconSize ?? defaultIconSize)),
                     child: Transform.scale(
                       scale: iconScale ?? 1,
                       child: Icon(
@@ -548,12 +534,11 @@ class SettingsContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(
-          (enableBorderRadius || getIsFullScreen(context)) && isOutlined != true
-              ? getPlatform() == PlatformOS.isIOS
-                  ? 10
-                  : 15
-              : 0),
+      borderRadius: BorderRadius.circular((enableBorderRadius || getIsFullScreen(context)) && isOutlined != true
+          ? getPlatform() == PlatformOS.isIOS
+              ? 10
+              : 15
+          : 0),
       child: isOutlined == true
           ? SettingsContainerOutlined(
               title: title,
@@ -593,7 +578,7 @@ class SettingsContainer extends StatelessWidget {
                           icon == null
                               ? SizedBox.shrink()
                               : Padding(
-                                  padding: const EdgeInsets.only(right: 16),
+                                  padding: const EdgeInsets.only(left: 16),
                                   child: ScaledAnimatedSwitcher(
                                     keyToWatch: icon.toString(),
                                     child: Transform.scale(
@@ -601,16 +586,13 @@ class SettingsContainer extends StatelessWidget {
                                       child: Icon(
                                         icon,
                                         size: iconSize ?? 30,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .secondary,
+                                        color: Theme.of(context).colorScheme.secondary,
                                       ),
                                     ),
                                   ),
                                 ),
                           Expanded(
-                            child: description == null &&
-                                    descriptionWidget == null
+                            child: description == null && descriptionWidget == null
                                 ? TextFont(
                                     fixParagraphMargin: true,
                                     text: title,
@@ -620,8 +602,7 @@ class SettingsContainer extends StatelessWidget {
                                   )
                                 : Column(
                                     mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       TextFont(
                                         fixParagraphMargin: true,
@@ -630,16 +611,13 @@ class SettingsContainer extends StatelessWidget {
                                         fontWeight: FontWeight.bold,
                                         maxLines: 5,
                                       ),
-                                      if (descriptionWidget != null)
-                                        descriptionWidget!,
+                                      if (descriptionWidget != null) descriptionWidget!,
                                       if (description != null)
                                         Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 3),
+                                          padding: const EdgeInsets.only(top: 3),
                                           child: AnimatedSizeSwitcher(
                                             child: TextFont(
-                                              key: ValueKey(
-                                                  description.toString()),
+                                              key: ValueKey(description.toString()),
                                               text: description ?? "",
                                               fontSize: 14,
                                               maxLines: 5,
@@ -653,9 +631,7 @@ class SettingsContainer extends StatelessWidget {
                         ],
                       ),
                     ),
-                    hasMoreOptionsIcon == true
-                        ? HasMoreOptionsIcon()
-                        : SizedBox.shrink(),
+                    hasMoreOptionsIcon == true ? HasMoreOptionsIcon() : SizedBox.shrink(),
                     afterWidget ?? SizedBox()
                   ],
                 ),

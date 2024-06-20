@@ -43,8 +43,7 @@ class OutlinedButtonStacked extends StatelessWidget {
   final bool showToggleSwitch;
   @override
   Widget build(BuildContext context) {
-    double borderRadiusValue =
-        borderRadius ?? (getPlatform() == PlatformOS.isIOS ? 10 : 15);
+    double borderRadiusValue = borderRadius ?? (getPlatform() == PlatformOS.isIOS ? 10 : 15);
     return Row(
       children: [
         Expanded(
@@ -59,31 +58,23 @@ class OutlinedButtonStacked extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Padding(
-                    padding: padding ??
-                        EdgeInsets.symmetric(horizontal: 8, vertical: 30),
+                    padding: padding ?? EdgeInsets.symmetric(horizontal: 8, vertical: 30),
                     child: Column(
-                      crossAxisAlignment: alignLeft
-                          ? CrossAxisAlignment.start
-                          : CrossAxisAlignment.center,
+                      crossAxisAlignment: alignLeft ? CrossAxisAlignment.start : CrossAxisAlignment.center,
                       children: [
                         alignBeside != true
                             ? Column(
-                                crossAxisAlignment: alignLeft
-                                    ? CrossAxisAlignment.start
-                                    : CrossAxisAlignment.center,
+                                crossAxisAlignment: alignLeft ? CrossAxisAlignment.start : CrossAxisAlignment.center,
                                 children: [
                                   if (iconData != null)
                                     Padding(
-                                      padding:
-                                          const EdgeInsets.only(bottom: 10),
+                                      padding: const EdgeInsets.only(bottom: 10),
                                       child: Transform.scale(
                                         scale: iconScale,
                                         child: Icon(
                                           iconData,
                                           size: 35,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .secondary,
+                                          color: Theme.of(context).colorScheme.secondary,
                                         ),
                                       ),
                                     ),
@@ -103,19 +94,15 @@ class OutlinedButtonStacked extends StatelessWidget {
                                 text: text,
                                 infoButton: infoButton,
                                 fontSize: fontSize,
-                                extraWidget:
-                                    onTap != null && showToggleSwitch == true
-                                        ? PlatformSwitch(
-                                            value: filled,
-                                            onTap: onTap!,
-                                          )
-                                        : null,
+                                extraWidget: onTap != null && showToggleSwitch == true
+                                    ? PlatformSwitch(
+                                        value: filled,
+                                        onTap: onTap!,
+                                      )
+                                    : null,
                               ),
-                        afterWidget == null
-                            ? SizedBox.shrink()
-                            : SizedBox(height: 8),
-                        if (afterWidgetPadding == null)
-                          afterWidget ?? SizedBox.shrink()
+                        afterWidget == null ? SizedBox.shrink() : SizedBox(height: 8),
+                        if (afterWidgetPadding == null) afterWidget ?? SizedBox.shrink()
                       ],
                     ),
                   ),
@@ -152,8 +139,7 @@ class OutlinedContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (enabled == false) return child;
-    double borderRadiusValue =
-        borderRadius ?? (getPlatform() == PlatformOS.isIOS ? 10 : 15);
+    double borderRadiusValue = borderRadius ?? (getPlatform() == PlatformOS.isIOS ? 10 : 15);
     return AnimatedContainer(
       duration: Duration(milliseconds: 250),
       decoration: BoxDecoration(
@@ -164,9 +150,7 @@ class OutlinedContainer extends StatelessWidget {
                   : getColor(context, "lightDarkAccentHeavy")),
           width: 2,
         ),
-        color: filled == true
-            ? Theme.of(context).colorScheme.secondary.withOpacity(0.2)
-            : Colors.transparent,
+        color: filled == true ? Theme.of(context).colorScheme.secondary.withOpacity(0.2) : Colors.transparent,
         borderRadius: BorderRadius.circular(borderRadiusValue),
       ),
       child: clip
@@ -206,7 +190,7 @@ class HeaderWithIconAndInfo extends StatelessWidget {
         children: [
           if (iconData != null)
             Padding(
-              padding: const EdgeInsets.only(right: 10),
+              padding: const EdgeInsets.only(left: 10),
               child: Transform.scale(
                 scale: iconScale,
                 child: Icon(

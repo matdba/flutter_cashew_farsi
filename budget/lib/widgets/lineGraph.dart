@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:budget/database/tables.dart';
 import 'package:budget/functions.dart';
 import 'package:budget/struct/currencyFunctions.dart';
@@ -11,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:budget/colors.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:shamsi_date/shamsi_date.dart';
 
 class _LineChart extends StatefulWidget {
   _LineChart({
@@ -62,8 +65,7 @@ class _LineChartState extends State<_LineChart> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(
-          right: 15 + extraHorizontalPadding, top: 8, bottom: 0),
+      padding: EdgeInsets.only(right: 15 + extraHorizontalPadding, top: 8, bottom: 0),
       child: GestureDetector(
         child: LineChart(
           data,
@@ -81,9 +83,7 @@ class _LineChartState extends State<_LineChart> with WidgetsBindingObserver {
         borderData: borderData,
         lineBarsData: lineBarsData,
         minX: 0,
-        maxX: loaded
-            ? widget.maxPair.x
-            : widget.maxPair.x - widget.maxPair.x * 0.7,
+        maxX: loaded ? widget.maxPair.x : widget.maxPair.x - widget.maxPair.x * 0.7,
         minY: loaded
             ?
             // (widget.maxPair.y > 0 && widget.minPair.y > 0) ||
@@ -107,29 +107,25 @@ class _LineChartState extends State<_LineChart> with WidgetsBindingObserver {
 
   ExtraLinesData get extraLinesData => ExtraLinesData(
         horizontalLines: [
-          ...(((widget.minPair.y > 0 && widget.maxPair.y > 0) ||
-                  (widget.minPair.y < 0 && widget.maxPair.y < 0))
+          ...(((widget.minPair.y > 0 && widget.maxPair.y > 0) || (widget.minPair.y < 0 && widget.maxPair.y < 0))
               ? []
               : [
                   HorizontalLine(
                     strokeWidth: 2,
                     y: 0,
-                    color: dynamicPastel(context, widget.color, amount: 0.3)
-                        .withOpacity(0.4),
+                    color: dynamicPastel(context, widget.color, amount: 0.3).withOpacity(0.4),
                   ),
                 ]),
           HorizontalLine(
             y: 0,
-            color: dynamicPastel(context, widget.color, amount: 0.3)
-                .withOpacity(0.4),
+            color: dynamicPastel(context, widget.color, amount: 0.3).withOpacity(0.4),
           ),
           ...(widget.horizontalLineAt == null
               ? []
               : [
                   HorizontalLine(
                     y: widget.horizontalLineAt!,
-                    color: dynamicPastel(context, widget.color, amount: 0.3)
-                        .withOpacity(0.7),
+                    color: dynamicPastel(context, widget.color, amount: 0.3).withOpacity(0.7),
                     dashArray: [2, 2],
                   ),
                 ])
@@ -139,8 +135,7 @@ class _LineChartState extends State<_LineChart> with WidgetsBindingObserver {
             x: 0.0001,
             dashArray: [2, 5],
             strokeWidth: 2,
-            color: dynamicPastel(context, widget.color, amount: 0.3)
-                .withOpacity(0.2),
+            color: dynamicPastel(context, widget.color, amount: 0.3).withOpacity(0.2),
           ),
           ...(widget.verticalLineAt != null
               ? [
@@ -148,8 +143,7 @@ class _LineChartState extends State<_LineChart> with WidgetsBindingObserver {
                     x: widget.maxPair.x - widget.verticalLineAt!,
                     dashArray: [2, 2],
                     strokeWidth: 2,
-                    color: dynamicPastel(context, widget.color, amount: 0.3)
-                        .withOpacity(0.7),
+                    color: dynamicPastel(context, widget.color, amount: 0.3).withOpacity(0.7),
                   )
                 ]
               : [])
@@ -166,19 +160,18 @@ class _LineChartState extends State<_LineChart> with WidgetsBindingObserver {
               if (value == widget.maxPair.x + 1) {
                 return SizedBox.shrink();
               }
-              DateTime currentDate =
-                  widget.endDate == null ? DateTime.now() : widget.endDate!;
+              Jalali currentDate = widget.endDate == null ? Jalali.now() : Jalali.fromDateTime(widget.endDate!);
               // double valueBefore = value - titleMeta.appliedInterval;
               // print(valueBefore);
               // print(value);
               // print(titleMeta.max);
-
+              // log('daiys: ${-widget.maxPair.x.toInt() + value.round()}');
               String text = getWordedDateShort(
-                DateTime(
+                Jalali(
                   currentDate.year,
                   currentDate.month,
-                  currentDate.day - widget.maxPair.x.toInt() + value.round(),
-                ),
+                  currentDate.day,
+                ).addDays(-widget.maxPair.x.toInt() + value.round()),
                 showTodayTomorrow: false,
               );
 
@@ -201,17 +194,14 @@ class _LineChartState extends State<_LineChart> with WidgetsBindingObserver {
                     textAlign: TextAlign.center,
                     fontSize: 13,
                     text: text,
-                    textColor: dynamicPastel(context, widget.color,
-                            amount: 0.8, inverse: true)
-                        .withOpacity(0.5),
+                    textColor: dynamicPastel(context, widget.color, amount: 0.8, inverse: true).withOpacity(0.5),
                   ),
                 ),
               );
             },
             reservedSize: 28,
-            interval: widget.maxPair.x / (getIsFullScreen(context) ? 6 : 4) == 0
-                ? 5
-                : widget.maxPair.x / (getIsFullScreen(context) ? 6 : 4),
+            interval:
+                widget.maxPair.x / (getIsFullScreen(context) ? 6 : 4) == 0 ? 5 : widget.maxPair.x / (getIsFullScreen(context) ? 6 : 4),
           ),
         ),
         leftTitles: AxisTitles(
@@ -226,13 +216,9 @@ class _LineChartState extends State<_LineChart> with WidgetsBindingObserver {
                 return SizedBox.shrink();
               } else if (value == 0) {
                 show = true;
-              } else if (value < widget.maxPair.y &&
-                  value > 1 &&
-                  value < titleMeta.max) {
+              } else if (value < widget.maxPair.y && value > 1 && value < titleMeta.max) {
                 show = true;
-              } else if (value > widget.minPair.y &&
-                  value < 1 &&
-                  value > titleMeta.min) {
+              } else if (value > widget.minPair.y && value < 1 && value > titleMeta.min) {
                 show = true;
               } else {
                 return SizedBox.shrink();
@@ -244,24 +230,17 @@ class _LineChartState extends State<_LineChart> with WidgetsBindingObserver {
                   data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
                   child: TextFont(
                     textAlign: TextAlign.right,
-                    text: getWordedNumber(context,
-                        Provider.of<AllWallets>(context, listen: false), value),
-                    textColor: dynamicPastel(context, widget.color,
-                            amount: 0.5, inverse: true)
-                        .withOpacity(0.3),
+                    text: getWordedNumber(context, Provider.of<AllWallets>(context, listen: false), value),
+                    textColor: dynamicPastel(context, widget.color, amount: 0.5, inverse: true).withOpacity(0.3),
                     fontSize: 13,
                   ),
                 ),
               );
             },
             // If the interval is equal to a really small number (almost 0, it freezes the app!)
-            interval: double.parse((widget.maxPair.y - widget.minPair.y)
-                        .toStringAsFixed(5)) ==
-                    0.0
+            interval: double.parse((widget.maxPair.y - widget.minPair.y).toStringAsFixed(5)) == 0.0
                 ? 0.001
-                : ((widget.maxPair.y - widget.minPair.y) /
-                        (getIsFullScreen(context) ? 7 : 4))
-                    .abs(),
+                : ((widget.maxPair.y - widget.minPair.y) / (getIsFullScreen(context) ? 7 : 4)).abs(),
             reservedSize: 7 +
                 (widget.minPair.y <= -10000
                     ? 55
@@ -269,13 +248,10 @@ class _LineChartState extends State<_LineChart> with WidgetsBindingObserver {
                         ? 45
                         : widget.minPair.y <= -100
                             ? 40 + widget.extraLeftPaddingIfSmall / 2
-                            : (widget.maxPair.y >= 100
-                                    ? (widget.maxPair.y >= 1000 ? 37 : 33)
-                                    : 25 + widget.extraLeftPaddingIfSmall) +
+                            : (widget.maxPair.y >= 100 ? (widget.maxPair.y >= 1000 ? 37 : 33) : 25 + widget.extraLeftPaddingIfSmall) +
                                 extraHorizontalPadding) +
                 10 +
-                measureCurrencyStringExtraWidth(
-                    Provider.of<AllWallets>(context)),
+                measureCurrencyStringExtraWidth(Provider.of<AllWallets>(context)),
             // This interval needs more work
             // interval: ((((widget.maxPair.y).abs() + (widget.minPair.y).abs()) /
             //                 (getIsFullScreen(context) ? 7 : 3.6)) /
@@ -309,8 +285,7 @@ class _LineChartState extends State<_LineChart> with WidgetsBindingObserver {
   LineTouchData get lineTouchData => LineTouchData(
         enabled: true,
         touchSpotThreshold: 1000,
-        getTouchedSpotIndicator:
-            (LineChartBarData barData, List<int> spotIndexes) {
+        getTouchedSpotIndicator: (LineChartBarData barData, List<int> spotIndexes) {
           // only show touch data for primary colored lines
           bool transparent = false;
           if (barData.color != lightenPastel(widget.color, amount: 0.3)) {
@@ -319,24 +294,17 @@ class _LineChartState extends State<_LineChart> with WidgetsBindingObserver {
           return spotIndexes.map((index) {
             return TouchedSpotIndicatorData(
               FlLine(
-                color: transparent
-                    ? Colors.transparent
-                    : widget.color.withOpacity(0.9),
+                color: transparent ? Colors.transparent : widget.color.withOpacity(0.9),
                 strokeWidth: 2,
                 dashArray: [2, 2],
               ),
               FlDotData(
                 show: true,
-                getDotPainter: (spot, percent, barData, index) =>
-                    FlDotCirclePainter(
+                getDotPainter: (spot, percent, barData, index) => FlDotCirclePainter(
                   radius: 3,
-                  color: transparent
-                      ? Colors.transparent
-                      : widget.color.withOpacity(0.9),
+                  color: transparent ? Colors.transparent : widget.color.withOpacity(0.9),
                   strokeWidth: 2,
-                  strokeColor: transparent
-                      ? Colors.transparent
-                      : widget.color.withOpacity(0.9),
+                  strokeColor: transparent ? Colors.transparent : widget.color.withOpacity(0.9),
                 ),
               ),
             );
@@ -354,8 +322,7 @@ class _LineChartState extends State<_LineChart> with WidgetsBindingObserver {
           if (event.runtimeType == FlLongPressStart) {
             HapticFeedback.selectionClick();
           } else if (touchedValue != value.toInt() &&
-              (event.runtimeType == FlLongPressMoveUpdate ||
-                  event.runtimeType == FlPanUpdateEvent)) {
+              (event.runtimeType == FlLongPressMoveUpdate || event.runtimeType == FlPanUpdateEvent)) {
             HapticFeedback.selectionClick();
           }
 
@@ -370,28 +337,22 @@ class _LineChartState extends State<_LineChart> with WidgetsBindingObserver {
           getTooltipItems: (List<LineBarSpot> lineBarsSpot) {
             return lineBarsSpot.map((LineBarSpot lineBarSpot) {
               // only show touch data for primary colored lines
-              if (lineBarSpot.bar.color !=
-                  lightenPastel(widget.color, amount: 0.3)) {
+              if (lineBarSpot.bar.color != lightenPastel(widget.color, amount: 0.3)) {
                 return null;
               }
-              DateTime currentDate =
-                  widget.endDate == null ? DateTime.now() : widget.endDate!;
+              DateTime currentDate = widget.endDate == null ? DateTime.now() : widget.endDate!;
               DateTime tooltipDate = DateTime(
                 currentDate.year,
                 currentDate.month,
-                currentDate.day -
-                    widget.maxPair.x.toInt() +
-                    lineBarSpot.x.toInt(),
+                currentDate.day - widget.maxPair.x.toInt() + lineBarSpot.x.toInt(),
               );
               return LineTooltipItem(
                 getWordedDateShort(
-                      tooltipDate,
+                      Jalali.fromDateTime(tooltipDate),
                       includeYear: DateTime.now().year != tooltipDate.year,
                     ) +
                     "\n" +
-                    convertToMoney(
-                        Provider.of<AllWallets>(context, listen: false),
-                        lineBarSpot.y),
+                    convertToMoney(Provider.of<AllWallets>(context, listen: false), lineBarSpot.y),
                 const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
@@ -405,9 +366,7 @@ class _LineChartState extends State<_LineChart> with WidgetsBindingObserver {
       );
 
   List<LineChartBarData> get lineBarsData => [
-        for (int spotsListIndex = 0;
-            spotsListIndex < widget.spots.length;
-            spotsListIndex++)
+        for (int spotsListIndex = 0; spotsListIndex < widget.spots.length; spotsListIndex++)
           lineChartBarData(widget.spots[spotsListIndex], spotsListIndex),
       ];
 
@@ -415,13 +374,10 @@ class _LineChartState extends State<_LineChart> with WidgetsBindingObserver {
         show: true,
         // If the interval is equal to a really small number (almost 0, it freezes the app!)
         verticalInterval: double.parse(
-                    (((widget.maxPair.x).abs() + (widget.minPair.x).abs()) /
-                            (getIsFullScreen(context) ? 6 : 4))
-                        .toStringAsFixed(5)) ==
+                    (((widget.maxPair.x).abs() + (widget.minPair.x).abs()) / (getIsFullScreen(context) ? 6 : 4)).toStringAsFixed(5)) ==
                 0
             ? 5
-            : ((widget.maxPair.x).abs() + (widget.minPair.x).abs()) /
-                (getIsFullScreen(context) ? 6 : 4),
+            : ((widget.maxPair.x).abs() + (widget.minPair.x).abs()) / (getIsFullScreen(context) ? 6 : 4),
         // This interval needs more work, maybe follow the one from budgetHistoryLineGraph.dart
         // horizontalInterval:
         //     ((widget.maxPair.y).abs() + (widget.minPair.y).abs()) /
@@ -433,25 +389,19 @@ class _LineChartState extends State<_LineChart> with WidgetsBindingObserver {
           // print(((widget.minPair.y)) /
           //     ((widget.maxPair.y).abs() + (widget.minPair.y).abs()));
           return FlLine(
-            color: dynamicPastel(context, widget.color, amount: 0.3)
-                .withOpacity(0.2),
+            color: dynamicPastel(context, widget.color, amount: 0.3).withOpacity(0.2),
             // color: Colors.transparent,
             strokeWidth: 2,
             dashArray: [2, 8],
           );
         },
         // If the interval is equal to a really small number (almost 0, it freezes the app!)
-        horizontalInterval: double.parse(
-                    (widget.maxPair.y - widget.minPair.y).toStringAsFixed(5)) ==
-                0.0
+        horizontalInterval: double.parse((widget.maxPair.y - widget.minPair.y).toStringAsFixed(5)) == 0.0
             ? 0.001
-            : ((widget.maxPair.y - widget.minPair.y) /
-                    (getIsFullScreen(context) ? 7 : 4))
-                .abs(),
+            : ((widget.maxPair.y - widget.minPair.y) / (getIsFullScreen(context) ? 7 : 4)).abs(),
         getDrawingHorizontalLine: (value) {
           return FlLine(
-            color: dynamicPastel(context, widget.color, amount: 0.3)
-                .withOpacity(0.2),
+            color: dynamicPastel(context, widget.color, amount: 0.3).withOpacity(0.2),
             strokeWidth: 2,
             dashArray: [2, 8],
           );
@@ -464,15 +414,12 @@ class _LineChartState extends State<_LineChart> with WidgetsBindingObserver {
 
   LineChartBarData lineChartBarData(List<FlSpot> spots, int index) {
     return LineChartBarData(
-      color: widget.colors.length > 0
-          ? lightenPastel(widget.colors[index], amount: 0.3)
-          : lightenPastel(widget.color, amount: 0.3),
+      color: widget.colors.length > 0 ? lightenPastel(widget.colors[index], amount: 0.3) : lightenPastel(widget.color, amount: 0.3),
       barWidth: 3,
       isStrokeCapRound: true,
       dotData: FlDotData(show: false),
       isCurved: widget.isCurved,
-      curveSmoothness:
-          appStateSettings["removeZeroTransactionEntries"] ? 0.1 : 0.3,
+      curveSmoothness: appStateSettings["removeZeroTransactionEntries"] ? 0.1 : 0.3,
       preventCurveOverShooting: true,
       preventCurveOvershootingThreshold: 8,
       aboveBarData: BarAreaData(
@@ -485,18 +432,12 @@ class _LineChartState extends State<_LineChart> with WidgetsBindingObserver {
                 : true,
         gradient: LinearGradient(
           colors: [
-            index == 0
-                ? widget.color.withAlpha(100)
-                : widget.color.withAlpha(1),
+            index == 0 ? widget.color.withAlpha(100) : widget.color.withAlpha(1),
             widget.color.withAlpha(1),
           ],
           begin: Alignment.bottomCenter,
           end: Alignment(
-              0,
-              widget.maxPair.y > 0
-                  ? -(widget.minPair.y).abs() /
-                      ((widget.maxPair.y).abs() + (widget.minPair.y).abs())
-                  : -1),
+              0, widget.maxPair.y > 0 ? -(widget.minPair.y).abs() / ((widget.maxPair.y).abs() + (widget.minPair.y).abs()) : -1),
         ),
         // gradientFrom: Offset(
         //     0,
@@ -509,16 +450,11 @@ class _LineChartState extends State<_LineChart> with WidgetsBindingObserver {
         show: widget.minPair.y <= 0 && widget.maxPair.y <= 0 ? false : true,
         gradient: LinearGradient(
           colors: [
-            index == 0
-                ? widget.color.withAlpha(100)
-                : widget.color.withAlpha(1),
+            index == 0 ? widget.color.withAlpha(100) : widget.color.withAlpha(1),
             widget.color.withAlpha(1),
           ],
           begin: Alignment.topCenter,
-          end: Alignment(
-              0,
-              (widget.maxPair.y).abs() /
-                  ((widget.maxPair.y).abs() + (widget.minPair.y).abs())),
+          end: Alignment(0, (widget.maxPair.y).abs() / ((widget.maxPair.y).abs() + (widget.minPair.y).abs())),
         ),
         // gradientTo: Offset(
         //     0,
@@ -581,8 +517,7 @@ class LineChartWrapper extends StatelessWidget {
 
   List<Pair> filterPoints(List<Pair> points) {
     List<Pair> pointsOut = [];
-    if (appStateSettings["removeZeroTransactionEntries"] &&
-        !appStateSettings["showCumulativeSpending"]) {
+    if (appStateSettings["removeZeroTransactionEntries"] && !appStateSettings["showCumulativeSpending"]) {
       for (Pair point in points) {
         if (point.y != 0) {
           pointsOut.add(Pair(point.x, point.y));
@@ -591,13 +526,10 @@ class LineChartWrapper extends StatelessWidget {
       if (pointsOut.length <= 0) {
         return [Pair(0, 0)];
       }
-      pointsOut.last.x != points.last.x
-          ? pointsOut.add(Pair(points.last.x, 0))
-          : 0;
+      pointsOut.last.x != points.last.x ? pointsOut.add(Pair(points.last.x, 0)) : 0;
       return pointsOut;
     }
-    if (appStateSettings["removeZeroTransactionEntries"] &&
-        appStateSettings["showCumulativeSpending"]) {
+    if (appStateSettings["removeZeroTransactionEntries"] && appStateSettings["showCumulativeSpending"]) {
       pointsOut.add(Pair(points.first.x, points.first.y));
       double previousTotal = 0;
       for (Pair point in points) {
@@ -609,9 +541,7 @@ class LineChartWrapper extends StatelessWidget {
       if (pointsOut.length <= 0) {
         return [Pair(0, 0)];
       }
-      pointsOut.last.x != points.last.x
-          ? pointsOut.add(Pair(points.last.x, points.last.y))
-          : 0;
+      pointsOut.last.x != points.last.x ? pointsOut.add(Pair(points.last.x, points.last.y)) : 0;
       return pointsOut;
     }
     return points;
@@ -631,9 +561,7 @@ class LineChartWrapper extends StatelessWidget {
 
   Pair getMaxPoint(List<List<Pair>> pointsList) {
     Pair max = Pair(0, 0);
-    if (amountBefore != 0 &&
-        pointsList.isNotEmpty &&
-        pointsList[0].isNotEmpty) {
+    if (amountBefore != 0 && pointsList.isNotEmpty && pointsList[0].isNotEmpty) {
       max.y = pointsList[0][0].y;
     }
     for (List<Pair> points in pointsList) {
@@ -657,9 +585,7 @@ class LineChartWrapper extends StatelessWidget {
 
   Pair getMinPoint(List<List<Pair>> pointsList) {
     Pair min = Pair(0, 0);
-    if (amountBefore != 0 &&
-        pointsList.isNotEmpty &&
-        pointsList[0].isNotEmpty) {
+    if (amountBefore != 0 && pointsList.isNotEmpty && pointsList[0].isNotEmpty) {
       min.y = pointsList[0][0].y;
     }
     for (List<Pair> points in pointsList) {

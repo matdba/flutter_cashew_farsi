@@ -11,22 +11,13 @@ import 'package:budget/struct/settings.dart';
 import 'package:budget/struct/spendingSummaryHelper.dart';
 import 'package:budget/widgets/animatedExpanded.dart';
 import 'package:budget/widgets/categoryEntry.dart';
-import 'package:budget/widgets/fadeIn.dart';
-import 'package:budget/widgets/framework/popupFramework.dart';
-import 'package:budget/widgets/iconButtonScaled.dart';
-import 'package:budget/widgets/incomeExpenseTabSelector.dart';
 import 'package:budget/widgets/navigationFramework.dart';
-import 'package:budget/widgets/openBottomSheet.dart';
-import 'package:budget/pages/editHomePage.dart';
 import 'package:budget/widgets/openPopup.dart';
 import 'package:budget/widgets/tappable.dart';
 import 'package:budget/widgets/transactionEntry/incomeAmountArrow.dart';
 import 'package:budget/widgets/util/keepAliveClientMixin.dart';
-import 'package:budget/widgets/navigationSidebar.dart';
 import 'package:budget/widgets/pieChart.dart';
 import 'package:budget/widgets/textWidgets.dart';
-import 'package:budget/widgets/transactionsAmountBox.dart';
-import 'package:budget/widgets/util/widgetSize.dart';
 import 'package:budget/widgets/viewAllTransactionsButton.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -42,8 +33,7 @@ class HomePagePieChart extends StatefulWidget {
   State<HomePagePieChart> createState() => _HomePagePieChartState();
 }
 
-class _HomePagePieChartState extends State<HomePagePieChart>
-    with SingleTickerProviderStateMixin {
+class _HomePagePieChartState extends State<HomePagePieChart> with SingleTickerProviderStateMixin {
   void openPieChartSettings() async {
     await openPieChartHomePageBottomSheetSettings(context);
     homePageStateKey.currentState?.refreshState();
@@ -51,8 +41,7 @@ class _HomePagePieChartState extends State<HomePagePieChart>
 
   @override
   Widget build(BuildContext context) {
-    final PageController _pageController = PageController(
-        initialPage: appStateSettings["pieChartTotal"] != "incoming" ? 0 : 1);
+    final PageController _pageController = PageController(initialPage: appStateSettings["pieChartTotal"] != "incoming" ? 0 : 1);
     TransactionCategory? selectedCategory;
 
     const double borderRadius = 15;
@@ -97,12 +86,8 @@ class _HomePagePieChartState extends State<HomePagePieChart>
                           clipBehavior: Clip.none,
                           controller: _pageController,
                           children: [
-                            PieChartHomeAndCategorySummary(
-                                isIncome: false,
-                                selectedCategory: selectedCategory),
-                            PieChartHomeAndCategorySummary(
-                                isIncome: true,
-                                selectedCategory: selectedCategory)
+                            PieChartHomeAndCategorySummary(isIncome: false, selectedCategory: selectedCategory),
+                            PieChartHomeAndCategorySummary(isIncome: true, selectedCategory: selectedCategory)
                           ],
                         ),
                         Positioned(
@@ -177,8 +162,7 @@ class IncomeOutcomeArrowPageIndicator extends StatelessWidget {
     return AnimatedBuilder(
       animation: controller,
       builder: (BuildContext context, Widget? child) {
-        int currentPage =
-            controller.page?.round().toInt() ?? controller.initialPage;
+        int currentPage = controller.page?.round().toInt() ?? controller.initialPage;
         bool isIncome = currentPage != 0;
         return Tappable(
           borderRadius: 100,
@@ -190,9 +174,7 @@ class IncomeOutcomeArrowPageIndicator extends StatelessWidget {
               iconSize: 30,
               width: 30,
               isIncome: isIncome,
-              color: isIncome
-                  ? getColor(context, "incomeAmount")
-                  : getColor(context, "expenseAmount"),
+              color: isIncome ? getColor(context, "incomeAmount") : getColor(context, "expenseAmount"),
             ),
           ),
         );
@@ -203,21 +185,16 @@ class IncomeOutcomeArrowPageIndicator extends StatelessWidget {
 
 class PieChartHomeAndCategorySummary extends StatefulWidget {
   const PieChartHomeAndCategorySummary(
-      {required this.isIncome,
-      this.animatedSizeCategoryContainer = false,
-      this.selectedCategory,
-      super.key});
+      {required this.isIncome, this.animatedSizeCategoryContainer = false, this.selectedCategory, super.key});
   final bool isIncome;
   final bool animatedSizeCategoryContainer;
   final TransactionCategory? selectedCategory;
 
   @override
-  State<PieChartHomeAndCategorySummary> createState() =>
-      _PieChartHomeAndCategorySummaryState();
+  State<PieChartHomeAndCategorySummary> createState() => _PieChartHomeAndCategorySummaryState();
 }
 
-class _PieChartHomeAndCategorySummaryState
-    extends State<PieChartHomeAndCategorySummary> {
+class _PieChartHomeAndCategorySummaryState extends State<PieChartHomeAndCategorySummary> {
   GlobalKey<PieChartDisplayState> pieChartDisplayStateKey = GlobalKey();
   late TransactionCategory? selectedCategory = widget.selectedCategory;
   bool expandCategorySelection = false;
@@ -254,13 +231,10 @@ class _PieChartHomeAndCategorySummaryState
       showAllSubcategories = !showAllSubcategories;
     });
     Future.delayed(Duration(milliseconds: 10), () {
-      if (expandCategorySelection)
-        pieChartDisplayStateKey.currentState
-            ?.setTouchedCategoryPk(selectedCategory?.categoryPk);
+      if (expandCategorySelection) pieChartDisplayStateKey.currentState?.setTouchedCategoryPk(selectedCategory?.categoryPk);
     });
 
-    updateSettings("showAllSubcategories", showAllSubcategories,
-        updateGlobalState: false);
+    updateSettings("showAllSubcategories", showAllSubcategories, updateGlobalState: false);
   }
 
   @override
@@ -268,15 +242,11 @@ class _PieChartHomeAndCategorySummaryState
     return StreamBuilder<List<TransactionWallet>>(
       stream: database.getAllPinnedWallets(HomePageWidgetDisplay.PieChart).$1,
       builder: (context, snapshot) {
-        if (snapshot.hasData ||
-            appStateSettings["pieChartAllWallets"] == true) {
-          List<String>? walletPks =
-              (snapshot.data ?? []).map((item) => item.walletPk).toList();
-          if (walletPks.length <= 0 ||
-              appStateSettings["pieChartAllWallets"] == true) walletPks = null;
+        if (snapshot.hasData || appStateSettings["pieChartAllWallets"] == true) {
+          List<String>? walletPks = (snapshot.data ?? []).map((item) => item.walletPk).toList();
+          if (walletPks.length <= 0 || appStateSettings["pieChartAllWallets"] == true) walletPks = null;
           return StreamBuilder<List<CategoryWithTotal>>(
-            stream:
-                database.watchTotalSpentInEachCategoryInTimeRangeFromCategories(
+            stream: database.watchTotalSpentInEachCategoryInTimeRangeFromCategories(
               allWallets: Provider.of<AllWallets>(context),
               start: DateTime.now(),
               end: DateTime.now(),
@@ -293,15 +263,12 @@ class _PieChartHomeAndCategorySummaryState
               includeAllSubCategories: true,
               searchFilters: SearchFilters(expenseIncome: [
                 if (appStateSettings["pieChartIncomeAndExpenseOnly"] == true)
-                  (widget.isIncome == true
-                      ? ExpenseIncome.income
-                      : ExpenseIncome.expense)
+                  (widget.isIncome == true ? ExpenseIncome.income : ExpenseIncome.expense)
               ]),
             ),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                TotalSpentCategoriesSummary s =
-                    watchTotalSpentInTimeRangeHelper(
+                TotalSpentCategoriesSummary s = watchTotalSpentInTimeRangeHelper(
                   dataInput: snapshot.data ?? [],
                   showAllSubcategories: showAllSubcategories,
                   multiplyTotalBy: 1,
@@ -312,10 +279,8 @@ class _PieChartHomeAndCategorySummaryState
                 double totalSpentPercent = 45 / 360;
                 snapshot.data!.asMap().forEach(
                   (index, category) {
-                    if (selectedCategory?.categoryPk ==
-                            category.category.categoryPk ||
-                        selectedCategory?.mainCategoryPk ==
-                            category.category.categoryPk)
+                    if (selectedCategory?.categoryPk == category.category.categoryPk ||
+                        selectedCategory?.mainCategoryPk == category.category.categoryPk)
                       categoryEntries.add(
                         CategoryEntry(
                           percentageOffset: totalSpentPercent,
@@ -324,24 +289,17 @@ class _PieChartHomeAndCategorySummaryState
                           },
                           useHorizontalPaddingConstrained: false,
                           expandSubcategories: showAllSubcategories ||
-                              category.category.categoryPk ==
-                                  selectedCategory?.categoryPk ||
-                              category.category.categoryPk ==
-                                  selectedCategory?.mainCategoryPk,
-                          subcategoriesWithTotalMap:
-                              s.subCategorySpendingIndexedByMainCategoryPk,
+                              category.category.categoryPk == selectedCategory?.categoryPk ||
+                              category.category.categoryPk == selectedCategory?.mainCategoryPk,
+                          subcategoriesWithTotalMap: s.subCategorySpendingIndexedByMainCategoryPk,
                           todayPercent: 0,
-                          overSpentColor: category.total > 0
-                              ? getColor(context, "incomeAmount")
-                              : getColor(context, "expenseAmount"),
+                          overSpentColor: category.total > 0 ? getColor(context, "incomeAmount") : getColor(context, "expenseAmount"),
                           showIncomeExpenseIcons: true,
-                          onLongPress: (TransactionCategory category,
-                              CategoryBudgetLimit? categoryBudgetLimit) {
+                          onLongPress: (TransactionCategory category, CategoryBudgetLimit? categoryBudgetLimit) {
                             pushRoute(
                               context,
                               AddCategoryPage(
-                                routesToPopAfterDelete:
-                                    RoutesToPopAfterDelete.One,
+                                routesToPopAfterDelete: RoutesToPopAfterDelete.One,
                                 category: category,
                               ),
                             );
@@ -356,33 +314,19 @@ class _PieChartHomeAndCategorySummaryState
                               context,
                               TransactionsSearchPage(
                                 initialFilters: SearchFilters().copyWith(
-                                  dateTimeRange:
-                                      getDateTimeRangeForPassedSearchFilters(
-                                          cycleSettingsExtension: "PieChart"),
-                                  categoryPks: selectedCategory
-                                              ?.mainCategoryPk !=
-                                          null
+                                  dateTimeRange: getDateTimeRangeForPassedSearchFilters(cycleSettingsExtension: "PieChart"),
+                                  categoryPks: selectedCategory?.mainCategoryPk != null
                                       ? [selectedCategory!.mainCategoryPk ?? ""]
                                       : selectedCategory == null
                                           ? null
                                           : [selectedCategory!.categoryPk],
-                                  subcategoryPks: selectedCategory != null &&
-                                          selectedCategory?.mainCategoryPk !=
-                                              null
+                                  subcategoryPks: selectedCategory != null && selectedCategory?.mainCategoryPk != null
                                       ? [selectedCategory!.categoryPk]
                                       : null,
-                                  positiveCashFlow: appStateSettings[
-                                              "pieChartIncomeAndExpenseOnly"] ==
-                                          true
-                                      ? null
-                                      : widget.isIncome,
+                                  positiveCashFlow: appStateSettings["pieChartIncomeAndExpenseOnly"] == true ? null : widget.isIncome,
                                   expenseIncome: [
-                                    if (appStateSettings[
-                                            "pieChartIncomeAndExpenseOnly"] ==
-                                        true)
-                                      (widget.isIncome == true
-                                          ? ExpenseIncome.income
-                                          : ExpenseIncome.expense)
+                                    if (appStateSettings["pieChartIncomeAndExpenseOnly"] == true)
+                                      (widget.isIncome == true ? ExpenseIncome.income : ExpenseIncome.expense)
                                   ],
                                 ),
                               ),
@@ -392,8 +336,7 @@ class _PieChartHomeAndCategorySummaryState
                           allSelected: true,
                         ),
                       );
-                    if (s.totalSpent != 0)
-                      totalSpentPercent += category.total.abs() / s.totalSpent;
+                    if (s.totalSpent != 0) totalSpentPercent += category.total.abs() / s.totalSpent;
                   },
                 );
 
@@ -403,16 +346,12 @@ class _PieChartHomeAndCategorySummaryState
                       clipBehavior: Clip.none,
                       children: [
                         Padding(
-                          padding: EdgeInsets.only(
-                              left: 10, right: 10, bottom: 15, top: 30),
+                          padding: EdgeInsets.only(left: 10, right: 10, bottom: 15, top: 30),
                           child: LayoutBuilder(
                             builder: (_, boxConstraints) {
-                              bool showTopCategoriesLegend =
-                                  boxConstraints.maxWidth > 320 &&
-                                      snapshot.data!.length > 0;
+                              bool showTopCategoriesLegend = boxConstraints.maxWidth > 320 && snapshot.data!.length > 0;
                               return Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   if (showTopCategoriesLegend)
@@ -423,9 +362,7 @@ class _PieChartHomeAndCategorySummaryState
                                         child: TopCategoriesSpentLegend(
                                           categoriesWithTotal: snapshot.data!
                                               .take(
-                                                boxConstraints.maxWidth < 420
-                                                    ? 3
-                                                    : 5,
+                                                boxConstraints.maxWidth < 420 ? 3 : 5,
                                               )
                                               .toList(),
                                         ),
@@ -438,32 +375,24 @@ class _PieChartHomeAndCategorySummaryState
                                       alignment: Alignment.center,
                                       children: [
                                         Padding(
-                                          padding: EdgeInsets.only(
-                                              right: showTopCategoriesLegend
-                                                  ? 20
-                                                  : 0),
+                                          padding: EdgeInsets.only(right: showTopCategoriesLegend ? 20 : 0),
                                           child: PieChartWrapper(
                                             disableLarge: true,
-                                            pieChartDisplayStateKey:
-                                                pieChartDisplayStateKey,
+                                            pieChartDisplayStateKey: pieChartDisplayStateKey,
                                             isPastBudget: true,
-                                            data: s
-                                                .dataFilterUnassignedTransactions,
+                                            data: s.dataFilterUnassignedTransactions,
                                             totalSpent: s.totalSpent,
-                                            setSelectedCategory:
-                                                (categoryPk, category) {
+                                            setSelectedCategory: (categoryPk, category) {
                                               if (category == null) {
                                                 clearCategorySelection();
                                               } else {
                                                 setState(() {
                                                   selectedCategory = category;
-                                                  expandCategorySelection =
-                                                      true;
+                                                  expandCategorySelection = true;
                                                 });
                                               }
                                             },
-                                            middleColor: getColor(context,
-                                                "lightDarkAccentHeavyLight"),
+                                            middleColor: getColor(context, "lightDarkAccentHeavyLight"),
                                           ),
                                         ),
                                         if (snapshot.data!.length <= 0)
@@ -473,30 +402,16 @@ class _PieChartHomeAndCategorySummaryState
                                               children: [
                                                 ConstrainedBox(
                                                   constraints: BoxConstraints(
-                                                      maxWidth: boxConstraints
-                                                                      .maxWidth -
-                                                                  50 <=
-                                                              10
-                                                          ? 10
-                                                          : boxConstraints
-                                                                  .maxWidth -
-                                                              50),
+                                                      maxWidth:
+                                                          boxConstraints.maxWidth - 50 <= 10 ? 10 : boxConstraints.maxWidth - 50),
                                                   child: TextFont(
                                                     text: widget.isIncome
-                                                        ? appStateSettings[
-                                                                    "pieChartIncomeAndExpenseOnly"] ==
-                                                                true
-                                                            ? "no-income-within-period"
-                                                                .tr()
-                                                            : "no-incoming-within-period"
-                                                                .tr()
-                                                        : appStateSettings[
-                                                                    "pieChartIncomeAndExpenseOnly"] ==
-                                                                true
-                                                            ? "no-expense-within-period"
-                                                                .tr()
-                                                            : "no-outgoing-within-period"
-                                                                .tr(),
+                                                        ? appStateSettings["pieChartIncomeAndExpenseOnly"] == true
+                                                            ? "هیچ تراکنش درآمدی در بازه زمانی انتخاب شده پیدا نشد"
+                                                            : "هیچ تراکنش دخلی در بازه زمانی انتخاب شده پیدا نشد"
+                                                        : appStateSettings["pieChartIncomeAndExpenseOnly"] == true
+                                                            ? "هیچ تراکنش هزینه ای در بازه زمانی انتخاب شده پیدا نشد"
+                                                            : "هیچ تراکنش خرجی در بازه زمانی انتخاب شده پیدا نشد",
                                                     textAlign: TextAlign.center,
                                                     maxLines: 20,
                                                     fontSize: 17,
@@ -505,9 +420,7 @@ class _PieChartHomeAndCategorySummaryState
                                                 SizedBox(height: 15),
                                                 LowKeyButton(
                                                   onTap: openPieChartSettings,
-                                                  text: "select-period"
-                                                      .tr()
-                                                      .capitalizeFirstofEach,
+                                                  text: "انتخاب بازه زمانی",
                                                 ),
                                               ],
                                             ),
@@ -527,9 +440,7 @@ class _PieChartHomeAndCategorySummaryState
                           child: PieChartOptions(
                             isIncomeBudget: false,
                             hasSubCategories: s.hasSubCategories,
-                            selectedCategory: expandCategorySelection
-                                ? selectedCategory
-                                : null,
+                            selectedCategory: expandCategorySelection ? selectedCategory : null,
                             onClearSelection: clearCategorySelection,
                             onEditSpendingGoals: null,
                             showAllSubcategories: true,
@@ -545,8 +456,7 @@ class _PieChartHomeAndCategorySummaryState
                                 ? Container(key: ValueKey(1), height: 10)
                                 : Column(
                                     children: categoryEntries,
-                                    key: ValueKey(
-                                        selectedCategory?.categoryPk ?? ""),
+                                    key: ValueKey(selectedCategory?.categoryPk ?? ""),
                                   ),
                           )
                         : AnimatedSwitcher(
@@ -555,8 +465,7 @@ class _PieChartHomeAndCategorySummaryState
                                 ? Container(key: ValueKey(1), height: 10)
                                 : Column(
                                     children: categoryEntries,
-                                    key: ValueKey(
-                                        selectedCategory?.categoryPk ?? ""),
+                                    key: ValueKey(selectedCategory?.categoryPk ?? ""),
                                   ),
                           ),
                   ],
@@ -573,8 +482,7 @@ class _PieChartHomeAndCategorySummaryState
 }
 
 class TopCategoriesSpentLegend extends StatelessWidget {
-  const TopCategoriesSpentLegend(
-      {required this.categoriesWithTotal, super.key});
+  const TopCategoriesSpentLegend({required this.categoriesWithTotal, super.key});
   final List<CategoryWithTotal> categoriesWithTotal;
 
   @override

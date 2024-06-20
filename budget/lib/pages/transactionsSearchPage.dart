@@ -30,6 +30,7 @@ import 'package:budget/colors.dart';
 import 'package:provider/provider.dart';
 import 'package:budget/widgets/selectChips.dart';
 import 'package:budget/widgets/framework/popupFramework.dart';
+import 'package:shamsi_date/shamsi_date.dart';
 
 import '../widgets/amountRangeSlider.dart';
 
@@ -38,8 +39,7 @@ int roundToNearestNextFifthYear(int year) {
 }
 
 class TransactionsSearchPage extends StatefulWidget {
-  const TransactionsSearchPage({this.initialFilters, Key? key})
-      : super(key: key);
+  const TransactionsSearchPage({this.initialFilters, Key? key}) : super(key: key);
 
   final SearchFilters? initialFilters;
 
@@ -47,8 +47,7 @@ class TransactionsSearchPage extends StatefulWidget {
   State<TransactionsSearchPage> createState() => TransactionsSearchPageState();
 }
 
-class TransactionsSearchPageState extends State<TransactionsSearchPage>
-    with TickerProviderStateMixin {
+class TransactionsSearchPageState extends State<TransactionsSearchPage> with TickerProviderStateMixin {
   void refreshState() {
     setState(() {});
   }
@@ -66,9 +65,7 @@ class TransactionsSearchPageState extends State<TransactionsSearchPage>
       currentFocus.unfocus();
       _searchFocusNode.requestFocus();
     });
-    searchFilters = widget.initialFilters != null
-        ? widget.initialFilters!
-        : SearchFilters();
+    searchFilters = widget.initialFilters != null ? widget.initialFilters! : SearchFilters();
     if (widget.initialFilters == null) {
       searchFilters.loadFilterString(
         appStateSettings["searchTransactionsSetFiltersString"],
@@ -124,8 +121,7 @@ class TransactionsSearchPageState extends State<TransactionsSearchPage>
     searchFilters.clearSearchFilters();
     searchFilters.dateTimeRange = dateTimeRange;
     searchFilters.searchQuery = searchQuery;
-    updateSettings("searchTransactionsSetFiltersString", null,
-        updateGlobalState: false);
+    updateSettings("searchTransactionsSetFiltersString", null, updateGlobalState: false);
     setState(() {});
   }
 
@@ -188,14 +184,12 @@ class TransactionsSearchPageState extends State<TransactionsSearchPage>
               slivers: [
                 SliverToBoxAdapter(
                   child: Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: getHorizontalPaddingConstrained(context)),
+                    padding: EdgeInsets.symmetric(horizontal: getHorizontalPaddingConstrained(context)),
                     child: AnimatedBuilder(
                       animation: _animationControllerSearch,
                       builder: (_, child) {
                         return Transform.translate(
-                          offset: Offset(0,
-                              6.5 - 6.5 * (_animationControllerSearch.value)),
+                          offset: Offset(0, 6.5 - 6.5 * (_animationControllerSearch.value)),
                           child: child,
                         );
                       },
@@ -205,9 +199,7 @@ class TransactionsSearchPageState extends State<TransactionsSearchPage>
                           Expanded(
                             child: TextInput(
                               labelText: "search-placeholder".tr(),
-                              icon: appStateSettings["outlinedIcons"]
-                                  ? Icons.search_outlined
-                                  : Icons.search_rounded,
+                              icon: appStateSettings["outlinedIcons"] ? Icons.search_outlined : Icons.search_rounded,
                               onSubmitted: (value) {
                                 searchFilters.searchQuery = value;
                               },
@@ -228,25 +220,15 @@ class TransactionsSearchPageState extends State<TransactionsSearchPage>
                             duration: Duration(milliseconds: 500),
                             child: ButtonIcon(
                               key: ValueKey(
-                                (searchFilters.dateTimeRange == null)
-                                    .toString(),
+                                (searchFilters.dateTimeRange == null).toString(),
                               ),
-                              color: searchFilters.dateTimeRange == null
-                                  ? null
-                                  : Theme.of(context)
-                                      .colorScheme
-                                      .tertiaryContainer,
-                              iconColor: searchFilters.dateTimeRange == null
-                                  ? null
-                                  : Theme.of(context)
-                                      .colorScheme
-                                      .onTertiaryContainer,
+                              color: searchFilters.dateTimeRange == null ? null : Theme.of(context).colorScheme.tertiaryContainer,
+                              iconColor:
+                                  searchFilters.dateTimeRange == null ? null : Theme.of(context).colorScheme.onTertiaryContainer,
                               onTap: () {
                                 selectDateRange(context);
                               },
-                              icon: appStateSettings["outlinedIcons"]
-                                  ? Icons.calendar_month_outlined
-                                  : Icons.calendar_month_rounded,
+                              icon: appStateSettings["outlinedIcons"] ? Icons.calendar_month_outlined : Icons.calendar_month_rounded,
                             ),
                           ),
                           SizedBox(width: 7),
@@ -264,23 +246,17 @@ class TransactionsSearchPageState extends State<TransactionsSearchPage>
                                 ignoreSearchQuery: true,
                               )
                                   ? null
-                                  : Theme.of(context)
-                                      .colorScheme
-                                      .tertiaryContainer,
+                                  : Theme.of(context).colorScheme.tertiaryContainer,
                               iconColor: searchFilters.isClear(
                                 ignoreDateTimeRange: true,
                                 ignoreSearchQuery: true,
                               )
                                   ? null
-                                  : Theme.of(context)
-                                      .colorScheme
-                                      .onTertiaryContainer,
+                                  : Theme.of(context).colorScheme.onTertiaryContainer,
                               onTap: () {
                                 selectFilters(context);
                               },
-                              icon: appStateSettings["outlinedIcons"]
-                                  ? Icons.filter_alt_outlined
-                                  : Icons.filter_alt_rounded,
+                              icon: appStateSettings["outlinedIcons"] ? Icons.filter_alt_outlined : Icons.filter_alt_rounded,
                             ),
                           ),
                           SizedBox(width: 20),
@@ -294,8 +270,7 @@ class TransactionsSearchPageState extends State<TransactionsSearchPage>
                 ),
                 SliverToBoxAdapter(
                   child: Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: getHorizontalPaddingConstrained(context)),
+                    padding: EdgeInsets.symmetric(horizontal: getHorizontalPaddingConstrained(context)),
                     child: AppliedFilterChips(
                       searchFilters: searchFilters,
                       openFiltersSelection: () {
@@ -324,13 +299,15 @@ class TransactionsSearchPageState extends State<TransactionsSearchPage>
                         text: searchFilters.dateTimeRange == null
                             ? "all-time".tr()
                             : getWordedDateShortMore(
-                                    searchFilters.dateTimeRange?.start ??
-                                        DateTime.now(),
+                                    searchFilters.dateTimeRange != null
+                                        ? Jalali.fromDateTime(searchFilters.dateTimeRange!.start)
+                                        : Jalali.now(),
                                     includeYear: true) +
                                 " – " +
                                 getWordedDateShortMore(
-                                    searchFilters.dateTimeRange?.end ??
-                                        DateTime.now(),
+                                    searchFilters.dateTimeRange != null
+                                        ? Jalali.fromDateTime(searchFilters.dateTimeRange!.end)
+                                        : Jalali.now(),
                                     includeYear: true),
                         fontSize: 13,
                         textAlign: TextAlign.center,
@@ -347,8 +324,7 @@ class TransactionsSearchPageState extends State<TransactionsSearchPage>
                     searchFilters: searchFilters,
                     // limit: 250,
                     noResultsExtraWidget: dateRangeWidget,
-                    totalCashFlowExtraWidget: Transform.translate(
-                        offset: Offset(0, -15), child: dateRangeWidget),
+                    totalCashFlowExtraWidget: Transform.translate(offset: Offset(0, -15), child: dateRangeWidget),
                     showTotalCashFlow: true,
                   );
                 }),
@@ -409,16 +385,14 @@ class AppliedFilterChip extends StatelessWidget {
           openFiltersSelection();
         },
         borderRadius: 8,
-        color:
-            Theme.of(context).colorScheme.secondaryContainer.withOpacity(0.5),
+        color: Theme.of(context).colorScheme.secondaryContainer.withOpacity(0.5),
         child: Container(
           padding: EdgeInsets.only(left: 14, right: 14, top: 7, bottom: 7),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
-              color: customBorderColor == null
-                  ? Theme.of(context).colorScheme.secondaryContainer
-                  : customBorderColor!.withOpacity(0.4),
+              color:
+                  customBorderColor == null ? Theme.of(context).colorScheme.secondaryContainer : customBorderColor!.withOpacity(0.4),
             ),
           ),
           child: Row(

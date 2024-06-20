@@ -2,7 +2,6 @@ import 'package:budget/colors.dart';
 import 'package:budget/database/generatePreviewData.dart';
 import 'package:budget/database/tables.dart';
 import 'package:budget/functions.dart';
-import 'package:budget/pages/addTransactionPage.dart';
 import 'package:budget/pages/homePage/homePageHeatmap.dart';
 import 'package:budget/pages/homePage/homePageLineGraph.dart';
 import 'package:budget/pages/homePage/homePageNetWorth.dart';
@@ -18,22 +17,14 @@ import 'package:budget/pages/homePage/homePageAllSpendingSummary.dart';
 import 'package:budget/pages/editHomePage.dart';
 import 'package:budget/pages/settingsPage.dart';
 import 'package:budget/pages/homePage/homePageCreditDebts.dart';
-import 'package:budget/pages/transactionFilters.dart';
-import 'package:budget/pages/walletDetailsPage.dart';
-import 'package:budget/struct/databaseGlobal.dart';
-import 'package:budget/struct/initializeNotifications.dart';
 import 'package:budget/struct/settings.dart';
 import 'package:budget/widgets/animatedExpanded.dart';
 import 'package:budget/widgets/button.dart';
 import 'package:budget/widgets/framework/pageFramework.dart';
-import 'package:budget/widgets/framework/popupFramework.dart';
 import 'package:budget/widgets/navigationFramework.dart';
 import 'package:budget/widgets/openBottomSheet.dart';
-import 'package:budget/widgets/openPopup.dart';
-import 'package:budget/widgets/pieChart.dart';
 import 'package:budget/widgets/ratingPopup.dart';
 import 'package:budget/widgets/selectedTransactionsAppBar.dart';
-import 'package:budget/widgets/util/deepLinks.dart';
 import 'package:budget/widgets/util/keepAliveClientMixin.dart';
 import 'package:budget/widgets/textWidgets.dart';
 import 'package:budget/widgets/transactionEntry/swipeToSelectTransactions.dart';
@@ -47,11 +38,9 @@ import 'package:budget/widgets/linearGradientFadedEdges.dart';
 import 'package:budget/widgets/pullDownToRefreshSync.dart';
 import 'package:budget/widgets/util/rightSideClipper.dart';
 import 'package:flutter/services.dart';
-import 'package:home_widget/home_widget.dart';
-import 'package:provider/provider.dart';
-import 'package:budget/pages/addWalletPage.dart';
 import 'package:budget/widgets/util/checkWidgetLaunch.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -62,8 +51,7 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => HomePageState();
 }
 
-class HomePageState extends State<HomePage>
-    with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
+class HomePageState extends State<HomePage> with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   void refreshState() {
     setState(() {});
   }
@@ -75,13 +63,8 @@ class HomePageState extends State<HomePage>
 
     // }
     _scrollController.animateTo(0,
-        duration: Duration(
-            milliseconds:
-                (getPlatform() == PlatformOS.isIOS ? duration * 0.2 : duration)
-                    .round()),
-        curve: getPlatform() == PlatformOS.isIOS
-            ? Curves.easeInOut
-            : Curves.elasticOut);
+        duration: Duration(milliseconds: (getPlatform() == PlatformOS.isIOS ? duration * 0.2 : duration).round()),
+        curve: getPlatform() == PlatformOS.isIOS ? Curves.easeInOut : Curves.elasticOut);
   }
 
   @override
@@ -119,12 +102,10 @@ class HomePageState extends State<HomePage>
     super.dispose();
   }
 
-  bool areAllDisabledAfterTransactionsList(
-      Map<String, Widget?> homePageSections) {
+  bool areAllDisabledAfterTransactionsList(Map<String, Widget?> homePageSections) {
     int countAfter = -1;
     for (String sectionKey in appStateSettings["homePageOrder"]) {
-      if (sectionKey == "transactionsList" &&
-          homePageSections[sectionKey] != null) {
+      if (sectionKey == "transactionsList" && homePageSections[sectionKey] != null) {
         countAfter = 0;
       } else if (countAfter == 0 && homePageSections[sectionKey] != null) {
         countAfter++;
@@ -147,11 +128,7 @@ class HomePageState extends State<HomePage>
         homePageStateKey.currentState?.refreshState();
       },
       child: SlidingSelectorIncomeExpense(
-          options: appStateSettings[
-                      "homePageTransactionsListIncomeAndExpenseOnly"] ==
-                  true
-              ? null
-              : ["all".tr(), "outgoing".tr(), "incoming".tr()],
+          options: appStateSettings["homePageTransactionsListIncomeAndExpenseOnly"] == true ? null : ["همه", "هزینه ها", "درآمد ها"],
           useHorizontalPaddingConstrained: false,
           onSelected: (index) {
             setState(() {
@@ -159,25 +136,23 @@ class HomePageState extends State<HomePage>
             });
           }),
     );
-    Widget? homePageTransactionsList =
-        isHomeScreenSectionEnabled(context, "showTransactionsList") == true
-            ? Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  slidingSelector,
-                  SizedBox(height: 8),
-                  HomeTransactions(
-                      selectedSlidingSelector: selectedSlidingSelector),
-                  SizedBox(height: 7),
-                  Center(
-                    child: ViewAllTransactionsButton(),
-                  ),
-                  if (enableDoubleColumn(context)) SizedBox(height: 35),
-                ],
-              )
-            : null;
+    Widget? homePageTransactionsList = isHomeScreenSectionEnabled(context, "showTransactionsList") == true
+        ? Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              slidingSelector,
+              SizedBox(height: 8),
+              HomeTransactions(selectedSlidingSelector: selectedSlidingSelector),
+              SizedBox(height: 7),
+              Center(
+                child: ViewAllTransactionsButton(),
+              ),
+              if (enableDoubleColumn(context)) SizedBox(height: 35),
+            ],
+          )
+        : null;
     if (homePageTransactionsList != null)
       homePageTransactionsList = enableDoubleColumn(context)
           ? KeepAliveClientMixin(
@@ -191,49 +166,25 @@ class HomePageState extends State<HomePage>
             );
 
     Map<String, Widget?> homePageSections = {
-      "wallets": isHomeScreenSectionEnabled(context, "showWalletSwitcher")
-          ? HomePageWalletSwitcher()
-          : null,
-      "walletsList": isHomeScreenSectionEnabled(context, "showWalletList")
-          ? HomePageWalletList()
-          : null,
-      "budgets": isHomeScreenSectionEnabled(context, "showPinnedBudgets")
-          ? HomePageBudgets()
-          : null,
-      "overdueUpcoming":
-          isHomeScreenSectionEnabled(context, "showOverdueUpcoming")
-              ? HomePageUpcomingTransactions()
-              : null,
-      "allSpendingSummary":
-          isHomeScreenSectionEnabled(context, "showAllSpendingSummary")
-              ? HomePageAllSpendingSummary()
-              : null,
-      "netWorth": isHomeScreenSectionEnabled(context, "showNetWorth")
-          ? HomePageNetWorth()
-          : null,
-      "objectives": isHomeScreenSectionEnabled(context, "showObjectives")
-          ? HomePageObjectives(objectiveType: ObjectiveType.goal)
-          : null,
-      "creditDebts": isHomeScreenSectionEnabled(context, "showCreditDebt")
-          ? HomePageCreditDebts()
-          : null,
+      "wallets": isHomeScreenSectionEnabled(context, "showWalletSwitcher") ? HomePageWalletSwitcher() : null,
+      "walletsList": isHomeScreenSectionEnabled(context, "showWalletList") ? HomePageWalletList() : null,
+      "budgets": isHomeScreenSectionEnabled(context, "showPinnedBudgets") ? HomePageBudgets() : null,
+      "overdueUpcoming": isHomeScreenSectionEnabled(context, "showOverdueUpcoming") ? HomePageUpcomingTransactions() : null,
+      "allSpendingSummary": isHomeScreenSectionEnabled(context, "showAllSpendingSummary") ? HomePageAllSpendingSummary() : null,
+      "netWorth": isHomeScreenSectionEnabled(context, "showNetWorth") ? HomePageNetWorth() : null,
+      "objectives":
+          isHomeScreenSectionEnabled(context, "showObjectives") ? HomePageObjectives(objectiveType: ObjectiveType.goal) : null,
+      "creditDebts": isHomeScreenSectionEnabled(context, "showCreditDebt") ? HomePageCreditDebts() : null,
       "objectiveLoans":
-          isHomeScreenSectionEnabled(context, "showObjectiveLoans")
-              ? HomePageObjectives(objectiveType: ObjectiveType.loan)
-              : null,
+          isHomeScreenSectionEnabled(context, "showObjectiveLoans") ? HomePageObjectives(objectiveType: ObjectiveType.loan) : null,
       "spendingGraph": isHomeScreenSectionEnabled(context, "showSpendingGraph")
           ? HomePageLineGraph(selectedSlidingSelector: selectedSlidingSelector)
           : null,
-      "pieChart": isHomeScreenSectionEnabled(context, "showPieChart")
-          ? HomePagePieChart()
-          : null,
-      "heatMap": isHomeScreenSectionEnabled(context, "showHeatMap")
-          ? HomePageHeatMap()
-          : null,
+      "pieChart": isHomeScreenSectionEnabled(context, "showPieChart") ? HomePagePieChart() : null,
+      "heatMap": isHomeScreenSectionEnabled(context, "showHeatMap") ? HomePageHeatMap() : null,
       "transactionsList": homePageTransactionsList ?? SizedBox.shrink(),
     };
-    bool showWelcomeBanner =
-        isHomeScreenSectionEnabled(context, "showUsernameWelcomeBanner");
+    bool showWelcomeBanner = isHomeScreenSectionEnabled(context, "showUsernameWelcomeBanner");
     bool useSmallBanner = showWelcomeBanner == false;
 
     List<String> homePageSectionsFullScreenCenter = [];
@@ -242,8 +193,7 @@ class HomePageState extends State<HomePage>
 
     String section = "";
 
-    for (String item
-        in appStateSettings[getHomePageOrderSettingsKey(context)]) {
+    for (String item in appStateSettings[getHomePageOrderSettingsKey(context)]) {
       if (item == "ORDER:LEFT") {
         section = item;
       } else if (item == "ORDER:RIGHT") {
@@ -286,15 +236,13 @@ class HomePageState extends State<HomePage>
                               )
                             : SizedBox.shrink(),
                         Tooltip(
-                          message: "edit-home".tr(),
+                          message: "ویرایش خانه",
                           child: IconButton(
                             padding: EdgeInsets.all(15),
                             onPressed: () {
                               pushRoute(context, EditHomePage());
                             },
-                            icon: Icon(appStateSettings["outlinedIcons"]
-                                ? Icons.more_vert_outlined
-                                : Icons.more_vert_rounded),
+                            icon: Icon(appStateSettings["outlinedIcons"] ? Icons.more_vert_outlined : Icons.more_vert_rounded),
                           ),
                         ),
                       ],
@@ -304,28 +252,19 @@ class HomePageState extends State<HomePage>
 
                     showWelcomeBanner
                         ? ConstrainedBox(
-                            constraints: BoxConstraints(
-                                minHeight: getExpandedHeaderHeight(
-                                        context, null,
-                                        isHomePageSpace: true) /
-                                    1.34),
+                            constraints:
+                                BoxConstraints(minHeight: getExpandedHeaderHeight(context, null, isHomePageSpace: true) / 1.34),
                             child: Container(
                               // Subtract one (1) here because of the thickness of the wiper above
                               alignment: Alignment.bottomLeft,
-                              padding: EdgeInsets.only(
-                                  left: 9,
-                                  bottom: enableDoubleColumn(context) ? 10 : 17,
-                                  right: 9),
+                              padding: EdgeInsets.only(left: 9, bottom: enableDoubleColumn(context) ? 10 : 17, right: 9),
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.end,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   HomePageUsername(
-                                    animationControllerHeader:
-                                        _animationControllerHeader,
-                                    animationControllerHeader2:
-                                        _animationControllerHeader2,
+                                    animationControllerHeader: _animationControllerHeader,
+                                    animationControllerHeader2: _animationControllerHeader2,
                                     showUsername: showUsername,
                                     appStateSettings: appStateSettings,
                                     enterNameBottomSheet: enterNameBottomSheet,
@@ -338,17 +277,12 @@ class HomePageState extends State<HomePage>
                     // Not full screen
                     if (enableDoubleColumn(context) != true) ...[
                       KeepAliveClientMixin(child: HomePageRatingBox()),
-                      for (String sectionKey
-                          in appStateSettings["homePageOrder"])
-                        homePageSections[sectionKey] ?? SizedBox.shrink(),
+                      for (String sectionKey in appStateSettings["homePageOrder"]) homePageSections[sectionKey] ?? SizedBox.shrink(),
                     ],
                     // Full screen top section
                     if (enableDoubleColumn(context) == true) ...[
-                      for (String sectionKey
-                          in appStateSettings["homePageOrderFullScreen"])
-                        if (homePageSectionsFullScreenCenter
-                            .contains(sectionKey))
-                          homePageSections[sectionKey] ?? SizedBox.shrink()
+                      for (String sectionKey in appStateSettings["homePageOrderFullScreen"])
+                        if (homePageSectionsFullScreenCenter.contains(sectionKey)) homePageSections[sectionKey] ?? SizedBox.shrink()
                     ],
                     // Full screen bottom split section
                     if (enableDoubleColumn(context) == true)
@@ -359,18 +293,15 @@ class HomePageState extends State<HomePage>
                             Flexible(
                               child: Column(
                                 children: [
-                                  for (String sectionKey in appStateSettings[
-                                      "homePageOrderFullScreen"])
-                                    if (homePageSectionsFullScreenLeft
-                                        .contains(sectionKey))
+                                  for (String sectionKey in appStateSettings["homePageOrderFullScreen"])
+                                    if (homePageSectionsFullScreenLeft.contains(sectionKey))
                                       LinearGradientFadedEdges(
                                         enableLeft: false,
                                         enableBottom: false,
                                         enableTop: false,
                                         child: ClipRRect(
                                           clipper: RightSideClipper(),
-                                          child: homePageSections[sectionKey] ??
-                                              SizedBox.shrink(),
+                                          child: homePageSections[sectionKey] ?? SizedBox.shrink(),
                                         ),
                                       ),
                                 ],
@@ -379,18 +310,15 @@ class HomePageState extends State<HomePage>
                             Flexible(
                               child: Column(
                                 children: [
-                                  for (String sectionKey in appStateSettings[
-                                      "homePageOrderFullScreen"])
-                                    if (homePageSectionsFullScreenRight
-                                        .contains(sectionKey))
+                                  for (String sectionKey in appStateSettings["homePageOrderFullScreen"])
+                                    if (homePageSectionsFullScreenRight.contains(sectionKey))
                                       LinearGradientFadedEdges(
                                         enableRight: false,
                                         enableBottom: false,
                                         enableTop: false,
                                         child: ClipRRect(
                                           clipper: RightSideClipper(),
-                                          child: homePageSections[sectionKey] ??
-                                              SizedBox.shrink(),
+                                          child: homePageSections[sectionKey] ?? SizedBox.shrink(),
                                         ),
                                       ),
                                 ],
@@ -402,8 +330,7 @@ class HomePageState extends State<HomePage>
                     SizedBox(
                       height: enableDoubleColumn(context) == true
                           ? 40
-                          : areAllDisabledAfterTransactionsList(
-                                  homePageSections)
+                          : areAllDisabledAfterTransactionsList(homePageSections)
                               ? 25
                               : 73,
                     ),
@@ -474,8 +401,7 @@ class _HomePageRatingBoxState extends State<HomePageRatingBox> {
               key: ValueKey(2),
               padding: const EdgeInsets.only(bottom: 13),
               child: Container(
-                padding:
-                    EdgeInsets.only(left: 15, right: 15, bottom: 18, top: 18),
+                padding: EdgeInsets.only(left: 15, right: 15, bottom: 18, top: 18),
                 margin: EdgeInsets.symmetric(horizontal: 13),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.all(Radius.circular(15)),
@@ -534,8 +460,7 @@ class _HomePageRatingBoxState extends State<HomePageRatingBox> {
                               },
                               expandedLayout: true,
                               color: Theme.of(context).colorScheme.tertiary,
-                              textColor:
-                                  Theme.of(context).colorScheme.onTertiary,
+                              textColor: Theme.of(context).colorScheme.onTertiary,
                             ),
                           ),
                         ),

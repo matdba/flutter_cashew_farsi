@@ -11,6 +11,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:shamsi_date/shamsi_date.dart';
 
 class BudgetHistoryLineGraph extends StatelessWidget {
   const BudgetHistoryLineGraph({
@@ -53,8 +54,7 @@ class BudgetHistoryLineGraph extends StatelessWidget {
 
     List<DateTimeRange> filteredDateRanges = dateRanges;
     List<List<FlSpot>> filteredSpotsFixedX = spots;
-    Map<String, List<FlSpot>> extraCategorySpotsFilteredFixedX =
-        extraCategorySpots;
+    Map<String, List<FlSpot>> extraCategorySpotsFilteredFixedX = extraCategorySpots;
     if (loadAllEvenIfZero == false) {
       filteredDateRanges = [];
       filteredSpotsFixedX = [];
@@ -72,15 +72,13 @@ class BudgetHistoryLineGraph extends StatelessWidget {
         numberZeroList.add(numberZero);
       }
 
-      int minNumberZero =
-          numberZeroList.isNotEmpty ? numberZeroList.reduce(min) : 0;
+      int minNumberZero = numberZeroList.isNotEmpty ? numberZeroList.reduce(min) : 0;
       // Always keep at least minimumNumberOfZero periods in view even if zero
       if (dateRanges.length - minNumberZero <= minimumNumberOfZero) {
         minNumberZero = dateRanges.length - minimumNumberOfZero;
       }
 
-      filteredDateRanges =
-          dateRanges.take(dateRanges.length - minNumberZero).toList();
+      filteredDateRanges = dateRanges.take(dateRanges.length - minNumberZero).toList();
 
       // Remove the zeroes
       List<List<FlSpot>> filteredSpots = [];
@@ -101,8 +99,7 @@ class BudgetHistoryLineGraph extends StatelessWidget {
       // Remove the zeroes
       Map<String, List<FlSpot>> extraCategorySpotsFiltered = extraCategorySpots;
       for (String key in extraCategorySpots.keys) {
-        extraCategorySpotsFiltered[key] =
-            extraCategorySpots[key]?.sublist(minNumberZero) ?? [];
+        extraCategorySpotsFiltered[key] = extraCategorySpots[key]?.sublist(minNumberZero) ?? [];
       }
       // Fix the x values
       for (String key in extraCategorySpotsFiltered.keys) {
@@ -119,8 +116,7 @@ class BudgetHistoryLineGraph extends StatelessWidget {
       // If all regions are non-zero
       // i.e. the oldest region loaded is not zero (If showing from April-November and April is non-zero)
       // Then we set this to true which indicates all periods were displayed on the graph
-      if (filteredSpotsFixedX.firstOrNull?.length ==
-          spots.firstOrNull?.length) {
+      if (filteredSpotsFixedX.firstOrNull?.length == spots.firstOrNull?.length) {
         setNoPastRegionsAreZero(true);
       }
       if (filteredDateRanges.length <= 0 || filteredSpotsFixedX.length <= 0) {
@@ -233,8 +229,7 @@ class _BudgetHistoryLineGraph extends StatefulWidget {
   final bool showDateOnHover;
 
   @override
-  State<_BudgetHistoryLineGraph> createState() =>
-      _BudgetHistoryLineGraphState();
+  State<_BudgetHistoryLineGraph> createState() => _BudgetHistoryLineGraphState();
 }
 
 class _BudgetHistoryLineGraphState extends State<_BudgetHistoryLineGraph> {
@@ -277,19 +272,12 @@ class _BudgetHistoryLineGraphState extends State<_BudgetHistoryLineGraph> {
                   gradient: LinearGradient(
                     colors: [
                       i == 0
-                          ? (widget.lineColors?[i] ?? widget.color)
-                              .withAlpha(100)
-                          : (widget.lineColors?[i] ?? widget.color)
-                              .withAlpha(1),
+                          ? (widget.lineColors?[i] ?? widget.color).withAlpha(100)
+                          : (widget.lineColors?[i] ?? widget.color).withAlpha(1),
                       (widget.lineColors?[i] ?? widget.color).withAlpha(1),
                     ],
                     begin: Alignment.bottomCenter,
-                    end: Alignment(
-                        0,
-                        widget.maxY > 0
-                            ? -(widget.minY).abs() /
-                                ((widget.maxY).abs() + (widget.minY).abs())
-                            : -1),
+                    end: Alignment(0, widget.maxY > 0 ? -(widget.minY).abs() / ((widget.maxY).abs() + (widget.minY).abs()) : -1),
                   ),
                   // gradientFrom: Offset(
                   //     0,
@@ -316,17 +304,12 @@ class _BudgetHistoryLineGraphState extends State<_BudgetHistoryLineGraph> {
                   gradient: LinearGradient(
                     colors: [
                       i == 0
-                          ? (widget.lineColors?[i] ?? widget.color)
-                              .withAlpha(100)
-                          : (widget.lineColors?[i] ?? widget.color)
-                              .withAlpha(1),
+                          ? (widget.lineColors?[i] ?? widget.color).withAlpha(100)
+                          : (widget.lineColors?[i] ?? widget.color).withAlpha(1),
                       (widget.lineColors?[i] ?? widget.color).withAlpha(1),
                     ],
                     begin: Alignment.topCenter,
-                    end: Alignment(
-                        0,
-                        (widget.maxY).abs() /
-                            ((widget.maxY).abs() + (widget.minY).abs())),
+                    end: Alignment(0, (widget.maxY).abs() / ((widget.maxY).abs() + (widget.minY).abs())),
                   ),
                 ),
           dotData: FlDotData(
@@ -334,15 +317,12 @@ class _BudgetHistoryLineGraphState extends State<_BudgetHistoryLineGraph> {
             getDotPainter: (spot, percent, barData, index) {
               return FlDotCirclePainter(
                 radius: 4,
-                color: lightenPastel(widget.lineColors?[i] ?? widget.color,
-                        amount: 0.3)
-                    .withOpacity(0.8),
+                color: lightenPastel(widget.lineColors?[i] ?? widget.color, amount: 0.3).withOpacity(0.8),
                 strokeWidth: 0,
               );
             },
           ),
-          color:
-              lightenPastel(widget.lineColors?[i] ?? widget.color, amount: 0.3),
+          color: lightenPastel(widget.lineColors?[i] ?? widget.color, amount: 0.3),
         ),
       if (widget.horizontalLineAt != null)
         for (int i = 0; i < widget.spots.length; i++)
@@ -382,24 +362,17 @@ class _BudgetHistoryLineGraphState extends State<_BudgetHistoryLineGraph> {
             getDotPainter: (spot, percent, barData, index) {
               return FlDotCirclePainter(
                 radius: 3,
-                color: lightenPastel(
-                        HexColor(widget.categoriesMapped[categoryPk]?.colour),
-                        amount: 0.3)
-                    .withOpacity(0.6),
+                color: lightenPastel(HexColor(widget.categoriesMapped[categoryPk]?.colour), amount: 0.3).withOpacity(0.6),
                 strokeWidth: 0,
               );
             },
           ),
-          color: lightenPastel(
-                  HexColor(widget.categoriesMapped[categoryPk]?.colour),
-                  amount: 0.3)
-              .withOpacity(0.8),
+          color: lightenPastel(HexColor(widget.categoriesMapped[categoryPk]?.colour), amount: 0.3).withOpacity(0.8),
         ),
     ];
 
     return Container(
-      height: MediaQuery.sizeOf(context).height * 0.3 >
-              (getIsFullScreen(context) == false ? 190 : 350)
+      height: MediaQuery.sizeOf(context).height * 0.3 > (getIsFullScreen(context) == false ? 190 : 350)
           ? getIsFullScreen(context) == false
               ? 190
               : 350
@@ -417,28 +390,23 @@ class _BudgetHistoryLineGraphState extends State<_BudgetHistoryLineGraph> {
           minY: widget.minY,
           maxY: widget.maxY,
           lineTouchData: LineTouchData(
-            touchCallback:
-                (FlTouchEvent event, LineTouchResponse? touchResponse) {
+            touchCallback: (FlTouchEvent event, LineTouchResponse? touchResponse) {
               if (!event.isInterestedForInteractions || touchResponse == null) {
-                if (touchedValue != null) if (widget.onTouchedIndex != null)
-                  widget.onTouchedIndex!(null);
+                if (touchedValue != null) if (widget.onTouchedIndex != null) widget.onTouchedIndex!(null);
                 touchedValue = null;
                 return;
               }
 
               // Correct the x value, because not all loaded periods may be shown in the graph
               // because we remove the zero values
-              double value = (widget.originalDateRanges.length -
-                      (widget.spots.firstOrNull ?? []).length) +
-                  touchResponse.lineBarSpots![0].x;
-              if (touchedValue != value.toInt()) if (widget.onTouchedIndex !=
-                  null) widget.onTouchedIndex!(value.toInt());
+              double value =
+                  (widget.originalDateRanges.length - (widget.spots.firstOrNull ?? []).length) + touchResponse.lineBarSpots![0].x;
+              if (touchedValue != value.toInt()) if (widget.onTouchedIndex != null) widget.onTouchedIndex!(value.toInt());
 
               if (event.runtimeType == FlLongPressStart) {
                 HapticFeedback.selectionClick();
               } else if (touchedValue != value.toInt() &&
-                  (event.runtimeType == FlLongPressMoveUpdate ||
-                      event.runtimeType == FlPanUpdateEvent)) {
+                  (event.runtimeType == FlLongPressMoveUpdate || event.runtimeType == FlPanUpdateEvent)) {
                 HapticFeedback.selectionClick();
               }
 
@@ -446,35 +414,28 @@ class _BudgetHistoryLineGraphState extends State<_BudgetHistoryLineGraph> {
             },
             enabled: true,
             touchSpotThreshold: 1000,
-            getTouchedSpotIndicator:
-                (LineChartBarData barData, List<int> spotIndexes) {
+            getTouchedSpotIndicator: (LineChartBarData barData, List<int> spotIndexes) {
               return spotIndexes.map((index) {
                 return TouchedSpotIndicatorData(
                   FlLine(
-                    color: (widget.extraCategorySpots.keys.length <= 0
-                            ? widget.color
-                            : barData.color) ??
+                    color: (widget.extraCategorySpots.keys.length <= 0 ? widget.color : barData.color) ??
                         Theme.of(context).colorScheme.primary,
                     strokeWidth: 2,
                     dashArray: [2, 2],
                   ),
                   FlDotData(
                     show: true,
-                    getDotPainter: (spot, percent, barData, index) =>
-                        FlDotCirclePainter(
+                    getDotPainter: (spot, percent, barData, index) => FlDotCirclePainter(
                       radius: 3,
-                      color: (widget.extraCategorySpots.keys.length <= 0 &&
-                                  widget.lineColors == null
+                      color: (widget.extraCategorySpots.keys.length <= 0 && widget.lineColors == null
                               ? widget.color.withOpacity(0.9)
                               : barData.color) ??
                           Theme.of(context).colorScheme.primary,
                       strokeWidth: 2,
-                      strokeColor:
-                          (widget.extraCategorySpots.keys.length <= 0 &&
-                                      widget.lineColors == null
-                                  ? widget.color.withOpacity(0.9)
-                                  : barData.color) ??
-                              Theme.of(context).colorScheme.primary,
+                      strokeColor: (widget.extraCategorySpots.keys.length <= 0 && widget.lineColors == null
+                              ? widget.color.withOpacity(0.9)
+                              : barData.color) ??
+                          Theme.of(context).colorScheme.primary,
                     ),
                   ),
                 );
@@ -482,22 +443,20 @@ class _BudgetHistoryLineGraphState extends State<_BudgetHistoryLineGraph> {
             },
             touchTooltipData: LineTouchTooltipData(
               maxContentWidth: 170,
-              tooltipBgColor: widget.extraCategorySpots.keys.length <= 0 &&
-                      (widget.lineColors == null ||
-                          (widget.lineColors?.length ?? 0) <= 0)
-                  ? widget.color.withOpacity(0.7)
-                  : dynamicPastel(
-                      context,
-                      getColor(context, "white"),
-                      inverse: true,
-                      amountLight: 0.2,
-                      amountDark: 0.05,
-                    ).withOpacity(0.8),
+              tooltipBgColor:
+                  widget.extraCategorySpots.keys.length <= 0 && (widget.lineColors == null || (widget.lineColors?.length ?? 0) <= 0)
+                      ? widget.color.withOpacity(0.7)
+                      : dynamicPastel(
+                          context,
+                          getColor(context, "white"),
+                          inverse: true,
+                          amountLight: 0.2,
+                          amountDark: 0.05,
+                        ).withOpacity(0.8),
               tooltipRoundedRadius: 8,
               fitInsideVertically: true,
               fitInsideHorizontally: true,
-              tooltipPadding:
-                  EdgeInsets.only(left: 8, right: 8, top: 8, bottom: 6),
+              tooltipPadding: EdgeInsets.only(left: 8, right: 8, top: 8, bottom: 6),
               getTooltipItems: (List<LineBarSpot> lineBarsSpot) {
                 return lineBarsSpot.asMap().entries.map((entry) {
                   LineBarSpot lineBarSpot = entry.value;
@@ -508,34 +467,24 @@ class _BudgetHistoryLineGraphState extends State<_BudgetHistoryLineGraph> {
                   }
                   DateTimeRange? dateRange;
                   try {
-                    List<DateTimeRange> dateRanges = widget.dateRanges
-                        .take(widget.spots.first.length)
-                        .toList();
-                    dateRange = dateRanges[
-                        dateRanges.length - 1 - (lineBarsSpot.first.x).round()];
+                    List<DateTimeRange> dateRanges = widget.dateRanges.take(widget.spots.first.length).toList();
+                    dateRange = dateRanges[dateRanges.length - 1 - (lineBarsSpot.first.x).round()];
                   } catch (e) {
-                    print(
-                        "Error with date ranges passed in, length mismatched that of lines: " +
-                            e.toString());
+                    print("Error with date ranges passed in, length mismatched that of lines: " + e.toString());
                   }
 
                   String startAndEndDateString = "";
                   if (dateRange != null && widget.showDateOnHover) {
-                    String startDateString =
-                        getWordedDateShort(dateRange.start);
-                    String endDateString = getWordedDateShort(dateRange.end);
+                    String startDateString = getWordedDateShort(Jalali.fromDateTime(dateRange.start));
+                    String endDateString = getWordedDateShort(Jalali.fromDateTime(dateRange.end));
                     if (startDateString == endDateString) {
-                      startAndEndDateString = getWordedDateShort(
-                          dateRange.start,
-                          includeYear:
-                              dateRange.start.year != DateTime.now().year);
+                      startAndEndDateString = getWordedDateShort(Jalali.fromDateTime(dateRange.start),
+                          includeYear: dateRange.start.year != DateTime.now().year);
                     } else {
-                      startAndEndDateString =
-                          getWordedDateShort(dateRange.start) +
-                              " – " +
-                              getWordedDateShort(dateRange.end,
-                                  includeYear: dateRange.end.year !=
-                                      DateTime.now().year);
+                      startAndEndDateString = getWordedDateShort(Jalali.fromDateTime(dateRange.start)) +
+                          " – " +
+                          getWordedDateShort(Jalali.fromDateTime(dateRange.end),
+                              includeYear: dateRange.end.year != DateTime.now().year);
                     }
                     startAndEndDateString = startAndEndDateString + "\n";
                   }
@@ -544,14 +493,11 @@ class _BudgetHistoryLineGraphState extends State<_BudgetHistoryLineGraph> {
                     "",
                     TextStyle(),
                     children: [
-                      if (dateRange != null &&
-                          index == 0 &&
-                          widget.showDateOnHover)
+                      if (dateRange != null && index == 0 && widget.showDateOnHover)
                         TextSpan(
                           text: startAndEndDateString,
                           style: TextStyle(
-                            color: getColor(context, "black")
-                                .withOpacity(lineBarsSpot.length > 1 ? 0.7 : 1),
+                            color: getColor(context, "black").withOpacity(lineBarsSpot.length > 1 ? 0.7 : 1),
                             fontWeight: FontWeight.bold,
                             fontSize: 12,
                             fontFamilyFallback: ['Inter'],
@@ -559,11 +505,9 @@ class _BudgetHistoryLineGraphState extends State<_BudgetHistoryLineGraph> {
                         ),
                       TextSpan(
                         text: convertToMoney(
-                            Provider.of<AllWallets>(context, listen: false),
-                            lineBarSpot.y == -1e-14 ? 0 : lineBarSpot.y),
+                            Provider.of<AllWallets>(context, listen: false), lineBarSpot.y == -1e-14 ? 0 : lineBarSpot.y),
                         style: TextStyle(
-                          color: lineBarSpot.bar.color ==
-                                  lightenPastel(widget.color, amount: 0.3)
+                          color: lineBarSpot.bar.color == lightenPastel(widget.color, amount: 0.3)
                               ? widget.extraCategorySpots.keys.length <= 0
                                   ? Colors.white.withOpacity(0.9)
                                   : getColor(context, "black").withOpacity(0.7)
@@ -571,11 +515,7 @@ class _BudgetHistoryLineGraphState extends State<_BudgetHistoryLineGraph> {
                           fontWeight: FontWeight.bold,
                           fontSize: 12,
                           fontFamilyFallback: ['Inter'],
-                          height: index == 0 &&
-                                  widget.showDateOnHover &&
-                                  lineBarsSpot.length > 1
-                              ? 1.8
-                              : null,
+                          height: index == 0 && widget.showDateOnHover && lineBarsSpot.length > 1 ? 1.8 : null,
                         ),
                       ),
                     ],
@@ -589,62 +529,34 @@ class _BudgetHistoryLineGraphState extends State<_BudgetHistoryLineGraph> {
               sideTitles: SideTitles(
                 interval: null,
                 showTitles: true,
-                reservedSize: widget.budget.reoccurrence ==
-                            BudgetReoccurence.weekly ||
-                        widget.budget.reoccurrence == BudgetReoccurence.daily
-                    ? 38
-                    : 22,
+                reservedSize:
+                    widget.budget.reoccurrence == BudgetReoccurence.weekly || widget.budget.reoccurrence == BudgetReoccurence.daily
+                        ? 38
+                        : 22,
                 getTitlesWidget: (value, meta) {
                   DateTime startDate = widget.dateRanges[0].start;
-                  if ((widget.spots.firstOrNull ?? []).length -
-                              1 -
-                              value.round() <
-                          widget.dateRanges.length &&
-                      (widget.spots.firstOrNull ?? []).length -
-                              1 -
-                              value.round() >=
-                          0) {
-                    startDate = widget
-                        .dateRanges[(widget.spots.firstOrNull ?? []).length -
-                            1 -
-                            value.round()]
-                        .start;
+                  if ((widget.spots.firstOrNull ?? []).length - 1 - value.round() < widget.dateRanges.length &&
+                      (widget.spots.firstOrNull ?? []).length - 1 - value.round() >= 0) {
+                    startDate = widget.dateRanges[(widget.spots.firstOrNull ?? []).length - 1 - value.round()].start;
                   }
-                  if (value.toStringAsFixed(2) ==
-                      value.round().toStringAsFixed(2)) {
+                  if (value.toStringAsFixed(2) == value.round().toStringAsFixed(2)) {
                     return Padding(
                       padding: const EdgeInsets.only(top: 7),
                       child: MediaQuery(
-                        data: MediaQuery.of(context)
-                            .copyWith(textScaleFactor: 1.0),
+                        data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
                         child: TextFont(
                           textAlign: TextAlign.center,
                           fontSize: 13,
-                          text: widget.budget.reoccurrence ==
-                                  BudgetReoccurence.weekly
-                              ? DateFormat('MMM\ndd', context.locale.toString())
-                                  .format(startDate)
-                              : widget.budget.reoccurrence ==
-                                      BudgetReoccurence.daily
-                                  ? DateFormat(
-                                          'MMM\ndd', context.locale.toString())
-                                      .format(startDate)
-                                  : widget.budget.reoccurrence ==
-                                          BudgetReoccurence.monthly
-                                      ? DateFormat(
-                                              'MMM', context.locale.toString())
-                                          .format(startDate)
-                                      : widget.budget.reoccurrence ==
-                                              BudgetReoccurence.yearly
-                                          ? DateFormat('yyyy',
-                                                  context.locale.toString())
-                                              .format(startDate)
-                                          : DateFormat('MMM',
-                                                  context.locale.toString())
-                                              .format(startDate),
-                          textColor: dynamicPastel(context, widget.color,
-                                  amount: 0.8, inverse: true)
-                              .withOpacity(0.5),
+                          text: widget.budget.reoccurrence == BudgetReoccurence.weekly
+                              ? DateFormat('MMM\ndd', context.locale.toString()).format(startDate)
+                              : widget.budget.reoccurrence == BudgetReoccurence.daily
+                                  ? DateFormat('MMM\ndd', context.locale.toString()).format(startDate)
+                                  : widget.budget.reoccurrence == BudgetReoccurence.monthly
+                                      ? DateFormat('MMM', context.locale.toString()).format(startDate)
+                                      : widget.budget.reoccurrence == BudgetReoccurence.yearly
+                                          ? DateFormat('yyyy', context.locale.toString()).format(startDate)
+                                          : DateFormat('MMM', context.locale.toString()).format(startDate),
+                          textColor: dynamicPastel(context, widget.color, amount: 0.8, inverse: true).withOpacity(0.5),
                         ),
                       ),
                     );
@@ -673,39 +585,28 @@ class _BudgetHistoryLineGraphState extends State<_BudgetHistoryLineGraph> {
                   return Padding(
                     padding: const EdgeInsets.only(right: 8.0),
                     child: MediaQuery(
-                      data:
-                          MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+                      data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
                       child: TextFont(
                         textAlign: TextAlign.right,
-                        text: getWordedNumber(
-                            context, Provider.of<AllWallets>(context), value),
-                        textColor: dynamicPastel(context, widget.color,
-                                amount: 0.5, inverse: true)
-                            .withOpacity(0.3),
+                        text: getWordedNumber(context, Provider.of<AllWallets>(context), value),
+                        textColor: dynamicPastel(context, widget.color, amount: 0.5, inverse: true).withOpacity(0.3),
                         fontSize: 13,
                       ),
                     ),
                   );
                 },
-                interval: double.parse(
-                            (widget.maxY - widget.minY).toStringAsFixed(5)) ==
-                        0.0
+                interval: double.parse((widget.maxY - widget.minY).toStringAsFixed(5)) == 0.0
                     ? 0.001
-                    : ((widget.maxY - widget.minY) /
-                            (getIsFullScreen(context) ? 7 : 4))
-                        .abs(),
+                    : ((widget.maxY - widget.minY) / (getIsFullScreen(context) ? 7 : 4)).abs(),
                 reservedSize: (widget.minY <= -10000
                         ? 55
                         : widget.minY <= -1000
                             ? 45
                             : widget.minY <= -100
                                 ? 40
-                                : (widget.maxY >= 100
-                                    ? (widget.maxY >= 1000 ? 37 : 33)
-                                    : 25)) +
+                                : (widget.maxY >= 100 ? (widget.maxY >= 1000 ? 37 : 33) : 25)) +
                     10 +
-                    measureCurrencyStringExtraWidth(
-                        Provider.of<AllWallets>(context)),
+                    measureCurrencyStringExtraWidth(Provider.of<AllWallets>(context)),
               ),
             ),
           ),
@@ -713,16 +614,14 @@ class _BudgetHistoryLineGraphState extends State<_BudgetHistoryLineGraph> {
             horizontalLines: [
               HorizontalLine(
                 y: 0,
-                color: dynamicPastel(context, widget.color, amount: 0.3)
-                    .withOpacity(0.4),
+                color: dynamicPastel(context, widget.color, amount: 0.3).withOpacity(0.4),
               ),
               ...(widget.horizontalLineAt == null
                   ? []
                   : [
                       HorizontalLine(
                         y: widget.horizontalLineAt!,
-                        color: dynamicPastel(context, widget.color, amount: 0.3)
-                            .withOpacity(0.7),
+                        color: dynamicPastel(context, widget.color, amount: 0.3).withOpacity(0.7),
                         dashArray: [2, 2],
                       ),
                     ])
@@ -765,25 +664,19 @@ class _BudgetHistoryLineGraphState extends State<_BudgetHistoryLineGraph> {
             //   return FlLine(color: Colors.transparent, strokeWidth: 0);
             // },
             // If the interval is equal to a really small number (almost 0, it freezes the app!)
-            horizontalInterval:
-                double.parse((widget.maxY - widget.minY).toStringAsFixed(5)) ==
-                        0.0
-                    ? 0.001
-                    : ((widget.maxY - widget.minY) /
-                            (getIsFullScreen(context) ? 7 : 4))
-                        .abs(),
+            horizontalInterval: double.parse((widget.maxY - widget.minY).toStringAsFixed(5)) == 0.0
+                ? 0.001
+                : ((widget.maxY - widget.minY) / (getIsFullScreen(context) ? 7 : 4)).abs(),
             getDrawingHorizontalLine: (value) {
               return FlLine(
-                color: dynamicPastel(context, widget.color, amount: 0.3)
-                    .withOpacity(0.2),
+                color: dynamicPastel(context, widget.color, amount: 0.3).withOpacity(0.2),
                 strokeWidth: 2,
                 dashArray: [2, 8],
               );
             },
             getDrawingVerticalLine: (value) {
               return FlLine(
-                color: dynamicPastel(context, widget.color, amount: 0.3)
-                    .withOpacity(0.2),
+                color: dynamicPastel(context, widget.color, amount: 0.3).withOpacity(0.2),
                 strokeWidth: 2,
                 dashArray: [2, 8],
               );

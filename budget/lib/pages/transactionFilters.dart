@@ -30,6 +30,7 @@ import 'package:budget/colors.dart';
 import 'package:provider/provider.dart';
 import 'package:budget/widgets/selectChips.dart';
 import 'package:budget/widgets/framework/popupFramework.dart';
+import 'package:shamsi_date/shamsi_date.dart';
 
 import '../widgets/amountRangeSlider.dart';
 
@@ -57,22 +58,16 @@ class SearchFilters {
   }) {
     walletPks = this.walletPks.isEmpty ? [] : this.walletPks;
     categoryPks = this.categoryPks.isEmpty ? [] : this.categoryPks;
-    subcategoryPks =
-        this.subcategoryPks?.isEmpty == true ? [] : this.subcategoryPks;
+    subcategoryPks = this.subcategoryPks?.isEmpty == true ? [] : this.subcategoryPks;
     budgetPks = this.budgetPks.isEmpty ? [] : this.budgetPks;
-    excludedBudgetPks =
-        this.excludedBudgetPks.isEmpty ? [] : this.excludedBudgetPks;
+    excludedBudgetPks = this.excludedBudgetPks.isEmpty ? [] : this.excludedBudgetPks;
     objectivePks = this.objectivePks.isEmpty ? [] : this.objectivePks;
-    objectiveLoanPks =
-        this.objectiveLoanPks.isEmpty ? [] : this.objectiveLoanPks;
+    objectiveLoanPks = this.objectiveLoanPks.isEmpty ? [] : this.objectiveLoanPks;
     expenseIncome = this.expenseIncome.isEmpty ? [] : this.expenseIncome;
     positiveCashFlow = this.positiveCashFlow;
     paidStatus = this.paidStatus.isEmpty ? [] : this.paidStatus;
-    transactionTypes =
-        this.transactionTypes.isEmpty ? [] : this.transactionTypes;
-    budgetTransactionFilters = this.budgetTransactionFilters.isEmpty
-        ? []
-        : this.budgetTransactionFilters;
+    transactionTypes = this.transactionTypes.isEmpty ? [] : this.transactionTypes;
+    budgetTransactionFilters = this.budgetTransactionFilters.isEmpty ? [] : this.budgetTransactionFilters;
     // reoccurence = [];
     methodAdded = this.methodAdded.isEmpty ? [] : this.methodAdded;
   }
@@ -80,8 +75,7 @@ class SearchFilters {
   // think of it, if the tag is added it will be considered in the search
   List<String> walletPks;
   List<String> categoryPks;
-  List<String>?
-      subcategoryPks; // if this is null, it means any transaction WITHOUT a subcategory (blank list means all)
+  List<String>? subcategoryPks; // if this is null, it means any transaction WITHOUT a subcategory (blank list means all)
   List<String?> budgetPks;
   List<String> excludedBudgetPks;
   List<String?> objectivePks;
@@ -132,13 +126,10 @@ class SearchFilters {
       positiveCashFlow: positiveCashFlow,
       paidStatus: paidStatus ?? this.paidStatus,
       transactionTypes: transactionTypes ?? this.transactionTypes,
-      budgetTransactionFilters:
-          budgetTransactionFilters ?? this.budgetTransactionFilters,
+      budgetTransactionFilters: budgetTransactionFilters ?? this.budgetTransactionFilters,
       methodAdded: methodAdded ?? this.methodAdded,
       amountRange: amountRange ?? this.amountRange,
-      dateTimeRange: forceSetDateTimeRange == true
-          ? dateTimeRange
-          : (dateTimeRange ?? this.dateTimeRange),
+      dateTimeRange: forceSetDateTimeRange == true ? dateTimeRange : (dateTimeRange ?? this.dateTimeRange),
       searchQuery: searchQuery ?? this.searchQuery,
       titleContains: titleContains ?? this.titleContains,
       noteContains: noteContains ?? this.noteContains,
@@ -192,8 +183,7 @@ class SearchFilters {
       return false;
   }
 
-  void loadFilterString(String? filterString,
-      {bool skipDateTimeRange = false, bool skipSearchQuery = false}) {
+  void loadFilterString(String? filterString, {bool skipDateTimeRange = false, bool skipSearchQuery = false}) {
     if (filterString == null) return;
     List<String> filterElements = filterString.split(":-:");
     clearSearchFilters();
@@ -259,13 +249,11 @@ class SearchFilters {
             if (value == "null") {
               transactionTypes.add(null);
             } else {
-              transactionTypes
-                  .add(TransactionSpecialType.values[int.parse(value)]);
+              transactionTypes.add(TransactionSpecialType.values[int.parse(value)]);
             }
             break;
           case 'budgetTransactionFilters':
-            budgetTransactionFilters
-                .add(BudgetTransactionFilters.values[int.parse(value)]);
+            budgetTransactionFilters.add(BudgetTransactionFilters.values[int.parse(value)]);
             break;
           case 'methodAdded':
             methodAdded.add(MethodAdded.values[int.parse(value)]);
@@ -320,11 +308,7 @@ class SearchFilters {
         }
       } catch (e) {
         print(
-          e.toString() +
-              " error loading filter string " +
-              key.toString() +
-              " " +
-              value.toString(),
+          e.toString() + " error loading filter string " + key.toString() + " " + value.toString(),
         );
       }
     }
@@ -364,16 +348,13 @@ class SearchFilters {
       outString += "paidStatus:-:" + (element.index).toString() + ":-:";
     }
     for (TransactionSpecialType? element in transactionTypes) {
-      outString +=
-          "transactionTypes:-:" + (element?.index ?? null).toString() + ":-:";
+      outString += "transactionTypes:-:" + (element?.index ?? null).toString() + ":-:";
     }
     for (BudgetTransactionFilters element in budgetTransactionFilters) {
-      outString +=
-          "budgetTransactionFilters:-:" + (element.index).toString() + ":-:";
+      outString += "budgetTransactionFilters:-:" + (element.index).toString() + ":-:";
     }
     for (MethodAdded element in methodAdded) {
-      outString +=
-          "methodAdded:-:" + (element.index).toString().toString() + ":-:";
+      outString += "methodAdded:-:" + (element.index).toString().toString() + ":-:";
     }
     outString += "amountRange:-:" + amountRange.toString() + ":-:";
     outString += "dateTimeRange:-:" + dateTimeRange.toString() + ":-:";
@@ -388,8 +369,7 @@ class SearchFilters {
 class HighlightStringInList extends TextEditingController {
   final Pattern pattern;
 
-  HighlightStringInList({String? initialText})
-      : pattern = RegExp(r'\b[^,]+(?=|$)') {
+  HighlightStringInList({String? initialText}) : pattern = RegExp(r'\b[^,]+(?=|$)') {
     this.text = initialText ?? '';
   }
 
@@ -432,22 +412,17 @@ class HighlightStringInList extends TextEditingController {
 
 class TransactionFiltersSelection extends StatefulWidget {
   const TransactionFiltersSelection(
-      {required this.searchFilters,
-      required this.setSearchFilters,
-      required this.clearSearchFilters,
-      super.key});
+      {required this.searchFilters, required this.setSearchFilters, required this.clearSearchFilters, super.key});
 
   final SearchFilters searchFilters;
   final Function(SearchFilters searchFilters) setSearchFilters;
   final Function() clearSearchFilters;
 
   @override
-  State<TransactionFiltersSelection> createState() =>
-      _TransactionFiltersSelectionState();
+  State<TransactionFiltersSelection> createState() => _TransactionFiltersSelectionState();
 }
 
-class _TransactionFiltersSelectionState
-    extends State<TransactionFiltersSelection> {
+class _TransactionFiltersSelectionState extends State<TransactionFiltersSelection> {
   late SearchFilters selectedFilters = widget.searchFilters;
   late ScrollController titleContainsScrollController = ScrollController();
   late TextEditingController titleContainsController = HighlightStringInList(
@@ -477,18 +452,13 @@ class _TransactionFiltersSelectionState
           selectedCategories: selectedFilters.categoryPks,
           setSelectedCategories: (List<String>? categories) async {
             selectedFilters.categoryPks = categories ?? [];
-            if (selectedFilters.categoryPks.length <= 0)
-              selectedFilters.subcategoryPks = [];
+            if (selectedFilters.categoryPks.length <= 0) selectedFilters.subcategoryPks = [];
 
             // Remove any subcategories that are selected that no longer
             // have the primary category selected
-            for (String subCategoryPk in ([
-              ...selectedFilters.subcategoryPks ?? []
-            ])) {
-              TransactionCategory subCategory =
-                  await database.getCategoryInstance(subCategoryPk);
-              if ((categories ?? []).contains(subCategory.mainCategoryPk) ==
-                  false) {
+            for (String subCategoryPk in ([...selectedFilters.subcategoryPks ?? []])) {
+              TransactionCategory subCategory = await database.getCategoryInstance(subCategoryPk);
+              if ((categories ?? []).contains(subCategory.mainCategoryPk) == false) {
                 (selectedFilters.subcategoryPks ?? []).remove(subCategoryPk);
               }
             }
@@ -515,9 +485,7 @@ class _TransactionFiltersSelectionState
                 setSearchFilters();
               },
               isOutlined: selectedFilters.subcategoryPks == null,
-              icon: appStateSettings["outlinedIcons"]
-                  ? Icons.block_outlined
-                  : Icons.block_rounded,
+              icon: appStateSettings["outlinedIcons"] ? Icons.block_outlined : Icons.block_rounded,
             ),
           ],
         ),
@@ -529,16 +497,12 @@ class _TransactionFiltersSelectionState
           ),
           builder: ((context, snapshot) {
             if (snapshot.hasData) {
-              RangeValues rangeLimit = RangeValues(
-                  (snapshot.data?.start ?? -0.00000001),
-                  (snapshot.data?.end ?? 0.00000001));
-              if ((selectedFilters.amountRange?.start ?? 0) <
-                      rangeLimit.start ||
+              RangeValues rangeLimit = RangeValues((snapshot.data?.start ?? -0.00000001), (snapshot.data?.end ?? 0.00000001));
+              if ((selectedFilters.amountRange?.start ?? 0) < rangeLimit.start ||
                   (selectedFilters.amountRange?.end ?? 0) > rangeLimit.end) {
                 selectedFilters.amountRange = rangeLimit;
               }
-              if (selectedFilters.amountRange?.end == rangeLimit.end &&
-                  selectedFilters.amountRange?.start == rangeLimit.start) {
+              if (selectedFilters.amountRange?.end == rangeLimit.end && selectedFilters.amountRange?.start == rangeLimit.start) {
                 selectedFilters.amountRange = null;
               }
               return AmountRangeSlider(
@@ -560,9 +524,9 @@ class _TransactionFiltersSelectionState
           items: ExpenseIncome.values,
           getLabel: (ExpenseIncome item) {
             return item == ExpenseIncome.expense
-                ? "expense".tr()
+                ? "هزینه ها"
                 : item == ExpenseIncome.income
-                    ? "income".tr()
+                    ? "درآمد ها"
                     : "";
           },
           getCustomBorderColor: (ExpenseIncome item) {
@@ -594,11 +558,7 @@ class _TransactionFiltersSelectionState
         SelectChips(
           items: [null, ...TransactionSpecialType.values],
           getLabel: (TransactionSpecialType? item) {
-            return transactionTypeDisplayToEnum[item]
-                    ?.toString()
-                    .toLowerCase()
-                    .tr() ??
-                "";
+            return transactionTypeDisplayToEnum[item]?.toString().toLowerCase().tr() ?? "";
           },
           getCustomBorderColor: (TransactionSpecialType? item) {
             Color? customBorderColor;
@@ -652,8 +612,7 @@ class _TransactionFiltersSelectionState
         StreamBuilder<List<TransactionWallet>>(
           stream: database.watchAllWallets(),
           builder: (context, snapshot) {
-            if (snapshot.data != null && snapshot.data!.length <= 1)
-              return SizedBox.shrink();
+            if (snapshot.data != null && snapshot.data!.length <= 1) return SizedBox.shrink();
             if (snapshot.hasData) {
               return SelectChips(
                 items: snapshot.data!,
@@ -662,8 +621,7 @@ class _TransactionFiltersSelectionState
                     context,
                     AddWalletPage(
                       wallet: item,
-                      routesToPopAfterDelete:
-                          RoutesToPopAfterDelete.PreventDelete,
+                      routesToPopAfterDelete: RoutesToPopAfterDelete.PreventDelete,
                     ),
                   );
                 },
@@ -703,8 +661,7 @@ class _TransactionFiltersSelectionState
         StreamBuilder<List<Budget>>(
           stream: database.watchAllAddableBudgets(),
           builder: (context, snapshot) {
-            if (snapshot.data != null && snapshot.data!.length <= 0)
-              return SizedBox.shrink();
+            if (snapshot.data != null && snapshot.data!.length <= 0) return SizedBox.shrink();
             if (snapshot.hasData) {
               return Column(
                 children: [
@@ -743,8 +700,7 @@ class _TransactionFiltersSelectionState
                         context,
                         AddBudgetPage(
                           budget: item,
-                          routesToPopAfterDelete:
-                              RoutesToPopAfterDelete.PreventDelete,
+                          routesToPopAfterDelete: RoutesToPopAfterDelete.PreventDelete,
                         ),
                       );
                     },
@@ -788,8 +744,7 @@ class _TransactionFiltersSelectionState
         StreamBuilder<List<Budget>>(
           stream: database.watchAllExcludedTransactionsBudgetsInUse(),
           builder: (context, snapshot) {
-            if (snapshot.data != null && snapshot.data!.length <= 0)
-              return SizedBox.shrink();
+            if (snapshot.data != null && snapshot.data!.length <= 0) return SizedBox.shrink();
             if (snapshot.hasData) {
               return Column(
                 children: [
@@ -800,8 +755,7 @@ class _TransactionFiltersSelectionState
                         context,
                         AddBudgetPage(
                           budget: item,
-                          routesToPopAfterDelete:
-                              RoutesToPopAfterDelete.PreventDelete,
+                          routesToPopAfterDelete: RoutesToPopAfterDelete.PreventDelete,
                         ),
                       );
                     },
@@ -809,8 +763,7 @@ class _TransactionFiltersSelectionState
                       return "excluded-from".tr() + " " + item.name;
                     },
                     onSelected: (Budget item) {
-                      if (selectedFilters.excludedBudgetPks
-                          .contains(item.budgetPk)) {
+                      if (selectedFilters.excludedBudgetPks.contains(item.budgetPk)) {
                         selectedFilters.excludedBudgetPks.remove(item.budgetPk);
                       } else {
                         selectedFilters.excludedBudgetPks.add(item.budgetPk);
@@ -818,8 +771,7 @@ class _TransactionFiltersSelectionState
                       setSearchFilters();
                     },
                     getSelected: (Budget item) {
-                      return selectedFilters.excludedBudgetPks
-                          .contains(item.budgetPk);
+                      return selectedFilters.excludedBudgetPks.contains(item.budgetPk);
                     },
                     getCustomBorderColor: (Budget? item) {
                       if (item == null) return null;
@@ -845,11 +797,9 @@ class _TransactionFiltersSelectionState
         ),
 
         StreamBuilder<List<Objective>>(
-          stream: database.watchAllObjectives(
-              objectiveType: ObjectiveType.goal, archivedLast: true),
+          stream: database.watchAllObjectives(objectiveType: ObjectiveType.goal, archivedLast: true),
           builder: (context, snapshot) {
-            if (snapshot.data != null && snapshot.data!.length <= 0)
-              return SizedBox.shrink();
+            if (snapshot.data != null && snapshot.data!.length <= 0) return SizedBox.shrink();
             if (snapshot.hasData) {
               return SelectChips(
                 items: [null, ...snapshot.data!],
@@ -858,8 +808,7 @@ class _TransactionFiltersSelectionState
                     context,
                     AddObjectivePage(
                       objective: item,
-                      routesToPopAfterDelete:
-                          RoutesToPopAfterDelete.PreventDelete,
+                      routesToPopAfterDelete: RoutesToPopAfterDelete.PreventDelete,
                     ),
                   );
                 },
@@ -868,8 +817,7 @@ class _TransactionFiltersSelectionState
                   return item.name;
                 },
                 onSelected: (Objective? item) {
-                  if (selectedFilters.objectivePks
-                      .contains(item?.objectivePk)) {
+                  if (selectedFilters.objectivePks.contains(item?.objectivePk)) {
                     selectedFilters.objectivePks.remove(item?.objectivePk);
                   } else {
                     selectedFilters.objectivePks.add(item?.objectivePk);
@@ -877,8 +825,7 @@ class _TransactionFiltersSelectionState
                   setSearchFilters();
                 },
                 getSelected: (Objective? item) {
-                  return selectedFilters.objectivePks
-                      .contains(item?.objectivePk);
+                  return selectedFilters.objectivePks.contains(item?.objectivePk);
                 },
                 getCustomBorderColor: (Objective? item) {
                   if (item == null) return null;
@@ -902,11 +849,9 @@ class _TransactionFiltersSelectionState
         ),
 
         StreamBuilder<List<Objective>>(
-          stream: database.watchAllObjectives(
-              objectiveType: ObjectiveType.loan, archivedLast: true),
+          stream: database.watchAllObjectives(objectiveType: ObjectiveType.loan, archivedLast: true),
           builder: (context, snapshot) {
-            if (snapshot.data != null && snapshot.data!.length <= 0)
-              return SizedBox.shrink();
+            if (snapshot.data != null && snapshot.data!.length <= 0) return SizedBox.shrink();
             if (snapshot.hasData) {
               return SelectChips(
                 items: [null, ...snapshot.data!],
@@ -915,8 +860,7 @@ class _TransactionFiltersSelectionState
                     context,
                     AddObjectivePage(
                       objective: item,
-                      routesToPopAfterDelete:
-                          RoutesToPopAfterDelete.PreventDelete,
+                      routesToPopAfterDelete: RoutesToPopAfterDelete.PreventDelete,
                     ),
                   );
                 },
@@ -925,8 +869,7 @@ class _TransactionFiltersSelectionState
                   return item.name;
                 },
                 onSelected: (Objective? item) {
-                  if (selectedFilters.objectiveLoanPks
-                      .contains(item?.objectivePk)) {
+                  if (selectedFilters.objectiveLoanPks.contains(item?.objectivePk)) {
                     selectedFilters.objectiveLoanPks.remove(item?.objectivePk);
                   } else {
                     selectedFilters.objectiveLoanPks.add(item?.objectivePk);
@@ -934,8 +877,7 @@ class _TransactionFiltersSelectionState
                   setSearchFilters();
                 },
                 getSelected: (Objective? item) {
-                  return selectedFilters.objectiveLoanPks
-                      .contains(item?.objectivePk);
+                  return selectedFilters.objectiveLoanPks.contains(item?.objectivePk);
                 },
                 getCustomBorderColor: (Objective? item) {
                   if (item == null) return null;
@@ -1005,12 +947,8 @@ class _TransactionFiltersSelectionState
                 showCategoryIconForRecommendedTitles: false,
                 unfocusWhenRecommendedTapped: false,
                 onNewRecommendedTitle: () {},
-                onRecommendedTitleTapped:
-                    (TransactionAssociatedTitleWithCategory title) async {
-                  List<String> splitTitles = titleContainsController.text
-                      .trim()
-                      .replaceAll(", ", ",")
-                      .split(",");
+                onRecommendedTitleTapped: (TransactionAssociatedTitleWithCategory title) async {
+                  List<String> splitTitles = titleContainsController.text.trim().replaceAll(", ", ",").split(",");
                   if (splitTitles.length <= 0) return;
                   splitTitles.last = title.title.title;
                   titleContainsController.text = splitTitles.join(", ") + ", ";
@@ -1018,13 +956,11 @@ class _TransactionFiltersSelectionState
                   if (titleContainsController.text == "") {
                     selectedFilters.titleContains = null;
                   } else {
-                    selectedFilters.titleContains =
-                        titleContainsController.text.trim();
+                    selectedFilters.titleContains = titleContainsController.text.trim();
                   }
 
                   // Scroll to the end of the text input
-                  titleContainsController.selection =
-                      TextSelection.fromPosition(
+                  titleContainsController.selection = TextSelection.fromPosition(
                     TextPosition(offset: titleContainsController.text.length),
                   );
                   Future.delayed(Duration(milliseconds: 50), () {
@@ -1061,9 +997,7 @@ class _TransactionFiltersSelectionState
                   }
                 },
                 initialValue: selectedFilters.noteContains,
-                icon: appStateSettings["outlinedIcons"]
-                    ? Icons.sticky_note_2_outlined
-                    : Icons.sticky_note_2_rounded,
+                icon: appStateSettings["outlinedIcons"] ? Icons.sticky_note_2_outlined : Icons.sticky_note_2_rounded,
               )
             ],
           ),
@@ -1124,8 +1058,7 @@ class AppliedFilterChips extends StatelessWidget {
     // Title contains
     if (searchFilters.titleContains != null) {
       out.add(AppliedFilterChip(
-        label:
-            "title-contains".tr() + ": " + (searchFilters.titleContains ?? ""),
+        label: "title-contains".tr() + ": " + (searchFilters.titleContains ?? ""),
         openFiltersSelection: openFiltersSelection,
       ));
     }
@@ -1137,8 +1070,8 @@ class AppliedFilterChips extends StatelessWidget {
       ));
     }
     // Categories
-    for (TransactionCategory category in await database.getAllCategories(
-        categoryFks: searchFilters.categoryPks, allCategories: false)) {
+    for (TransactionCategory category
+        in await database.getAllCategories(categoryFks: searchFilters.categoryPks, allCategories: false)) {
       out.add(AppliedFilterChip(
         label: category.name,
         customBorderColor: HexColor(
@@ -1149,9 +1082,7 @@ class AppliedFilterChips extends StatelessWidget {
       ));
     }
     for (TransactionCategory category in await database.getAllCategories(
-        categoryFks: searchFilters.subcategoryPks,
-        allCategories: false,
-        includeSubCategories: true)) {
+        categoryFks: searchFilters.subcategoryPks, allCategories: false, includeSubCategories: true)) {
       out.add(AppliedFilterChip(
         label: category.name,
         customBorderColor: HexColor(
@@ -1211,8 +1142,7 @@ class AppliedFilterChips extends StatelessWidget {
       ));
     }
     // Transaction Types
-    for (TransactionSpecialType? transactionType
-        in searchFilters.transactionTypes) {
+    for (TransactionSpecialType? transactionType in searchFilters.transactionTypes) {
       Color? customBorderColor;
       if (transactionType == TransactionSpecialType.credit) {
         customBorderColor = getColor(context, "unPaidUpcoming");
@@ -1220,11 +1150,7 @@ class AppliedFilterChips extends StatelessWidget {
         customBorderColor = getColor(context, "unPaidOverdue");
       }
       out.add(AppliedFilterChip(
-        label: transactionTypeDisplayToEnum[transactionType]
-                ?.toString()
-                .toLowerCase()
-                .tr() ??
-            "default".tr(),
+        label: transactionTypeDisplayToEnum[transactionType]?.toString().toLowerCase().tr() ?? "default".tr(),
         customBorderColor: customBorderColor,
         openFiltersSelection: openFiltersSelection,
       ));
@@ -1249,15 +1175,13 @@ class AppliedFilterChips extends StatelessWidget {
       ));
     }
     // Budget Transaction Filters
-    if (searchFilters.budgetTransactionFilters
-        .contains(BudgetTransactionFilters.sharedToOtherBudget)) {
+    if (searchFilters.budgetTransactionFilters.contains(BudgetTransactionFilters.sharedToOtherBudget)) {
       out.add(AppliedFilterChip(
         label: "added-to-other-budgets".tr(),
         openFiltersSelection: openFiltersSelection,
       ));
     }
-    if (searchFilters.budgetTransactionFilters
-        .contains(BudgetTransactionFilters.addedToOtherBudget)) {
+    if (searchFilters.budgetTransactionFilters.contains(BudgetTransactionFilters.addedToOtherBudget)) {
       out.add(AppliedFilterChip(
         label: "added-to-other-budgets".tr(),
         openFiltersSelection: openFiltersSelection,
@@ -1305,8 +1229,7 @@ class AppliedFilterChips extends StatelessWidget {
       ));
     }
     // Objectives
-    for (Objective objective
-        in await database.getAllObjectives(objectiveType: ObjectiveType.goal)) {
+    for (Objective objective in await database.getAllObjectives(objectiveType: ObjectiveType.goal)) {
       if (searchFilters.objectivePks.contains(objective.objectivePk))
         out.add(AppliedFilterChip(
           label: objective.name,
@@ -1324,8 +1247,7 @@ class AppliedFilterChips extends StatelessWidget {
       ));
     }
     // Loan Objectives
-    for (Objective objective
-        in await database.getAllObjectives(objectiveType: ObjectiveType.loan)) {
+    for (Objective objective in await database.getAllObjectives(objectiveType: ObjectiveType.loan)) {
       if (searchFilters.objectiveLoanPks.contains(objective.objectivePk))
         out.add(AppliedFilterChip(
           label: objective.name,
@@ -1343,20 +1265,16 @@ class AppliedFilterChips extends StatelessWidget {
       ));
     }
     // Date and time range
-    if (out.length > 0 &&
-        openSelectDate != null &&
-        searchFilters.dateTimeRange != null) {
+    if (out.length > 0 && openSelectDate != null && searchFilters.dateTimeRange != null) {
       out.add(AppliedFilterChip(
         label: getWordedDateShortMore(
-              searchFilters.dateTimeRange!.start,
-              includeYear:
-                  searchFilters.dateTimeRange!.start != DateTime.now().year,
+              Jalali.fromDateTime(searchFilters.dateTimeRange!.start),
+              includeYear: searchFilters.dateTimeRange!.start != DateTime.now().year,
             ) +
             " – " +
             getWordedDateShortMore(
-              searchFilters.dateTimeRange!.end,
-              includeYear:
-                  searchFilters.dateTimeRange!.end != DateTime.now().year,
+              Jalali.fromDateTime(searchFilters.dateTimeRange!.end),
+              includeYear: searchFilters.dateTimeRange!.end != DateTime.now().year,
             ),
         openFiltersSelection: () => {openSelectDate!()},
       ));
@@ -1377,9 +1295,7 @@ class AppliedFilterChips extends StatelessWidget {
           return AnimatedSize(
             curve: Curves.easeInOutCubicEmphasized,
             duration: Duration(milliseconds: 1000),
-            child: snapshot.hasData &&
-                    snapshot.data != null &&
-                    snapshot.data!.length > 0
+            child: snapshot.hasData && snapshot.data != null && snapshot.data!.length > 0
                 ? Padding(
                     padding: padding,
                     child: SingleChildScrollView(

@@ -86,8 +86,7 @@ class MoreActionsPage extends StatefulWidget {
   State<MoreActionsPage> createState() => MoreActionsPageState();
 }
 
-class MoreActionsPageState extends State<MoreActionsPage>
-    with AutomaticKeepAliveClientMixin {
+class MoreActionsPageState extends State<MoreActionsPage> with AutomaticKeepAliveClientMixin {
   GlobalKey<PageFrameworkState> pageState = GlobalKey();
 
   void refreshState() {
@@ -199,9 +198,7 @@ class MorePages extends StatelessWidget {
                       openBottomSheet(context, RatingPopup(), fullSnap: true);
                     },
                     title: "feedback".tr(),
-                    icon: appStateSettings["outlinedIcons"]
-                        ? Icons.rate_review_outlined
-                        : Icons.rate_review_rounded,
+                    icon: appStateSettings["outlinedIcons"] ? Icons.rate_review_outlined : Icons.rate_review_rounded,
                     isOutlined: true,
                   ),
                 ),
@@ -221,8 +218,7 @@ class MorePages extends StatelessWidget {
                       ),
                     )
                   : SizedBox.shrink(),
-              if (hasSideNavigation == false)
-                Expanded(child: GoogleAccountLoginButton()),
+              if (hasSideNavigation == false) Expanded(child: GoogleAccountLoginButton()),
             ],
           ),
           if (hasSideNavigation == false)
@@ -239,8 +235,7 @@ class MorePages extends StatelessWidget {
                 ),
                 Expanded(
                   child: SettingsContainerOpenPage(
-                    openPage:
-                        UpcomingOverdueTransactions(overdueTransactions: null),
+                    openPage: UpcomingOverdueTransactions(overdueTransactions: null),
                     title: navBarIconsData["scheduled"]!.label.tr(),
                     icon: navBarIconsData["scheduled"]!.iconData,
                     isOutlined: true,
@@ -291,10 +286,8 @@ class MorePages extends StatelessWidget {
                   child: SettingsContainerOpenPage(
                     isOutlinedColumn: true,
                     // If budget page not pinned to home, open budget list page
-                    openPage: appStateSettings["customNavBarShortcut1"] !=
-                                "budgets" &&
-                            appStateSettings["customNavBarShortcut2"] !=
-                                "budgets"
+                    openPage: appStateSettings["customNavBarShortcut1"] != "budgets" &&
+                            appStateSettings["customNavBarShortcut2"] != "budgets"
                         ? BudgetsListPage(enableBackButton: true)
                         : EditBudgetPage(),
                     title: navBarIconsData["budgetDetails"]!.label.tr(),
@@ -357,13 +350,10 @@ Future enterNameBottomSheet(context) async {
       title: "enter-name".tr(),
       child: SelectText(
         buttonLabel: "set-name".tr(),
-        icon: appStateSettings["outlinedIcons"]
-            ? Icons.person_outlined
-            : Icons.person_rounded,
+        icon: appStateSettings["outlinedIcons"] ? Icons.person_outlined : Icons.person_rounded,
         setSelectedText: (_) {},
         nextWithInput: (text) {
-          updateSettings("username", text.trim(),
-              pagesNeedingRefresh: [0], updateGlobalState: false);
+          updateSettings("username", text.trim(), pagesNeedingRefresh: [0], updateGlobalState: false);
         },
         selectedText: appStateSettings["username"],
         placeholder: "nickname".tr(),
@@ -408,8 +398,7 @@ class SettingsPageContent extends StatelessWidget {
         SettingsHeader(title: "theme".tr()),
         Builder(
           builder: (context) {
-            late Color? selectedColor =
-                HexColor(appStateSettings["accentColor"]);
+            late Color? selectedColor = HexColor(appStateSettings["accentColor"]);
 
             return SettingsContainer(
               onTap: () {
@@ -425,13 +414,10 @@ class SettingsPageContent extends StatelessWidget {
                                 child: SettingsContainerSwitch(
                                   title: "colorful-interface".tr(),
                                   onSwitched: (value) {
-                                    updateSettings("materialYou", value,
-                                        updateGlobalState: true);
+                                    updateSettings("materialYou", value, updateGlobalState: true);
                                   },
                                   initialValue: appStateSettings["materialYou"],
-                                  icon: appStateSettings["outlinedIcons"]
-                                      ? Icons.brush_outlined
-                                      : Icons.brush_rounded,
+                                  icon: appStateSettings["outlinedIcons"] ? Icons.brush_outlined : Icons.brush_rounded,
                                   enableBorderRadius: true,
                                 ),
                               )
@@ -442,10 +428,8 @@ class SettingsPageContent extends StatelessWidget {
                           selectedColor: selectedColor,
                           setSelectedColor: (color) {
                             selectedColor = color;
-                            updateSettings("accentColor", toHexString(color),
-                                updateGlobalState: true);
-                            updateSettings("accentSystemColor", false,
-                                updateGlobalState: true);
+                            updateSettings("accentColor", toHexString(color), updateGlobalState: true);
+                            updateSettings("accentSystemColor", false, updateGlobalState: true);
                             updateWidgetColorsAndText(context);
                           },
                           useSystemColorPrompt: true,
@@ -457,9 +441,7 @@ class SettingsPageContent extends StatelessWidget {
               },
               title: "accent-color".tr(),
               description: "accent-color-description".tr(),
-              icon: appStateSettings["outlinedIcons"]
-                  ? Icons.color_lens_outlined
-                  : Icons.color_lens_rounded,
+              icon: appStateSettings["outlinedIcons"] ? Icons.color_lens_outlined : Icons.color_lens_rounded,
             );
           },
         ),
@@ -472,9 +454,7 @@ class SettingsPageContent extends StatelessWidget {
                   updateSettings("materialYou", value, updateGlobalState: true);
                 },
                 initialValue: appStateSettings["materialYou"],
-                icon: appStateSettings["outlinedIcons"]
-                    ? Icons.brush_outlined
-                    : Icons.brush_rounded,
+                icon: appStateSettings["outlinedIcons"] ? Icons.brush_outlined : Icons.brush_rounded,
               ),
         ThemeSettingsDropdown(),
 
@@ -484,18 +464,14 @@ class SettingsPageContent extends StatelessWidget {
         SettingsContainerOpenPage(
           openPage: EditHomePage(),
           title: "edit-home-page".tr(),
-          icon: appStateSettings["outlinedIcons"]
-              ? Icons.home_outlined
-              : Icons.home_rounded,
+          icon: appStateSettings["outlinedIcons"] ? Icons.home_outlined : Icons.home_rounded,
         ),
 
         notificationsGlobalEnabled && getIsFullScreen(context) == false
             ? SettingsContainerOpenPage(
                 openPage: NotificationsPage(),
                 title: "notifications".tr(),
-                icon: appStateSettings["outlinedIcons"]
-                    ? Icons.notifications_outlined
-                    : Icons.notifications_rounded,
+                icon: appStateSettings["outlinedIcons"] ? Icons.notifications_outlined : Icons.notifications_rounded,
               )
             : SizedBox.shrink(),
 
@@ -503,17 +479,14 @@ class SettingsPageContent extends StatelessWidget {
 
         SettingsContainer(
           title: "language".tr(),
-          icon: appStateSettings["outlinedIcons"]
-              ? Icons.language_outlined
-              : Icons.language_rounded,
+          icon: appStateSettings["outlinedIcons"] ? Icons.language_outlined : Icons.language_rounded,
           afterWidget: Tappable(
             color: Theme.of(context).colorScheme.secondaryContainer,
             borderRadius: 10,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               child: TextFont(
-                text: languageDisplayFilter(
-                    appStateSettings["locale"].toString()),
+                text: languageDisplayFilter(appStateSettings["locale"].toString()),
                 fontSize: 14,
               ),
             ),
@@ -527,9 +500,7 @@ class SettingsPageContent extends StatelessWidget {
           openPage: MoreOptionsPagePreferences(),
           title: "more-options".tr(),
           description: "more-options-description".tr(),
-          icon: appStateSettings["outlinedIcons"]
-              ? Icons.app_registration_outlined
-              : Icons.app_registration_rounded,
+          icon: appStateSettings["outlinedIcons"] ? Icons.app_registration_outlined : Icons.app_registration_rounded,
         ),
 
         SettingsHeader(title: "automation".tr()),
@@ -542,9 +513,7 @@ class SettingsPageContent extends StatelessWidget {
         SettingsContainer(
           title: "auto-mark-transactions".tr(),
           description: "auto-mark-transactions-description".tr(),
-          icon: appStateSettings["outlinedIcons"]
-              ? Icons.check_circle_outlined
-              : Icons.check_circle_rounded,
+          icon: appStateSettings["outlinedIcons"] ? Icons.check_circle_outlined : Icons.check_circle_rounded,
           onTap: () {
             openBottomSheet(
               context,
@@ -560,29 +529,22 @@ class SettingsPageContent extends StatelessWidget {
             ? SettingsContainerOpenPage(
                 openPage: AutoTransactionsPageEmail(),
                 title: "auto-email-transactions".tr(),
-                icon: appStateSettings["outlinedIcons"]
-                    ? Icons.mark_email_unread_outlined
-                    : Icons.mark_email_unread_rounded,
+                icon: appStateSettings["outlinedIcons"] ? Icons.mark_email_unread_outlined : Icons.mark_email_unread_rounded,
               )
             : SizedBox.shrink(),
 
-        appStateSettings["notificationScanningDebug"] &&
-                getPlatform(ignoreEmulation: true) == PlatformOS.isAndroid
+        appStateSettings["notificationScanningDebug"] && getPlatform(ignoreEmulation: true) == PlatformOS.isAndroid
             ? SettingsContainerOpenPage(
                 title: "Notification Transactions",
                 openPage: AutoTransactionsPageNotifications(),
-                icon: appStateSettings["outlinedIcons"]
-                    ? Icons.edit_notifications_outlined
-                    : Icons.edit_notifications_rounded,
+                icon: appStateSettings["outlinedIcons"] ? Icons.edit_notifications_outlined : Icons.edit_notifications_rounded,
               )
             : SizedBox.shrink(),
 
         SettingsContainerOpenPage(
           openPage: BillSplitter(),
           title: "bill-splitter".tr(),
-          icon: appStateSettings["outlinedIcons"]
-              ? Icons.summarize_outlined
-              : Icons.summarize_rounded,
+          icon: appStateSettings["outlinedIcons"] ? Icons.summarize_outlined : Icons.summarize_rounded,
         ),
 
         SettingsHeader(title: "import-and-export".tr()),
@@ -626,28 +588,19 @@ class _ThemeSettingsDropdownState extends State<ThemeSettingsDropdown> {
           : appStateSettings["outlinedIcons"]
               ? Icons.dark_mode_outlined
               : Icons.dark_mode_rounded,
-      initial: appStateSettings["theme"].toString() == "black" &&
-              appStateSettings["materialYou"] == false
+      initial: appStateSettings["theme"].toString() == "black" && appStateSettings["materialYou"] == false
           ? "dark"
           : appStateSettings["theme"].toString(),
-      items: [
-        "system",
-        "light",
-        "dark",
-        if (appStateSettings["materialYou"] == true) "black"
-      ],
+      items: ["system", "light", "dark", if (appStateSettings["materialYou"] == true) "black"],
       faintValues: [
-        if (appStateSettings["materialYou"] == true &&
-            appStateSettings["theme"].toString() == "system")
+        if (appStateSettings["materialYou"] == true && appStateSettings["theme"].toString() == "system")
           appStateSettings["forceFullDarkBackground"] == true ? "dark" : "black"
       ],
       onChanged: (value) async {
         if (value == "black") {
-          await updateSettings("forceFullDarkBackground", true,
-              updateGlobalState: false);
+          await updateSettings("forceFullDarkBackground", true, updateGlobalState: false);
         } else if (value == "dark") {
-          await updateSettings("forceFullDarkBackground", false,
-              updateGlobalState: false);
+          await updateSettings("forceFullDarkBackground", false, updateGlobalState: false);
         }
         setState(() {});
         await updateSettings("theme", value, updateGlobalState: true);
@@ -694,7 +647,7 @@ class MoreOptionsPagePreferences extends StatelessWidget {
         NumberFormattingSetting(),
         PercentagePrecisionSetting(),
         Time24HourFormatSetting(),
-        NumberPadFormatSetting(),
+        // NumberPadFormatSetting(),
       ],
     );
   }
@@ -705,8 +658,7 @@ class WidgetSettings extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (getPlatform(ignoreEmulation: true) != PlatformOS.isAndroid)
-      return SizedBox.shrink();
+    if (getPlatform(ignoreEmulation: true) != PlatformOS.isAndroid) return SizedBox.shrink();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -720,21 +672,16 @@ class WidgetSettings extends StatelessWidget {
             // We need to resfresh the widget rendering since it exists on the homepage!
             homePageStateKey.currentState?.refreshState();
           },
-          icon: appStateSettings["outlinedIcons"]
-              ? Icons.area_chart_outlined
-              : Icons.area_chart_rounded,
+          icon: appStateSettings["outlinedIcons"] ? Icons.area_chart_outlined : Icons.area_chart_rounded,
         ),
         SettingsContainerDropdown(
           title: "widget-theme".tr(),
-          icon: appStateSettings["outlinedIcons"]
-              ? Icons.contrast_outlined
-              : Icons.contrast_rounded,
+          icon: appStateSettings["outlinedIcons"] ? Icons.contrast_outlined : Icons.contrast_rounded,
           initial: appStateSettings["widgetTheme"].toString(),
           items: ["app", "light", "dark"],
           onChanged: (value) async {
             if (value == "app") value = "system";
-            await updateSettings("widgetTheme", value,
-                updateGlobalState: false);
+            await updateSettings("widgetTheme", value, updateGlobalState: false);
             updateWidgetColorsAndText(context);
           },
           getLabel: (item) {
@@ -743,9 +690,7 @@ class WidgetSettings extends StatelessWidget {
         ),
         SettingsContainer(
           title: "widget-background-opacity".tr(),
-          icon: appStateSettings["outlinedIcons"]
-              ? Icons.blur_on_outlined
-              : Icons.blur_on_rounded,
+          icon: appStateSettings["outlinedIcons"] ? Icons.blur_on_outlined : Icons.blur_on_rounded,
           descriptionWidget: Container(
             height: 28,
             padding: EdgeInsets.only(right: 10),
@@ -757,13 +702,11 @@ class WidgetSettings extends StatelessWidget {
               child: SliderSelector(
                 min: 0,
                 max: 1,
-                initialValue:
-                    (appStateSettings["widgetOpacity"] ?? 1).toDouble(),
+                initialValue: (appStateSettings["widgetOpacity"] ?? 1).toDouble(),
                 onChange: (value) {},
                 divisions: 20,
                 onFinished: (value) {
-                  updateSettings("widgetOpacity", value,
-                      updateGlobalState: false);
+                  updateSettings("widgetOpacity", value, updateGlobalState: false);
                   updateWidgetColorsAndText(context);
                 },
                 displayFilter: (double number) {
@@ -789,8 +732,7 @@ class CustomTrackShape extends RoundedRectSliderTrackShape {
   }) {
     final trackHeight = sliderTheme.trackHeight;
     final trackLeft = offset.dx;
-    final trackTop =
-        offset.dy + (parentBox.size.height - (trackHeight ?? 0)) / 2;
+    final trackTop = offset.dy + (parentBox.size.height - (trackHeight ?? 0)) / 2;
     final trackWidth = parentBox.size.width;
     return Rect.fromLTWH(trackLeft, trackTop, trackWidth, (trackHeight ?? 0));
   }
@@ -800,8 +742,7 @@ class BiometricsSettingToggle extends StatefulWidget {
   const BiometricsSettingToggle({super.key});
 
   @override
-  State<BiometricsSettingToggle> createState() =>
-      _BiometricsSettingToggleState();
+  State<BiometricsSettingToggle> createState() => _BiometricsSettingToggleState();
 }
 
 class _BiometricsSettingToggleState extends State<BiometricsSettingToggle> {
@@ -815,31 +756,22 @@ class _BiometricsSettingToggleState extends State<BiometricsSettingToggle> {
                 title: "biometric-lock".tr(),
                 description: "biometric-lock-description".tr(),
                 onSwitched: (value) async {
-                  AuthResult authResult =
-                      await checkBiometrics(checkAlways: true);
+                  AuthResult authResult = await checkBiometrics(checkAlways: true);
                   if (authResult == AuthResult.error) {
                     openPopup(
                       context,
-                      icon: appStateSettings["outlinedIcons"]
-                          ? Icons.warning_outlined
-                          : Icons.warning_rounded,
-                      title: getPlatform() == PlatformOS.isIOS
-                          ? "biometrics-disabled".tr()
-                          : "biometrics-error".tr(),
+                      icon: appStateSettings["outlinedIcons"] ? Icons.warning_outlined : Icons.warning_rounded,
+                      title: getPlatform() == PlatformOS.isIOS ? "biometrics-disabled".tr() : "biometrics-error".tr(),
                       description: getPlatform() == PlatformOS.isIOS
                           ? "biometrics-disabled-description".tr()
                           : "biometrics-error-description".tr(),
-                      onCancelLabel:
-                          getPlatform() == PlatformOS.isIOS ? "ok".tr() : null,
+                      onCancelLabel: getPlatform() == PlatformOS.isIOS ? "ok".tr() : null,
                       onCancel: () {
                         Navigator.pop(context);
                       },
-                      onSubmitLabel: getPlatform() == PlatformOS.isIOS
-                          ? "open-settings".tr()
-                          : "ok".tr(),
+                      onSubmitLabel: getPlatform() == PlatformOS.isIOS ? "open-settings".tr() : "ok".tr(),
                       onSubmit: () {
-                        updateSettings("requireAuth", false,
-                            updateGlobalState: false);
+                        updateSettings("requireAuth", false, updateGlobalState: false);
                         setState(() {
                           isLocked = false;
                         });
@@ -852,8 +784,7 @@ class _BiometricsSettingToggleState extends State<BiometricsSettingToggle> {
                       },
                     );
                   } else if (authResult == AuthResult.authenticated) {
-                    updateSettings("requireAuth", value,
-                        updateGlobalState: false);
+                    updateSettings("requireAuth", value, updateGlobalState: false);
                     setState(() {
                       isLocked = value;
                     });
@@ -882,13 +813,10 @@ class HeaderHeightSetting extends StatelessWidget {
   Widget build(BuildContext context) {
     return AnimatedExpanded(
       // Indicates if it is enabled by default per device height
-      expand: MediaQuery.sizeOf(context).height > MIN_HEIGHT_FOR_HEADER &&
-          getPlatform() != PlatformOS.isIOS,
+      expand: MediaQuery.sizeOf(context).height > MIN_HEIGHT_FOR_HEADER && getPlatform() != PlatformOS.isIOS,
       child: SettingsContainerDropdown(
         title: "header-height".tr(),
-        icon: appStateSettings["outlinedIcons"]
-            ? Icons.subtitles_outlined
-            : Icons.subtitles_rounded,
+        icon: appStateSettings["outlinedIcons"] ? Icons.subtitles_outlined : Icons.subtitles_rounded,
         initial: appStateSettings["forceSmallHeader"].toString(),
         items: ["true", "false"],
         onChanged: (value) async {
@@ -925,8 +853,7 @@ class OutlinedIconsSetting extends StatelessWidget {
       items: ["rounded", "outlined"],
       onChanged: (value) async {
         if (value == "rounded") {
-          await updateSettings("outlinedIcons", false,
-              updateGlobalState: false);
+          await updateSettings("outlinedIcons", false, updateGlobalState: false);
         } else {
           await updateSettings(
             "outlinedIcons",
@@ -940,12 +867,9 @@ class OutlinedIconsSetting extends StatelessWidget {
       getLabel: (value) {
         return value.tr();
       },
-      initial:
-          appStateSettings["outlinedIcons"] == true ? "outlined" : "rounded",
+      initial: appStateSettings["outlinedIcons"] == true ? "outlined" : "rounded",
       title: "icon-style".tr(),
-      icon: appStateSettings["outlinedIcons"]
-          ? Icons.star_outline
-          : Icons.star_rounded,
+      icon: appStateSettings["outlinedIcons"] ? Icons.star_outline : Icons.star_rounded,
     );
   }
 }
@@ -957,12 +881,8 @@ class CountingNumberAnimationSetting extends StatelessWidget {
   Widget build(BuildContext context) {
     return SettingsContainerDropdown(
       title: "number-animation".tr(),
-      icon: appStateSettings["outlinedIcons"]
-          ? Icons.pin_outlined
-          : Icons.pin_rounded,
-      initial: appStateSettings["numberCountUpAnimation"] == true
-          ? "count-up"
-          : "disabled",
+      icon: appStateSettings["outlinedIcons"] ? Icons.pin_outlined : Icons.pin_rounded,
+      initial: appStateSettings["numberCountUpAnimation"] == true ? "count-up" : "disabled",
       items: ["count-up", "disabled"],
       onChanged: (value) async {
         await updateSettings(
@@ -987,13 +907,10 @@ class IncreaseTextContrastSetting extends StatelessWidget {
       title: "increase-text-contrast".tr(),
       description: "increase-text-contrast-description".tr(),
       onSwitched: (value) async {
-        await updateSettings("increaseTextContrast", value,
-            updateGlobalState: true);
+        await updateSettings("increaseTextContrast", value, updateGlobalState: true);
       },
       initialValue: appStateSettings["increaseTextContrast"],
-      icon: appStateSettings["outlinedIcons"]
-          ? Icons.exposure_outlined
-          : Icons.exposure_rounded,
+      icon: appStateSettings["outlinedIcons"] ? Icons.exposure_outlined : Icons.exposure_rounded,
       descriptionColor: appStateSettings["increaseTextContrast"]
           ? getColor(context, "black").withOpacity(0.84)
           : Theme.of(context).colorScheme.secondary.withOpacity(0.45),
@@ -1008,17 +925,14 @@ class FontPickerSetting extends StatelessWidget {
   Widget build(BuildContext context) {
     return SettingsContainer(
       title: "font".tr().capitalizeFirst,
-      icon: appStateSettings["outlinedIcons"]
-          ? Icons.font_download_outlined
-          : Icons.font_download_rounded,
+      icon: appStateSettings["outlinedIcons"] ? Icons.font_download_outlined : Icons.font_download_rounded,
       afterWidget: Tappable(
         color: Theme.of(context).colorScheme.secondaryContainer,
         borderRadius: 10,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           child: Builder(builder: (context) {
-            String displayFontName =
-                fontNameDisplayFilter(appStateSettings["font"].toString());
+            String displayFontName = fontNameDisplayFilter(appStateSettings["font"].toString());
             return TextFont(
               text: displayFontName,
               fontSize: 14,
@@ -1082,9 +996,7 @@ class NumberFormattingSetting extends StatelessWidget {
   Widget build(BuildContext context) {
     return SettingsContainer(
       title: "number-format".tr(),
-      icon: appStateSettings["outlinedIcons"]
-          ? Icons.one_x_mobiledata_outlined
-          : Icons.one_x_mobiledata_rounded,
+      icon: appStateSettings["outlinedIcons"] ? Icons.one_x_mobiledata_outlined : Icons.one_x_mobiledata_rounded,
       afterWidget: IgnorePointer(
         child: Tappable(
           color: Theme.of(context).colorScheme.secondaryContainer,
@@ -1102,11 +1014,10 @@ class NumberFormattingSetting extends StatelessWidget {
         ),
       ),
       onTap: () async {
-        String originalSetting =
-            appStateSettings["customNumberFormat"].toString() +
-                appStateSettings["numberFormatDelimiter"].toString() +
-                appStateSettings["numberFormatDecimal"].toString() +
-                appStateSettings["numberFormatCurrencyFirst"].toString();
+        String originalSetting = appStateSettings["customNumberFormat"].toString() +
+            appStateSettings["numberFormatDelimiter"].toString() +
+            appStateSettings["numberFormatDecimal"].toString() +
+            appStateSettings["numberFormatCurrencyFirst"].toString();
         await openBottomSheet(
           context,
           fullSnap: true,
@@ -1134,9 +1045,7 @@ class Time24HourFormatSetting extends StatelessWidget {
   Widget build(BuildContext context) {
     return SettingsContainerDropdown(
       title: "clock-format".tr(),
-      icon: appStateSettings["outlinedIcons"]
-          ? Icons.history_toggle_off_outlined
-          : Icons.history_toggle_off_rounded,
+      icon: appStateSettings["outlinedIcons"] ? Icons.history_toggle_off_outlined : Icons.history_toggle_off_rounded,
       initial: appStateSettings["use24HourFormat"].toString(),
       items: ["system", "12-hour", "24-hour"],
       onChanged: (value) async {
@@ -1177,9 +1086,7 @@ class _SetNumberFormatPopupState extends State<SetNumberFormatPopup> {
             },
             initialValue: appStateSettings["shortNumberFormat"] == "compact",
             enableBorderRadius: true,
-            icon: appStateSettings["outlinedIcons"]
-                ? Icons.one_k_outlined
-                : Icons.one_k_rounded,
+            icon: appStateSettings["outlinedIcons"] ? Icons.one_k_outlined : Icons.one_k_rounded,
           ),
           HorizontalBreak(),
           SizedBox(height: 10),
@@ -1214,12 +1121,9 @@ class _SetNumberFormatPopupState extends State<SetNumberFormatPopup> {
                         ],
                       ),
                     ),
-                    iconData: appStateSettings["outlinedIcons"]
-                        ? Icons.check_circle_outlined
-                        : Icons.check_circle_rounded,
+                    iconData: appStateSettings["outlinedIcons"] ? Icons.check_circle_outlined : Icons.check_circle_rounded,
                     onTap: () {
-                      updateSettings("customNumberFormat", false,
-                          updateGlobalState: false);
+                      updateSettings("customNumberFormat", false, updateGlobalState: false);
                       setState(() {
                         customNumberFormat = false;
                       });
@@ -1243,18 +1147,14 @@ class _SetNumberFormatPopupState extends State<SetNumberFormatPopup> {
                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                     text: "custom".tr(),
                     afterWidget: CustomNumberFormatPopup(onChangeAnyOption: () {
-                      updateSettings("customNumberFormat", true,
-                          updateGlobalState: false);
+                      updateSettings("customNumberFormat", true, updateGlobalState: false);
                       setState(() {
                         customNumberFormat = true;
                       });
                     }),
-                    iconData: appStateSettings["outlinedIcons"]
-                        ? Icons.tune_outlined
-                        : Icons.tune_rounded,
+                    iconData: appStateSettings["outlinedIcons"] ? Icons.tune_outlined : Icons.tune_rounded,
                     onTap: () {
-                      updateSettings("customNumberFormat", true,
-                          updateGlobalState: false);
+                      updateSettings("customNumberFormat", true, updateGlobalState: false);
                       setState(() {
                         customNumberFormat = true;
                       });
@@ -1273,8 +1173,7 @@ class _SetNumberFormatPopupState extends State<SetNumberFormatPopup> {
               pushRoute(context, EditWalletsPage());
             },
             child: Padding(
-              padding:
-                  const EdgeInsets.only(left: 8, right: 8, top: 5, bottom: 5),
+              padding: const EdgeInsets.only(left: 8, right: 8, top: 5, bottom: 5),
               child: TextFont(
                 text: "decimal-precision-edit-account-info".tr(),
                 fontSize: 14,
@@ -1295,15 +1194,13 @@ class CustomNumberFormatPopup extends StatefulWidget {
   final VoidCallback? onChangeAnyOption;
 
   @override
-  State<CustomNumberFormatPopup> createState() =>
-      _CustomNumberFormatPopupState();
+  State<CustomNumberFormatPopup> createState() => _CustomNumberFormatPopupState();
 }
 
 class _CustomNumberFormatPopupState extends State<CustomNumberFormatPopup> {
   String customDelimiter = appStateSettings["numberFormatDelimiter"];
   String customDecimal = appStateSettings["numberFormatDecimal"];
-  bool numberFormatCurrencyFirst =
-      appStateSettings["numberFormatCurrencyFirst"];
+  bool numberFormatCurrencyFirst = appStateSettings["numberFormatCurrencyFirst"];
   @override
   Widget build(BuildContext context) {
     AllWallets allWallets = Provider.of<AllWallets>(context);
@@ -1312,9 +1209,7 @@ class _CustomNumberFormatPopupState extends State<CustomNumberFormatPopup> {
       -1234.56,
       forceCustomNumberFormat: true,
       addCurrencyName: true,
-      customSymbol: getCurrencyString(allWallets) == ""
-          ? "⬚"
-          : getCurrencyString(allWallets),
+      customSymbol: getCurrencyString(allWallets) == "" ? "⬚" : getCurrencyString(allWallets),
     );
     return Column(
       children: [
@@ -1337,12 +1232,9 @@ class _CustomNumberFormatPopupState extends State<CustomNumberFormatPopup> {
                 isOutlined: true,
                 isOutlinedColumn: true,
                 title: "delimiter".tr(),
-                icon: appStateSettings["outlinedIcons"]
-                    ? Symbols.decimal_decrease_sharp
-                    : Symbols.decimal_decrease_rounded,
+                icon: appStateSettings["outlinedIcons"] ? Symbols.decimal_decrease_sharp : Symbols.decimal_decrease_rounded,
                 onTap: () {
-                  if (widget.onChangeAnyOption != null)
-                    widget.onChangeAnyOption!();
+                  if (widget.onChangeAnyOption != null) widget.onChangeAnyOption!();
                   openBottomSheet(
                     context,
                     popupWithKeyboard: true,
@@ -1354,16 +1246,13 @@ class _CustomNumberFormatPopupState extends State<CustomNumberFormatPopup> {
                         popContext: false,
                         setSelectedText: (_) {},
                         placeholder: "delimiter-symbol".tr(),
-                        icon: appStateSettings["outlinedIcons"]
-                            ? Symbols.decimal_decrease_sharp
-                            : Symbols.decimal_decrease_rounded,
+                        icon: appStateSettings["outlinedIcons"] ? Symbols.decimal_decrease_sharp : Symbols.decimal_decrease_rounded,
                         selectedText: customDelimiter,
                         nextWithInput: (text) async {
                           setState(() {
                             customDelimiter = text;
                           });
-                          updateSettings("numberFormatDelimiter", text,
-                              updateGlobalState: false);
+                          updateSettings("numberFormatDelimiter", text, updateGlobalState: false);
                           Navigator.pop(context);
                         },
                       ),
@@ -1377,23 +1266,15 @@ class _CustomNumberFormatPopupState extends State<CustomNumberFormatPopup> {
               child: SettingsContainer(
                 isOutlined: true,
                 isOutlinedColumn: true,
-                title: "symbol".tr() +
-                    "\n" +
-                    (numberFormatCurrencyFirst
-                        ? "before".tr().capitalizeFirst
-                        : "after".tr().capitalizeFirst),
-                icon: appStateSettings["outlinedIcons"]
-                    ? Icons.monetization_on_outlined
-                    : Icons.monetization_on_rounded,
+                title:
+                    "symbol".tr() + "\n" + (numberFormatCurrencyFirst ? "before".tr().capitalizeFirst : "after".tr().capitalizeFirst),
+                icon: appStateSettings["outlinedIcons"] ? Icons.monetization_on_outlined : Icons.monetization_on_rounded,
                 onTap: () {
-                  if (widget.onChangeAnyOption != null)
-                    widget.onChangeAnyOption!();
+                  if (widget.onChangeAnyOption != null) widget.onChangeAnyOption!();
                   setState(() {
                     numberFormatCurrencyFirst = !numberFormatCurrencyFirst;
                   });
-                  updateSettings(
-                      "numberFormatCurrencyFirst", numberFormatCurrencyFirst,
-                      updateGlobalState: false);
+                  updateSettings("numberFormatCurrencyFirst", numberFormatCurrencyFirst, updateGlobalState: false);
                 },
               ),
             ),
@@ -1403,12 +1284,9 @@ class _CustomNumberFormatPopupState extends State<CustomNumberFormatPopup> {
                 isOutlined: true,
                 isOutlinedColumn: true,
                 title: "decimal".tr(),
-                icon: appStateSettings["outlinedIcons"]
-                    ? Symbols.decimal_increase_sharp
-                    : Symbols.decimal_increase_rounded,
+                icon: appStateSettings["outlinedIcons"] ? Symbols.decimal_increase_sharp : Symbols.decimal_increase_rounded,
                 onTap: () {
-                  if (widget.onChangeAnyOption != null)
-                    widget.onChangeAnyOption!();
+                  if (widget.onChangeAnyOption != null) widget.onChangeAnyOption!();
                   openBottomSheet(
                     context,
                     popupWithKeyboard: true,
@@ -1420,16 +1298,13 @@ class _CustomNumberFormatPopupState extends State<CustomNumberFormatPopup> {
                         popContext: false,
                         setSelectedText: (_) {},
                         placeholder: "decimal-symbol".tr(),
-                        icon: appStateSettings["outlinedIcons"]
-                            ? Symbols.decimal_increase_sharp
-                            : Symbols.decimal_increase_rounded,
+                        icon: appStateSettings["outlinedIcons"] ? Symbols.decimal_increase_sharp : Symbols.decimal_increase_rounded,
                         selectedText: customDecimal,
                         nextWithInput: (text) async {
                           setState(() {
                             customDecimal = text;
                           });
-                          updateSettings("numberFormatDecimal", text,
-                              updateGlobalState: false);
+                          updateSettings("numberFormatDecimal", text, updateGlobalState: false);
                           Navigator.pop(context);
                         },
                       ),
@@ -1445,166 +1320,162 @@ class _CustomNumberFormatPopupState extends State<CustomNumberFormatPopup> {
   }
 }
 
-class NumberPadFormatSetting extends StatelessWidget {
-  const NumberPadFormatSetting({super.key});
+// class NumberPadFormatSetting extends StatelessWidget {
+//   const NumberPadFormatSetting({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return SettingsContainer(
-      title: "number-pad-format".tr(),
-      onTap: () {
-        openBottomSheet(
-          context,
-          NumberPadFormatSettingPopup(),
-        );
-      },
-      icon: appStateSettings["outlinedIcons"]
-          ? Icons.dialpad_sharp
-          : Icons.dialpad_rounded,
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return SettingsContainer(
+//       title: "number-pad-format".tr(),
+//       onTap: () {
+//         openBottomSheet(
+//           context,
+//           NumberPadFormatSettingPopup(),
+//         );
+//       },
+//       icon: appStateSettings["outlinedIcons"] ? Icons.dialpad_sharp : Icons.dialpad_rounded,
+//     );
+//   }
+// }
 
-class NumberPadFormatSettingPopup extends StatefulWidget {
-  const NumberPadFormatSettingPopup({super.key});
+// class NumberPadFormatSettingPopup extends StatefulWidget {
+//   const NumberPadFormatSettingPopup({super.key});
 
-  @override
-  State<NumberPadFormatSettingPopup> createState() =>
-      _NumberPadFormatSettingPopupState();
-}
+//   @override
+//   State<NumberPadFormatSettingPopup> createState() => _NumberPadFormatSettingPopupState();
+// }
 
-class _NumberPadFormatSettingPopupState
-    extends State<NumberPadFormatSettingPopup> {
-  @override
-  Widget build(BuildContext context) {
-    return PopupFramework(
-      title: "number-pad-format".tr(),
-      child: Column(
-        children: [
-          ExtraZerosButtonSetting(
-            enableBorderRadius: true,
-            onChange: () {
-              setState(() {});
-            },
-          ),
-          HorizontalBreak(),
-          SizedBox(height: 10),
-          NumberPadFormatPicker(),
-        ],
-      ),
-    );
-  }
-}
+// class _NumberPadFormatSettingPopupState extends State<NumberPadFormatSettingPopup> {
+//   @override
+//   Widget build(BuildContext context) {
+//     return PopupFramework(
+//       title: "number-pad-format".tr(),
+//       child: Column(
+//         children: [
+//           ExtraZerosButtonSetting(
+//             enableBorderRadius: true,
+//             onChange: () {
+//               setState(() {});
+//             },
+//           ),
+//           HorizontalBreak(),
+//           SizedBox(height: 10),
+//           NumberPadFormatPicker(),
+//         ],
+//       ),
+//     );
+//   }
+// }
 
-class NumberPadFormatPicker extends StatefulWidget {
-  const NumberPadFormatPicker({super.key});
+// class NumberPadFormatPicker extends StatefulWidget {
+//   const NumberPadFormatPicker({super.key});
 
-  @override
-  State<NumberPadFormatPicker> createState() => _NumberPadFormatPickerState();
-}
+//   @override
+//   State<NumberPadFormatPicker> createState() => _NumberPadFormatPickerState();
+// }
 
-class _NumberPadFormatPickerState extends State<NumberPadFormatPicker> {
-  NumberPadFormat selectedNumberPadFormat = getNumberPadFormat();
+// class _NumberPadFormatPickerState extends State<NumberPadFormatPicker> {
+//   // NumberPadFormat selectedNumberPadFormat = getNumberPadFormat();
 
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: AnimatedOpacity(
-                duration: Duration(milliseconds: 500),
-                opacity: selectedNumberPadFormat == NumberPadFormat.format123
-                    ? 1
-                    : 0.5,
-                child: OutlinedButtonStacked(
-                  filled: selectedNumberPadFormat == NumberPadFormat.format123,
-                  alignLeft: true,
-                  alignBeside: true,
-                  text: null,
-                  afterWidget: IgnorePointer(
-                    child: NumberPadAmount(
-                      extraWidgetAboveNumbers: null,
-                      addToAmount: (_) {},
-                      enableDecimal: true,
-                      removeToAmount: () {},
-                      removeAll: () {},
-                      canChange: () => true,
-                      enableCalculator: true,
-                      padding: EdgeInsets.zero,
-                      setState: () {},
-                      format: NumberPadFormat.format123,
-                    ),
-                  ),
-                  padding:
-                      EdgeInsets.only(left: 20, right: 15, top: 10, bottom: 15),
-                  iconData: null,
-                  onTap: () {
-                    setState(() {
-                      selectedNumberPadFormat = NumberPadFormat.format123;
-                    });
-                    updateSettings(
-                        "numberPadFormat", NumberPadFormat.format123.index,
-                        updateGlobalState: false);
-                  },
-                ),
-              ),
-            ),
-          ],
-        ),
-        SizedBox(height: 12),
-        Row(
-          children: [
-            Expanded(
-              child: AnimatedOpacity(
-                duration: Duration(milliseconds: 500),
-                opacity: selectedNumberPadFormat == NumberPadFormat.format789
-                    ? 1
-                    : 0.5,
-                child: OutlinedButtonStacked(
-                  filled: selectedNumberPadFormat == NumberPadFormat.format789,
-                  alignLeft: true,
-                  alignBeside: true,
-                  text: null,
-                  afterWidget: IgnorePointer(
-                    child: NumberPadAmount(
-                      extraWidgetAboveNumbers: null,
-                      addToAmount: (_) {},
-                      enableDecimal: true,
-                      removeToAmount: () {},
-                      removeAll: () {},
-                      canChange: () => true,
-                      enableCalculator: true,
-                      padding: EdgeInsets.zero,
-                      setState: () {},
-                      format: NumberPadFormat.format789,
-                    ),
-                  ),
-                  padding:
-                      EdgeInsets.only(left: 20, right: 15, top: 10, bottom: 15),
-                  iconData: null,
-                  onTap: () {
-                    setState(() {
-                      selectedNumberPadFormat = NumberPadFormat.format789;
-                    });
-                    updateSettings(
-                        "numberPadFormat", NumberPadFormat.format789.index,
-                        updateGlobalState: false);
-                  },
-                ),
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Text('data');
+// return Column(
+//   children: [
+//     Row(
+//       children: [
+//         Expanded(
+//           child: AnimatedOpacity(
+//             duration: Duration(milliseconds: 500),
+//             opacity: selectedNumberPadFormat == NumberPadFormat.format123
+//                 ? 1
+//                 : 0.5,
+//             child: OutlinedButtonStacked(
+//               filled: selectedNumberPadFormat == NumberPadFormat.format123,
+//               alignLeft: true,
+//               alignBeside: true,
+//               text: null,
+//               afterWidget: IgnorePointer(
+//                 child: NumberPadAmount(
+//                   extraWidgetAboveNumbers: null,
+//                   addToAmount: (_) {},
+//                   enableDecimal: true,
+//                   removeToAmount: () {},
+//                   removeAll: () {},
+//                   canChange: () => true,
+//                   enableCalculator: true,
+//                   padding: EdgeInsets.zero,
+//                   setState: () {},
+//                   format: NumberPadFormat.format123,
+//                 ),
+//               ),
+//               padding:
+//                   EdgeInsets.only(left: 20, right: 15, top: 10, bottom: 15),
+//               iconData: null,
+//               onTap: () {
+//                 setState(() {
+//                   selectedNumberPadFormat = NumberPadFormat.format123;
+//                 });
+//                 updateSettings(
+//                     "numberPadFormat", NumberPadFormat.format123.index,
+//                     updateGlobalState: false);
+//               },
+//             ),
+//           ),
+//         ),
+//       ],
+//     ),
+//     SizedBox(height: 12),
+//     Row(
+//       children: [
+//         Expanded(
+//           child: AnimatedOpacity(
+//             duration: Duration(milliseconds: 500),
+//             opacity: selectedNumberPadFormat == NumberPadFormat.format789
+//                 ? 1
+//                 : 0.5,
+//             child: OutlinedButtonStacked(
+//               filled: selectedNumberPadFormat == NumberPadFormat.format789,
+//               alignLeft: true,
+//               alignBeside: true,
+//               text: null,
+//               afterWidget: IgnorePointer(
+//                 child: NumberPadAmount(
+//                   extraWidgetAboveNumbers: null,
+//                   addToAmount: (_) {},
+//                   enableDecimal: true,
+//                   removeToAmount: () {},
+//                   removeAll: () {},
+//                   canChange: () => true,
+//                   enableCalculator: true,
+//                   padding: EdgeInsets.zero,
+//                   setState: () {},
+//                   format: NumberPadFormat.format789,
+//                 ),
+//               ),
+//               padding:
+//                   EdgeInsets.only(left: 20, right: 15, top: 10, bottom: 15),
+//               iconData: null,
+//               onTap: () {
+//                 setState(() {
+//                   selectedNumberPadFormat = NumberPadFormat.format789;
+//                 });
+//                 updateSettings(
+//                     "numberPadFormat", NumberPadFormat.format789.index,
+//                     updateGlobalState: false);
+//               },
+//             ),
+//           ),
+//         ),
+//       ],
+//     ),
+//   ],
+// );
+//   }
+// }
 
 class ExtraZerosButtonSetting extends StatelessWidget {
-  const ExtraZerosButtonSetting(
-      {this.onChange, this.enableBorderRadius = false, super.key});
+  const ExtraZerosButtonSetting({this.onChange, this.enableBorderRadius = false, super.key});
   final bool enableBorderRadius;
   final VoidCallback? onChange;
   @override
@@ -1612,9 +1483,7 @@ class ExtraZerosButtonSetting extends StatelessWidget {
     return SettingsContainerDropdown(
       enableBorderRadius: enableBorderRadius,
       title: "extra-zeros-button".tr(),
-      icon: appStateSettings["outlinedIcons"]
-          ? Symbols.counter_0_sharp
-          : Symbols.counter_0_rounded,
+      icon: appStateSettings["outlinedIcons"] ? Symbols.counter_0_sharp : Symbols.counter_0_rounded,
       initial: appStateSettings["extraZerosButton"].toString(),
       items: ["", "00", "000"],
       onChanged: (value) async {
@@ -1639,9 +1508,7 @@ class PercentagePrecisionSetting extends StatelessWidget {
   Widget build(BuildContext context) {
     return SettingsContainerDropdown(
       title: "percentage-precision".tr(),
-      icon: appStateSettings["outlinedIcons"]
-          ? Icons.percent_outlined
-          : Icons.percent_rounded,
+      icon: appStateSettings["outlinedIcons"] ? Icons.percent_outlined : Icons.percent_rounded,
       initial: appStateSettings["percentagePrecision"] == 2
           ? "2-decimals"
           : appStateSettings["percentagePrecision"] == 1

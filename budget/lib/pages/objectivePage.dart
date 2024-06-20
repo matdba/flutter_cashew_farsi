@@ -47,6 +47,7 @@ import 'package:provider/provider.dart';
 import 'package:budget/widgets/countNumber.dart';
 import 'package:budget/struct/currencyFunctions.dart';
 import 'package:confetti/confetti.dart';
+import 'package:shamsi_date/shamsi_date.dart';
 
 import '../widgets/util/widgetSize.dart';
 
@@ -63,8 +64,7 @@ class ObjectivePage extends StatelessWidget {
         stream: database.getObjective(objectivePk),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            Color accentColor = HexColor(snapshot.data?.colour,
-                defaultColor: Theme.of(context).colorScheme.primary);
+            Color accentColor = HexColor(snapshot.data?.colour, defaultColor: Theme.of(context).colorScheme.primary);
             return CustomColorTheme(
               accentColor: accentColor,
               child: _ObjectivePageContent(
@@ -119,8 +119,7 @@ class _ObjectivePageContentState extends State<_ObjectivePageContent> {
   }
 
   confettiListener() {
-    if (mounted &&
-        confettiController.state == ConfettiControllerState.playing) {
+    if (mounted && confettiController.state == ConfettiControllerState.playing) {
       Future.delayed(Duration(milliseconds: 2000), () {
         if (mounted) confettiController.stop();
       });
@@ -134,8 +133,7 @@ class _ObjectivePageContentState extends State<_ObjectivePageContent> {
         title: "select-icon".tr(),
         child: SelectCategoryImage(
           setSelectedImage: (String? selection) async {
-            String? selectedIcon =
-                (selection ?? "").replaceFirst("assets/categories/", "");
+            String? selectedIcon = (selection ?? "").replaceFirst("assets/categories/", "");
             Objective newObjective = widget.objective.copyWith(
               iconName: Value(selectedIcon),
               emojiIconName: Value(null),
@@ -154,8 +152,7 @@ class _ObjectivePageContentState extends State<_ObjectivePageContent> {
             );
             print(newObjective);
           },
-          selectedImage:
-              "assets/categories/" + widget.objective.iconName.toString(),
+          selectedImage: "assets/categories/" + widget.objective.iconName.toString(),
           setSelectedTitle: (String? titleRecommendation) {},
         ),
       ),
@@ -166,18 +163,14 @@ class _ObjectivePageContentState extends State<_ObjectivePageContent> {
   @override
   Widget build(BuildContext context) {
     Widget numberTransactionsWidget = StreamBuilder<int?>(
-      stream: database
-          .getTotalCountOfTransactionsInObjective(widget.objective.objectivePk)
-          .$1,
+      stream: database.getTotalCountOfTransactionsInObjective(widget.objective.objectivePk).$1,
       builder: (context, snapshot) {
         if (snapshot.hasData && snapshot.data != null) {
           return TextFont(
             textAlign: TextAlign.center,
             text: snapshot.data.toString() +
                 " " +
-                (snapshot.data == 1
-                    ? "transaction".tr().toLowerCase()
-                    : "transactions".tr().toLowerCase()),
+                (snapshot.data == 1 ? "transaction".tr().toLowerCase() : "transactions".tr().toLowerCase()),
             fontSize: 16,
             maxLines: 3,
           );
@@ -191,14 +184,11 @@ class _ObjectivePageContentState extends State<_ObjectivePageContent> {
         }
       },
     );
-    Color? pageBackgroundColor =
-        Theme.of(context).brightness == Brightness.dark &&
-                appStateSettings["forceFullDarkBackground"]
-            ? Colors.black
-            : appStateSettings["materialYou"]
-                ? dynamicPastel(context, Theme.of(context).colorScheme.primary,
-                    amount: 0.92)
-                : null;
+    Color? pageBackgroundColor = Theme.of(context).brightness == Brightness.dark && appStateSettings["forceFullDarkBackground"]
+        ? Colors.black
+        : appStateSettings["materialYou"]
+            ? dynamicPastel(context, Theme.of(context).colorScheme.primary, amount: 0.92)
+            : null;
     String pageId = widget.objective.objectivePk;
     return WillPopScope(
       onWillPop: () async {
@@ -236,12 +226,8 @@ class _ObjectivePageContentState extends State<_ObjectivePageContent> {
                 items: [
                   DropdownItemMenu(
                     id: "edit-goals",
-                    label: widget.objective.type == ObjectiveType.loan
-                        ? "edit-loan".tr()
-                        : "edit-goal".tr(),
-                    icon: appStateSettings["outlinedIcons"]
-                        ? Icons.edit_outlined
-                        : Icons.edit_rounded,
+                    label: widget.objective.type == ObjectiveType.loan ? "edit-loan".tr() : "edit-goal".tr(),
+                    icon: appStateSettings["outlinedIcons"] ? Icons.edit_outlined : Icons.edit_rounded,
                     action: () {
                       pushRoute(
                         context,
@@ -275,20 +261,16 @@ class _ObjectivePageContentState extends State<_ObjectivePageContent> {
               ),
             ],
             title: widget.objective.name,
-            appBarBackgroundColor:
-                Theme.of(context).colorScheme.secondaryContainer,
-            appBarBackgroundColorStart:
-                Theme.of(context).colorScheme.secondaryContainer,
+            appBarBackgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+            appBarBackgroundColorStart: Theme.of(context).colorScheme.secondaryContainer,
             textColor: getColor(context, "black"),
             dragDownToDismiss: true,
             slivers: [
               SliverToBoxAdapter(
                 child: WatchTotalAndAmountOfObjective(
                   objective: widget.objective,
-                  builder: (double objectiveAmount, double totalAmount,
-                      double percentageTowardsGoal) {
-                    if (percentageTowardsGoal >= 1 &&
-                        hasPlayedConfetti == false) {
+                  builder: (double objectiveAmount, double totalAmount, double percentageTowardsGoal) {
+                    if (percentageTowardsGoal >= 1 && hasPlayedConfetti == false) {
                       confettiController.play();
                       hasPlayedConfetti = true;
                     }
@@ -309,21 +291,15 @@ class _ObjectivePageContentState extends State<_ObjectivePageContent> {
                                 children: [
                                   Flexible(
                                     child: Container(
-                                      constraints:
-                                          BoxConstraints(maxWidth: 250),
+                                      constraints: BoxConstraints(maxWidth: 250),
                                       child: AspectRatio(
                                         aspectRatio: 1,
                                         child: AnimatedCircularProgress(
-                                          percent: clampDouble(
-                                              percentageTowardsGoal, 0, 1),
-                                          backgroundColor: Theme.of(context)
-                                              .colorScheme
-                                              .secondaryContainer,
+                                          percent: clampDouble(percentageTowardsGoal, 0, 1),
+                                          backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
                                           foregroundColor: dynamicPastel(
                                             context,
-                                            Theme.of(context)
-                                                .colorScheme
-                                                .primary,
+                                            Theme.of(context).colorScheme.primary,
                                             amountLight: 0.4,
                                             amountDark: 0.2,
                                           ),
@@ -348,8 +324,7 @@ class _ObjectivePageContentState extends State<_ObjectivePageContent> {
                                       income: false,
                                       iconName: widget.objective.iconName,
                                       colour: widget.objective.colour,
-                                      emojiIconName:
-                                          widget.objective.emojiIconName,
+                                      emojiIconName: widget.objective.emojiIconName,
                                     ),
                                     size: 40,
                                     sizePadding: 30,
@@ -368,15 +343,13 @@ class _ObjectivePageContentState extends State<_ObjectivePageContent> {
                                       ? SizedBox.shrink()
                                       : CountNumber(
                                           count: percentageTowardsGoal * 100,
-                                          duration:
-                                              Duration(milliseconds: 1000),
+                                          duration: Duration(milliseconds: 1000),
                                           initialCount: (0),
                                           textBuilder: (value) {
                                             return TextFont(
                                               text: convertToPercent(
                                                 value,
-                                                finalNumber:
-                                                    percentageTowardsGoal * 100,
+                                                finalNumber: percentageTowardsGoal * 100,
                                                 useLessThanZero: true,
                                               ),
                                               fontSize: 28,
@@ -385,8 +358,7 @@ class _ObjectivePageContentState extends State<_ObjectivePageContent> {
                                           },
                                         ),
                                   Builder(builder: (context) {
-                                    String amountSpentLabel =
-                                        getObjectiveAmountSpentLabel(
+                                    String amountSpentLabel = getObjectiveAmountSpentLabel(
                                       objective: widget.objective,
                                       context: context,
                                       showTotalSpent: showTotalSpent,
@@ -402,78 +374,56 @@ class _ObjectivePageContentState extends State<_ObjectivePageContent> {
                                             copyToClipboard(amountSpentLabel);
                                           },
                                           onTap: () {
-                                            if (getIsDifferenceOnlyLoan(
-                                                    widget.objective) ==
-                                                false) {
+                                            if (getIsDifferenceOnlyLoan(widget.objective) == false) {
                                               _swapTotalSpentDisplay();
                                             }
                                           },
                                           color: Colors.transparent,
                                           child: Padding(
                                             padding: const EdgeInsets.all(8.0),
-                                            child: getIsDifferenceOnlyLoan(
-                                                    widget.objective)
+                                            child: getIsDifferenceOnlyLoan(widget.objective)
                                                 ? TextFont(
                                                     text: amountSpentLabel,
                                                     fontSize: 28,
                                                     fontWeight: FontWeight.bold,
-                                                    textColor:
-                                                        percentageTowardsGoal ==
-                                                                1
-                                                            ? getColor(context,
-                                                                "black")
-                                                            : getDifferenceOfLoan(
-                                                                      widget
-                                                                          .objective,
-                                                                      totalAmount,
-                                                                      objectiveAmount,
-                                                                    ) <
-                                                                    0
-                                                                ? getColor(
-                                                                    context,
-                                                                    "unPaidUpcoming",
-                                                                  )
-                                                                : getColor(
-                                                                    context,
-                                                                    "unPaidOverdue",
-                                                                  ),
+                                                    textColor: percentageTowardsGoal == 1
+                                                        ? getColor(context, "black")
+                                                        : getDifferenceOfLoan(
+                                                                  widget.objective,
+                                                                  totalAmount,
+                                                                  objectiveAmount,
+                                                                ) <
+                                                                0
+                                                            ? getColor(
+                                                                context,
+                                                                "unPaidUpcoming",
+                                                              )
+                                                            : getColor(
+                                                                context,
+                                                                "unPaidOverdue",
+                                                              ),
                                                   )
                                                 : Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment.end,
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    crossAxisAlignment: CrossAxisAlignment.end,
                                                     children: [
                                                       TextFont(
                                                         text: amountSpentLabel,
                                                         fontSize: 18,
-                                                        textColor: totalAmount >=
-                                                                objectiveAmount
-                                                            ? getColor(context,
-                                                                "incomeAmount")
-                                                            : getColor(context,
-                                                                "black"),
+                                                        textColor: totalAmount >= objectiveAmount
+                                                            ? getColor(context, "incomeAmount")
+                                                            : getColor(context, "black"),
                                                       ),
                                                       Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .only(
-                                                                bottom: 1),
+                                                        padding: const EdgeInsets.only(bottom: 1),
                                                         child: TextFont(
-                                                          text:
-                                                              objectiveRemainingAmountText(
-                                                            objectiveAmount:
-                                                                objectiveAmount,
-                                                            totalAmount:
-                                                                totalAmount,
+                                                          text: objectiveRemainingAmountText(
+                                                            objectiveAmount: objectiveAmount,
+                                                            totalAmount: totalAmount,
                                                             context: context,
                                                           ),
                                                           fontSize: 13,
-                                                          textColor: getColor(
-                                                                  context,
-                                                                  "black")
-                                                              .withOpacity(0.4),
+                                                          textColor: getColor(context, "black").withOpacity(0.4),
                                                         ),
                                                       ),
                                                     ],
@@ -483,34 +433,21 @@ class _ObjectivePageContentState extends State<_ObjectivePageContent> {
                                       ),
                                     );
                                   }),
-                                  if (widget.objective.type ==
-                                      ObjectiveType.loan)
+                                  if (widget.objective.type == ObjectiveType.loan)
                                     TextFont(
-                                      text: getIsDifferenceOnlyLoan(
-                                              widget.objective)
+                                      text: getIsDifferenceOnlyLoan(widget.objective)
                                           ? percentageTowardsGoal == 1
                                               ? "all-settled".tr()
-                                              : (getDifferenceOfLoan(
-                                                          widget.objective,
-                                                          totalAmount,
-                                                          objectiveAmount) >
-                                                      0)
+                                              : (getDifferenceOfLoan(widget.objective, totalAmount, objectiveAmount) > 0)
                                                   ? "to-pay".tr()
                                                   : "to-collect".tr()
-                                          : ((showTotalSpent ||
-                                                  totalAmount >=
-                                                      objectiveAmount)
-                                              ? (widget.objective.income
-                                                  ? "collected".tr()
-                                                  : "paid".tr())
-                                              : (widget.objective.income
-                                                  ? "to-collect".tr()
-                                                  : "to-pay".tr())),
+                                          : ((showTotalSpent || totalAmount >= objectiveAmount)
+                                              ? (widget.objective.income ? "collected".tr() : "paid".tr())
+                                              : (widget.objective.income ? "to-collect".tr() : "to-pay".tr())),
                                       fontSize: 18,
                                       textColor: getColor(context, "black"),
                                     ),
-                                  if (getIsDifferenceOnlyLoan(widget.objective))
-                                    numberTransactionsWidget,
+                                  if (getIsDifferenceOnlyLoan(widget.objective)) numberTransactionsWidget,
                                 ],
                               ),
                             ],
@@ -518,28 +455,21 @@ class _ObjectivePageContentState extends State<_ObjectivePageContent> {
                         ),
                         if (getIsDifferenceOnlyLoan(widget.objective) == false)
                           Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal:
-                                    getHorizontalPaddingConstrained(context)),
+                            padding: EdgeInsets.symmetric(horizontal: getHorizontalPaddingConstrained(context)),
                             child: Padding(
-                              padding: const EdgeInsets.only(
-                                  top: 20.0, left: 20, right: 20),
+                              padding: const EdgeInsets.only(top: 20.0, left: 20, right: 20),
                               child: Column(
                                 children: [
                                   TextFont(
                                     text: getWordedDateShortMore(
-                                          widget.objective.dateCreated,
-                                          includeYear: widget
-                                                  .objective.dateCreated.year !=
-                                              DateTime.now().year,
+                                          Jalali.fromDateTime(widget.objective.dateCreated),
+                                          includeYear: widget.objective.dateCreated.year != DateTime.now().year,
                                         ) +
                                         (widget.objective.endDate != null
                                             ? " – " +
                                                 getWordedDateShortMore(
-                                                  widget.objective.endDate!,
-                                                  includeYear: widget.objective
-                                                          .endDate!.year !=
-                                                      DateTime.now().year,
+                                                  Jalali.fromDateTime(widget.objective.endDate!),
+                                                  includeYear: widget.objective.endDate!.year != DateTime.now().year,
                                                 )
                                             : ""),
                                     maxLines: 3,
@@ -573,8 +503,7 @@ class _ObjectivePageContentState extends State<_ObjectivePageContent> {
                   },
                 ),
               ),
-              if (getIsDifferenceOnlyLoan(widget.objective) == true)
-                SliverToBoxAdapter(child: SizedBox(height: 20)),
+              if (getIsDifferenceOnlyLoan(widget.objective) == true) SliverToBoxAdapter(child: SizedBox(height: 20)),
               if (getIsDifferenceOnlyLoan(widget.objective) == false)
                 SliverPadding(
                   padding: EdgeInsets.only(
@@ -595,52 +524,34 @@ class _ObjectivePageContentState extends State<_ObjectivePageContent> {
                 transactionBackgroundColor: pageBackgroundColor,
                 categoryTintColor: Theme.of(context).colorScheme.primary,
                 searchFilters: widget.objective.type == ObjectiveType.loan
-                    ? SearchFilters().copyWith(
-                        objectiveLoanPks: [widget.objective.objectivePk])
-                    : SearchFilters()
-                        .copyWith(objectivePks: [widget.objective.objectivePk]),
+                    ? SearchFilters().copyWith(objectiveLoanPks: [widget.objective.objectivePk])
+                    : SearchFilters().copyWith(objectivePks: [widget.objective.objectivePk]),
                 allowOpenIntoObjectiveLoanPage: false,
                 showObjectivePercentage: false,
                 noResultsMessage: "no-transactions-found".tr() +
-                    (widget.objective.type == ObjectiveType.loan
-                        ? "\n" + "add-record-using-plus-button"
-                        : ""),
+                    (widget.objective.type == ObjectiveType.loan ? "\n" + "add-record-using-plus-button" : ""),
                 showNoResults: widget.objective.type == ObjectiveType.loan,
-                noResultsExtraWidget:
-                    widget.objective.type == ObjectiveType.goal
-                        ? ExtraInfoButton(
-                            onTap: () {
-                              startCreatingInstallment(
-                                  context: context,
-                                  initialObjective: widget.objective);
-                            },
-                            icon: appStateSettings["outlinedIcons"]
-                                ? Icons.punch_clock_outlined
-                                : Icons.punch_clock_rounded,
-                            text: "setup-installment-payments".tr(),
-                            color: dynamicPastel(
-                              context,
-                              Theme.of(context).colorScheme.secondaryContainer,
-                              amountLight:
-                                  appStateSettings["materialYou"] ? 0.25 : 0.4,
-                              amountDark:
-                                  appStateSettings["materialYou"] ? 0.4 : 0.55,
-                            ),
-                            buttonIconColor: dynamicPastel(
-                                context,
-                                HexColor(widget.objective.colour,
-                                    defaultColor:
-                                        Theme.of(context).colorScheme.primary),
-                                amount: 0.5),
-                            buttonIconColorIcon: dynamicPastel(
-                                context,
-                                HexColor(widget.objective.colour,
-                                    defaultColor:
-                                        Theme.of(context).colorScheme.primary),
-                                amount: 0.7,
-                                inverse: true),
-                          )
-                        : null,
+                noResultsExtraWidget: widget.objective.type == ObjectiveType.goal
+                    ? ExtraInfoButton(
+                        onTap: () {
+                          startCreatingInstallment(context: context, initialObjective: widget.objective);
+                        },
+                        icon: appStateSettings["outlinedIcons"] ? Icons.punch_clock_outlined : Icons.punch_clock_rounded,
+                        text: "setup-installment-payments".tr(),
+                        color: dynamicPastel(
+                          context,
+                          Theme.of(context).colorScheme.secondaryContainer,
+                          amountLight: appStateSettings["materialYou"] ? 0.25 : 0.4,
+                          amountDark: appStateSettings["materialYou"] ? 0.4 : 0.55,
+                        ),
+                        buttonIconColor: dynamicPastel(
+                            context, HexColor(widget.objective.colour, defaultColor: Theme.of(context).colorScheme.primary),
+                            amount: 0.5),
+                        buttonIconColorIcon: dynamicPastel(
+                            context, HexColor(widget.objective.colour, defaultColor: Theme.of(context).colorScheme.primary),
+                            amount: 0.7, inverse: true),
+                      )
+                    : null,
               ),
               // Wipe all remaining pixels off - sometimes graphics artifacts are left behind
               SliverToBoxAdapter(
