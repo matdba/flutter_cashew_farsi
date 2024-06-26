@@ -183,32 +183,32 @@ String convertToMoney(AllWallets allWallets, double amount,
   //     : allDecimals == true || hasDecimalPoints(finalNumber) || hasDecimalPoints(amount)
   //         ? numberDecimals
   //         : 0;
-  String? locale = appStateSettings["customNumberFormat"] == true ? "en-US" : Platform.localeName;
+  // String? locale = appStateSettings["customNumberFormat"] == true ? "en-US" : Platform.localeName;
   // String? symbol = customSymbol ?? getCurrencyString(allWallets, currencyKey: currencyKey);
   // String? locale = '';
   String? symbol = 'تومان';
 
-  bool useCustomNumberFormat =
-      forceCustomNumberFormat || (forceNonCustomNumberFormat == false && appStateSettings["customNumberFormat"] == true);
+  // bool useCustomNumberFormat =
+  //     forceCustomNumberFormat || (forceNonCustomNumberFormat == false && appStateSettings["customNumberFormat"] == true);
 
-  final NumberFormat formatter;
-  if (getCustomNumberFormat != null) {
-    formatter = getCustomNumberFormat(0, locale, useCustomNumberFormat ? "" : symbol);
-  } else if (forceDefaultNumberFormatter == false &&
-      (forceCompactNumberFormatter || appStateSettings["shortNumberFormat"] == "compact")) {
-    formatter = NumberFormat.compactCurrency(
-      locale: locale,
-      decimalDigits: 0,
-      symbol: useCustomNumberFormat ? "" : symbol,
-    );
-    formatter.significantDigitsInUse = false;
-  } else {
-    formatter = NumberFormat.currency(
-      decimalDigits: 0,
-      locale: locale,
-      symbol: useCustomNumberFormat ? "" : symbol,
-    );
-  }
+  // final NumberFormat formatter;
+  // if (getCustomNumberFormat != null) {
+  //   formatter = getCustomNumberFormat(0, locale, useCustomNumberFormat ? "" : symbol);
+  // } else if (forceDefaultNumberFormatter == false &&
+  //     (forceCompactNumberFormatter || appStateSettings["shortNumberFormat"] == "compact")) {
+  //   formatter = NumberFormat.compactCurrency(
+  //     locale: locale,
+  //     decimalDigits: 0,
+  //     symbol: useCustomNumberFormat ? "" : symbol,
+  //   );
+  //   formatter.significantDigitsInUse = false;
+  // } else {
+  //   formatter = NumberFormat.currency(
+  //     decimalDigits: 0,
+  //     locale: locale,
+  //     symbol: useCustomNumberFormat ? "" : symbol,
+  //   );
+  // }
 
   // View the entire dictionary of locale formats, through NumberFormat.currency definition
   // numberFormatSymbols[locale] as NumberSymbols
@@ -218,13 +218,6 @@ String convertToMoney(AllWallets allWallets, double amount,
     addCurrencyName = true;
   }
 
-  // String formatOutput = formatter.format(amount).trim();
-  // String formatOutput;
-  // if (intAmount > 9999999999999) {
-  //   developer.log('amount : ${intAmount.toString().seRagham()}');
-  //   intAmount = int.parse(intAmount.toString().substring(0, 13));
-  //   developer.log('amount 2: ${intAmount.toString().seRagham()}');
-  // }
   String formatOutput = intAmount.toString() + ' ' + symbol;
   developer.log('formatOutput: ${intAmount}');
 
@@ -633,7 +626,7 @@ int monthDay(Jalali baseDate, Jalali date) {
 
 String getWordedNumber(BuildContext context, AllWallets allWallets, double value) {
   if (removeTrailingZeroes(value.toStringAsFixed(10)) == "0") {
-    return getCurrencyString(allWallets) + "0";
+    return "۰ تومان";
   }
   return convertToMoney(
     allWallets,

@@ -86,7 +86,7 @@ class PopupFramework extends StatelessWidget {
                           ),
                           Padding(
                             padding: const EdgeInsets.only(
-                              left: 10,
+                              right: 10,
                             ),
                             child: icon ?? SizedBox.shrink(),
                           )
@@ -115,7 +115,7 @@ class PopupFramework extends StatelessWidget {
                                       ),
                                     if (subtitle != null || customSubtitleWidget != null)
                                       Padding(
-                                        padding: EdgeInsets.only(left: 2, bottom: 4),
+                                        padding: EdgeInsets.only(right: 2, bottom: 4),
                                         child: customSubtitleWidget ??
                                             TextFont(
                                               text: subtitle ?? "",

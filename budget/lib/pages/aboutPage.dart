@@ -1,4 +1,3 @@
-import 'package:budget/database/tables.dart';
 import 'package:budget/functions.dart';
 import 'package:budget/main.dart';
 import 'package:budget/pages/accountsPage.dart';
@@ -50,9 +49,7 @@ class AboutPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Color containerColor = appStateSettings["materialYou"]
-        ? dynamicPastel(
-            context, Theme.of(context).colorScheme.secondaryContainer,
-            amountLight: 0.2, amountDark: 0.6)
+        ? dynamicPastel(context, Theme.of(context).colorScheme.secondaryContainer, amountLight: 0.2, amountDark: 0.6)
         : getColor(context, "lightDarkAccent");
     return PageFramework(
       dragDownToDismiss: true,
@@ -86,8 +83,7 @@ class AboutPage extends StatelessWidget {
                         );
                     },
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 3, horizontal: 10),
+                      padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 10),
                       child: TextFont(
                         text: globalAppName,
                         fontWeight: FontWeight.bold,
@@ -103,8 +99,7 @@ class AboutPage extends StatelessWidget {
                       showChangelogForce(context);
                     },
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 0, horizontal: 10),
+                      padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
                       child: TextFont(
                         text: getVersionString(),
                         fontSize: 14,
@@ -142,8 +137,7 @@ class AboutPage extends StatelessWidget {
                       SizedBox(width: 10),
                       Flexible(
                         child: TextFont(
-                          text: "app-is-open-source"
-                              .tr(namedArgs: {"app": globalAppName}),
+                          text: "app-is-open-source".tr(namedArgs: {"app": globalAppName}),
                           fontSize: 18,
                           maxLines: 5,
                         ),
@@ -280,8 +274,7 @@ class AboutPage extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15),
           child: OutlinedContainer(
-            borderColor:
-                Theme.of(context).colorScheme.tertiary.withOpacity(0.6),
+            borderColor: Theme.of(context).colorScheme.tertiary.withOpacity(0.6),
             clip: true,
             child: Column(
               children: [
@@ -300,11 +293,7 @@ class AboutPage extends StatelessWidget {
                                 "exchange-rate-notice-description".tr());
                   },
                 ),
-                TappableOpacityButtonBreak(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .tertiary
-                        .withOpacity(0.6)),
+                TappableOpacityButtonBreak(color: Theme.of(context).colorScheme.tertiary.withOpacity(0.6)),
                 TappableOpacityButton(
                   expandedLayout: true,
                   label: "privacy-policy".tr(),
@@ -314,11 +303,7 @@ class AboutPage extends StatelessWidget {
                     openUrl("http://cashewapp.web.app/policy.html");
                   },
                 ),
-                TappableOpacityButtonBreak(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .tertiary
-                        .withOpacity(0.6)),
+                TappableOpacityButtonBreak(color: Theme.of(context).colorScheme.tertiary.withOpacity(0.6)),
                 TappableOpacityButton(
                   expandedLayout: true,
                   label: "delete-all-data".tr(),
@@ -329,9 +314,7 @@ class AboutPage extends StatelessWidget {
                       context,
                       title: "erase-everything".tr(),
                       description: "erase-everything-description".tr(),
-                      icon: appStateSettings["outlinedIcons"]
-                          ? Icons.warning_outlined
-                          : Icons.warning_rounded,
+                      icon: appStateSettings["outlinedIcons"] ? Icons.warning_outlined : Icons.warning_rounded,
                       onExtraLabel2: "erase-synced-data-and-cloud-backups".tr(),
                       onExtra2: () {
                         Navigator.pop(context);
@@ -385,11 +368,8 @@ class AboutPage extends StatelessWidget {
                         openPopup(
                           context,
                           title: "erase-everything-warning".tr(),
-                          description:
-                              "erase-everything-warning-description".tr(),
-                          icon: appStateSettings["outlinedIcons"]
-                              ? Icons.warning_amber_outlined
-                              : Icons.warning_amber_rounded,
+                          description: "erase-everything-warning-description".tr(),
+                          icon: appStateSettings["outlinedIcons"] ? Icons.warning_amber_outlined : Icons.warning_amber_rounded,
                           onSubmit: () async {
                             Navigator.pop(context);
                             clearDatabase(context);
@@ -426,8 +406,7 @@ class AboutPage extends StatelessWidget {
           ),
         ),
         SizedBox(height: 10),
-        if (getPlatform(ignoreEmulation: true) == PlatformOS.isAndroid ||
-            kIsWeb)
+        if (getPlatform(ignoreEmulation: true) == PlatformOS.isAndroid || kIsWeb)
           Padding(
             padding: const EdgeInsets.only(top: 10, bottom: 10),
             child: HorizontalBreakAbove(
@@ -435,8 +414,7 @@ class AboutPage extends StatelessWidget {
               children: [
                 SizedBox(height: 10),
                 Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 15, vertical: 7),
+                  padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 7),
                   child: Center(
                     child: TextFont(
                       text: "advanced-automation".tr(),
@@ -450,8 +428,7 @@ class AboutPage extends StatelessWidget {
                 AboutInfoBox(
                   title: "deep-linking".tr(),
                   showLink: false,
-                  link:
-                      "https://github.com/jameskokoska/Cashew?tab=readme-ov-file#app-links",
+                  link: "https://github.com/jameskokoska/Cashew?tab=readme-ov-file#app-links",
                   list: [
                     "deep-linking-description".tr(),
                   ],
@@ -675,8 +652,7 @@ class AboutInfoBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding:
-          padding ?? const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+      padding: padding ?? const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
       child: Tappable(
         onTap: () async {
           if (link != null) openUrl(link ?? "");
@@ -686,9 +662,7 @@ class AboutInfoBox extends StatelessWidget {
         },
         color: color ??
             (appStateSettings["materialYou"]
-                ? dynamicPastel(
-                    context, Theme.of(context).colorScheme.secondaryContainer,
-                    amountLight: 0.2, amountDark: 0.6)
+                ? dynamicPastel(context, Theme.of(context).colorScheme.secondaryContainer, amountLight: 0.2, amountDark: 0.6)
                 : getColor(context, "lightDarkAccent")),
         borderRadius: getPlatform() == PlatformOS.isIOS ? 10 : 15,
         child: Padding(

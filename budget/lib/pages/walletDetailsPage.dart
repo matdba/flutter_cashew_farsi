@@ -4,10 +4,8 @@ import 'package:budget/pages/addBudgetPage.dart';
 import 'package:budget/pages/addTransactionPage.dart';
 import 'package:budget/pages/addWalletPage.dart';
 import 'package:budget/pages/creditDebtTransactionsPage.dart';
-import 'package:budget/pages/editHomePage.dart';
 import 'package:budget/pages/homePage/homePageLineGraph.dart';
 import 'package:budget/pages/homePage/homePageNetWorth.dart';
-import 'package:budget/pages/homePage/homePageWalletSwitcher.dart';
 import 'package:budget/pages/pastBudgetsPage.dart';
 import 'package:budget/pages/premiumPage.dart';
 import 'package:budget/pages/transactionFilters.dart';
@@ -21,8 +19,6 @@ import 'package:budget/widgets/budgetHistoryLineGraph.dart';
 import 'package:budget/widgets/button.dart';
 import 'package:budget/widgets/countNumber.dart';
 import 'package:budget/widgets/dropdownSelect.dart';
-import 'package:budget/widgets/editRowEntry.dart';
-import 'package:budget/widgets/extraInfoBoxes.dart';
 import 'package:budget/widgets/framework/popupFramework.dart';
 import 'package:budget/widgets/iconButtonScaled.dart';
 import 'package:budget/widgets/incomeExpenseTabSelector.dart';
@@ -31,43 +27,35 @@ import 'package:budget/widgets/navigationSidebar.dart';
 import 'package:budget/widgets/openBottomSheet.dart';
 import 'package:budget/widgets/openContainerNavigation.dart';
 import 'package:budget/widgets/openPopup.dart';
-import 'package:budget/widgets/outlinedButtonStacked.dart';
 import 'package:budget/widgets/periodCyclePicker.dart';
-import 'package:budget/widgets/radioItems.dart';
 import 'package:budget/widgets/scrollbarWrap.dart';
-import 'package:budget/widgets/selectAmount.dart';
 import 'package:budget/widgets/selectedTransactionsAppBar.dart';
 import 'package:budget/widgets/categoryEntry.dart';
 import 'package:budget/widgets/framework/pageFramework.dart';
 import 'package:budget/widgets/pieChart.dart';
 import 'package:budget/widgets/settingsContainers.dart';
 import 'package:budget/widgets/tappable.dart';
-import 'package:budget/widgets/tappableTextEntry.dart';
 import 'package:budget/widgets/textWidgets.dart';
 import 'package:budget/widgets/transactionEntries.dart';
 import 'package:budget/widgets/transactionEntry/incomeAmountArrow.dart';
 import 'package:budget/widgets/transactionEntry/swipeToSelectTransactions.dart';
 import 'package:budget/widgets/transactionEntry/transactionEntry.dart';
 import 'package:budget/widgets/transactionsAmountBox.dart';
-import 'package:budget/widgets/util/keepAliveClientMixin.dart';
-import 'package:budget/widgets/util/showDatePicker.dart';
 import 'package:budget/widgets/util/sliverPinnedOverlapInjector.dart';
 import 'package:budget/widgets/util/widgetSize.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:budget/colors.dart';
 import 'package:budget/widgets/viewAllTransactionsButton.dart';
 import 'package:flutter_sticky_header/flutter_sticky_header.dart';
-import 'package:implicitly_animated_reorderable_list/transitions.dart';
 import 'package:provider/provider.dart';
 import 'package:budget/widgets/fab.dart';
 import 'package:budget/widgets/fadeIn.dart';
 import 'package:async/async.dart' show StreamZip;
 import 'package:shamsi_date/shamsi_date.dart';
 import 'package:sliver_tools/sliver_tools.dart';
-import 'package:budget/widgets/util/rightSideClipper.dart';
+import 'package:flutter/material.dart' as material;
 
 // Also known as the all spending page
 
@@ -103,20 +91,23 @@ class WatchedWalletDetailsPage extends StatelessWidget {
   final String walletPk;
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<TransactionWallet>(
-      stream: database.getWallet(walletPk),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          Color accentColor = HexColor(snapshot.data?.colour, defaultColor: Theme.of(context).colorScheme.primary);
-          return CustomColorTheme(
-            accentColor: accentColor,
-            child: WalletDetailsPage(
-              wallet: snapshot.data,
-            ),
-          );
-        }
-        return SizedBox.shrink();
-      },
+    return Directionality(
+      textDirection: material.TextDirection.rtl,
+      child: StreamBuilder<TransactionWallet>(
+        stream: database.getWallet(walletPk),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            Color accentColor = HexColor(snapshot.data?.colour, defaultColor: Theme.of(context).colorScheme.primary);
+            return CustomColorTheme(
+              accentColor: accentColor,
+              child: WalletDetailsPage(
+                wallet: snapshot.data,
+              ),
+            );
+          }
+          return SizedBox.shrink();
+        },
+      ),
     );
   }
 }
@@ -1085,6 +1076,7 @@ class WalletDetailsPageState extends State<WalletDetailsPage> with SingleTickerP
       onWillPop: () async {
         if ((globalSelectedID.value[listID] ?? []).length > 0) {
           globalSelectedID.value[listID] = [];
+          // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
           globalSelectedID.notifyListeners();
           return false;
         } else {
@@ -2190,7 +2182,7 @@ class _AllSpendingPastSpendingGraphState extends State<AllSpendingPastSpendingGr
                                 netSpending,
                               ),
                               fontSize: 16,
-                              textAlign: TextAlign.left,
+                              textAlign: TextAlign.right,
                               fontWeight: FontWeight.bold,
                             ),
                           ],
@@ -2637,7 +2629,7 @@ class AmountSpentEntryRow extends StatelessWidget {
                                     child: TextFont(
                                       text: "",
                                       maxLines: 1,
-                                      textAlign: TextAlign.left,
+                                      textAlign: TextAlign.right,
                                       richTextSpan: [
                                         TextSpan(
                                           text: label,

@@ -15,7 +15,6 @@ import 'package:budget/widgets/openBottomSheet.dart';
 import 'package:budget/widgets/outlinedButtonStacked.dart';
 import 'package:budget/widgets/periodCyclePicker.dart';
 import 'package:budget/widgets/transactionsAmountBox.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -115,7 +114,7 @@ class _WalletPickerPeriodCycleState extends State<WalletPickerPeriodCycle> {
                     alignBeside: true,
                     padding: EdgeInsets.only(left: 20, right: 15, top: 15, bottom: 15),
                     showToggleSwitch: true,
-                    text: "all-accounts".tr(),
+                    text: "تمام حساب ها",
                     iconData: appStateSettings["outlinedIcons"]
                         ? Icons.account_balance_wallet_outlined
                         : Icons.account_balance_wallet_rounded,

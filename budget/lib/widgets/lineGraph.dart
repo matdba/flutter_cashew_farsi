@@ -1,13 +1,8 @@
-import 'dart:developer';
-
 import 'package:budget/database/tables.dart';
 import 'package:budget/functions.dart';
-import 'package:budget/struct/currencyFunctions.dart';
 import 'package:budget/struct/settings.dart';
-import 'package:budget/widgets/noResults.dart';
 import 'package:budget/widgets/openBottomSheet.dart';
 import 'package:budget/widgets/textWidgets.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:budget/colors.dart';
@@ -211,15 +206,15 @@ class _LineChartState extends State<_LineChart> with WidgetsBindingObserver {
               value,
               titleMeta,
             ) {
-              bool show = false;
+              // bool show = false;
               if (value == titleMeta.max || value == titleMeta.min) {
                 return SizedBox.shrink();
               } else if (value == 0) {
-                show = true;
+                // show = true;
               } else if (value < widget.maxPair.y && value > 1 && value < titleMeta.max) {
-                show = true;
+                // show = true;
               } else if (value > widget.minPair.y && value < 1 && value > titleMeta.min) {
-                show = true;
+                // show = true;
               } else {
                 return SizedBox.shrink();
               }
@@ -641,7 +636,7 @@ class LineChartWrapper extends StatelessWidget {
 }
 
 double measureCurrencyStringExtraWidth(AllWallets allWallets) {
-  String currencyString = getCurrencyString(allWallets);
+  String currencyString = 'تومان';
   if (currencyString.length == "1") {
     return 0;
   } else {

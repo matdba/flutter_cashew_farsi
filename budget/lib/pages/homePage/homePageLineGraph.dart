@@ -2,16 +2,13 @@ import 'package:budget/colors.dart';
 import 'package:budget/database/tables.dart';
 import 'package:budget/functions.dart';
 import 'package:budget/pages/budgetPage.dart';
-import 'package:budget/pages/editHomePage.dart';
 import 'package:budget/pages/transactionFilters.dart';
 import 'package:budget/struct/currencyFunctions.dart';
 import 'package:budget/struct/databaseGlobal.dart';
 import 'package:budget/struct/settings.dart';
 import 'package:budget/widgets/globalLoadingProgress.dart';
-import 'package:budget/widgets/navigationFramework.dart';
 import 'package:budget/widgets/util/keepAliveClientMixin.dart';
 import 'package:budget/widgets/lineGraph.dart';
-import 'package:budget/widgets/navigationSidebar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -29,23 +26,16 @@ class HomePageLineGraph extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SearchFilters searchFilters = SearchFilters(
-      expenseIncome:
-          appStateSettings["homePageTransactionsListIncomeAndExpenseOnly"] ==
-                  true
-              ? [
-                  if (selectedSlidingSelector == 2) ExpenseIncome.expense,
-                  if (selectedSlidingSelector == 3) ExpenseIncome.income
-                ]
-              : [],
-      positiveCashFlow:
-          appStateSettings["homePageTransactionsListIncomeAndExpenseOnly"] ==
-                  false
-              ? selectedSlidingSelector == 2
-                  ? false
-                  : selectedSlidingSelector == 3
-                      ? true
-                      : null
-              : null,
+      expenseIncome: appStateSettings["homePageTransactionsListIncomeAndExpenseOnly"] == true
+          ? [if (selectedSlidingSelector == 2) ExpenseIncome.expense, if (selectedSlidingSelector == 3) ExpenseIncome.income]
+          : [],
+      positiveCashFlow: appStateSettings["homePageTransactionsListIncomeAndExpenseOnly"] == false
+          ? selectedSlidingSelector == 2
+              ? false
+              : selectedSlidingSelector == 3
+                  ? true
+                  : null
+          : null,
     );
     return KeepAliveClientMixin(
       child: Padding(
@@ -57,31 +47,25 @@ class HomePageLineGraph extends StatelessWidget {
             color: getColor(context, "lightDarkAccentHeavyLight"),
             boxShadow: boxShadowCheck(boxShadowGeneral(context)),
           ),
-          child: appStateSettings["lineGraphDisplayType"] ==
-                  LineGraphDisplay.Default30Days.index
+          child: appStateSettings["lineGraphDisplayType"] == LineGraphDisplay.Default30Days.index
               ? PastSpendingGraph(
                   isIncome: null,
                   searchFilters: searchFilters,
                 )
-              : appStateSettings["lineGraphDisplayType"] ==
-                      LineGraphDisplay.AllTime.index
+              : appStateSettings["lineGraphDisplayType"] == LineGraphDisplay.AllTime.index
                   ? PastSpendingGraph(
                       isIncome: null,
                       searchFilters: searchFilters,
                       allTimeUpToFirstTransaction: true,
                     )
-                  : appStateSettings["lineGraphDisplayType"] ==
-                          LineGraphDisplay.CustomStartDate.index
+                  : appStateSettings["lineGraphDisplayType"] == LineGraphDisplay.CustomStartDate.index
                       ? PastSpendingGraph(
                           isIncome: null,
                           searchFilters: searchFilters,
-                          customStartDate: DateTime.parse(
-                              appStateSettings["lineGraphStartDate"]),
+                          customStartDate: DateTime.parse(appStateSettings["lineGraphStartDate"]),
                         )
                       : StreamBuilder<Budget>(
-                          stream: database.getBudget(
-                              appStateSettings["lineGraphReferenceBudgetPk"]
-                                  .toString()),
+                          stream: database.getBudget(appStateSettings["lineGraphReferenceBudgetPk"].toString()),
                           builder: (context, snapshot) {
                             if (snapshot.hasData && snapshot.data != null) {
                               Budget budget = snapshot.data!;
@@ -89,8 +73,7 @@ class HomePageLineGraph extends StatelessWidget {
                                 key: ValueKey(budget.budgetPk),
                                 budget: budget,
                                 dateForRange: DateTime.now(),
-                                budgetRange:
-                                    getBudgetDate(budget, DateTime.now()),
+                                budgetRange: getBudgetDate(budget, DateTime.now()),
                                 isPastBudget: false,
                                 selectedCategory: null,
                                 showPastSpending: false,
@@ -136,10 +119,8 @@ class PastSpendingGraph extends StatelessWidget {
   final Widget Function(Widget)? builder;
   final bool allTimeUpToFirstTransaction;
 
-  Widget buildLineChart(BuildContext context,
-      {DateTime? earliestTransactionDate, DateTime? latestTransactionDate}) {
-    DateTime? customStartDateCheckedNull =
-        earliestTransactionDate ?? customStartDate;
+  Widget buildLineChart(BuildContext context, {DateTime? earliestTransactionDate, DateTime? latestTransactionDate}) {
+    DateTime? customStartDateCheckedNull = earliestTransactionDate ?? customStartDate;
     if (customStartDate?.isAfter(DateTime.now()) ?? false) {
       customStartDateCheckedNull = DateTime.now();
     }
@@ -150,8 +131,7 @@ class PastSpendingGraph extends StatelessWidget {
           DateTime.now().day,
         );
 
-    DateTime customEndDateChecked =
-        customEndDate ?? latestTransactionDate ?? DateTime.now();
+    DateTime customEndDateChecked = customEndDate ?? latestTransactionDate ?? DateTime.now();
 
     // Days limit no longer needed, it was incorporated into calculatePoints()
     // by using 'resolution'
@@ -182,9 +162,7 @@ class PastSpendingGraph extends StatelessWidget {
       ),
       builder: (context, snapshotTotalSpentBefore) {
         if (snapshotTotalSpentBefore.hasData) {
-          double totalSpentBefore = appStateSettings["ignorePastAmountSpent"]
-              ? 0
-              : snapshotTotalSpentBefore.data!;
+          double totalSpentBefore = appStateSettings["ignorePastAmountSpent"] ? 0 : snapshotTotalSpentBefore.data!;
           return StreamBuilder<List<Transaction>>(
             stream: database.getTransactionsInTimeRangeFromCategories(
               customStartDateChecked,
@@ -212,10 +190,8 @@ class PastSpendingGraph extends StatelessWidget {
                       customEndDate: customEndDateChecked,
                       totalSpentBefore: totalSpentBefore,
                       isIncome: isIncome,
-                      allWallets:
-                          Provider.of<AllWallets>(context, listen: false),
-                      showCumulativeSpending:
-                          appStateSettings["showCumulativeSpending"],
+                      allWallets: Provider.of<AllWallets>(context, listen: false),
+                      showCumulativeSpending: appStateSettings["showCumulativeSpending"],
                       appStateSettingsPassed: appStateSettings,
                     ),
                   ),
@@ -257,8 +233,7 @@ class PastSpendingGraph extends StatelessWidget {
   Widget build(BuildContext context) {
     if (allTimeUpToFirstTransaction) {
       return StreamBuilder<EarliestLatestDateTime?>(
-        stream: database.watchEarliestLatestTransactionDateTime(
-            searchFilters: searchFilters),
+        stream: database.watchEarliestLatestTransactionDateTime(searchFilters: searchFilters),
         builder: (context, snapshot) {
           if (snapshot.hasData == false) return SizedBox.shrink();
           return buildLineChart(
@@ -310,8 +285,7 @@ List<Pair> calculatePoints(CalculatePointsParams p) {
       continue;
     }
 
-    DateTime day = DateTime(transaction.dateCreated.year,
-        transaction.dateCreated.month, transaction.dateCreated.day);
+    DateTime day = DateTime(transaction.dateCreated.year, transaction.dateCreated.month, transaction.dateCreated.day);
     double amount = transaction.amount *
         amountRatioToPrimaryCurrencyGivenPk(
           p.allWallets,
@@ -320,8 +294,7 @@ List<Pair> calculatePoints(CalculatePointsParams p) {
         ) *
         invertPolarity;
 
-    if (p.customStartDate.millisecondsSinceEpoch >
-        transaction.dateCreated.millisecondsSinceEpoch) {
+    if (p.customStartDate.millisecondsSinceEpoch > transaction.dateCreated.millisecondsSinceEpoch) {
       transactionsBeforeStartDateTotal += (transaction.amount *
               (amountRatioToPrimaryCurrencyGivenPk(
                 p.allWallets,
@@ -339,8 +312,7 @@ List<Pair> calculatePoints(CalculatePointsParams p) {
   // Higher number is more resolution!
   // Means for every resolutionThreshold point, it will skip one
   double resolutionThreshold = 500;
-  double resolution =
-      (dailyTotals.length / resolutionThreshold).round().toDouble();
+  double resolution = (dailyTotals.length / resolutionThreshold).round().toDouble();
   if (resolution <= 1) resolution = 1;
 
   //print("Input length: " + dailyTotals.length.toString());
@@ -352,18 +324,13 @@ List<Pair> calculatePoints(CalculatePointsParams p) {
       indexDay = DateTime(indexDay.year, indexDay.month, indexDay.day + 1)) {
     index++;
     if (indexDay == p.customStartDate) {
-      indexDay = DateTime(p.customStartDate.year, p.customStartDate.month,
-          p.customStartDate.day);
+      indexDay = DateTime(p.customStartDate.year, p.customStartDate.month, p.customStartDate.day);
     }
 
     double totalForDay = dailyTotals[indexDay] ?? 0;
     cumulativeTotal += totalForDay;
-    if (indexDay !=
-            DateTime(p.customStartDate.year, p.customStartDate.month,
-                p.customStartDate.day) &&
-        indexDay !=
-            DateTime(p.customEndDate.year, p.customEndDate.month,
-                p.customEndDate.day) &&
+    if (indexDay != DateTime(p.customStartDate.year, p.customStartDate.month, p.customStartDate.day) &&
+        indexDay != DateTime(p.customEndDate.year, p.customEndDate.month, p.customEndDate.day) &&
         index % resolution >= 1) continue;
     points.add(
       Pair(

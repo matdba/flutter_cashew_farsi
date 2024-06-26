@@ -43,33 +43,34 @@ class OpenContainerNavigation extends StatelessWidget {
         ),
       );
     }
-    return OpenContainer(
-      onClosed: (_) async {
-        if (onClosed != null) onClosed!();
-      },
-      transitionType: ContainerTransitionType.fade,
-      openBuilder: (BuildContext context, VoidCallback _) {
-        return openPage;
-      },
-      tappable: false,
-      transitionDuration: getPlatform() == PlatformOS.isIOS
-          ? Duration(milliseconds: 475)
-          : Duration(milliseconds: 400),
-      closedElevation: closedElevation ?? 0,
-      openColor: closedColor ?? Colors.transparent,
-      closedColor: closedColor ?? Colors.transparent,
-      openElevation: 0,
-      closedBuilder: (BuildContext context, VoidCallback openContainer) {
-        return button(() {
-          if (onOpen != null) onOpen!();
-          openContainer();
-        });
-      },
-      closedShape: RoundedRectangleBorder(
-        borderRadius: customBorderRadius ??
-            BorderRadius.all(
-              Radius.circular(borderRadius),
-            ),
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: OpenContainer(
+        onClosed: (_) async {
+          if (onClosed != null) onClosed!();
+        },
+        transitionType: ContainerTransitionType.fade,
+        openBuilder: (BuildContext context, VoidCallback _) {
+          return openPage;
+        },
+        tappable: false,
+        transitionDuration: getPlatform() == PlatformOS.isIOS ? Duration(milliseconds: 475) : Duration(milliseconds: 400),
+        closedElevation: closedElevation ?? 0,
+        openColor: closedColor ?? Colors.transparent,
+        closedColor: closedColor ?? Colors.transparent,
+        openElevation: 0,
+        closedBuilder: (BuildContext context, VoidCallback openContainer) {
+          return button(() {
+            if (onOpen != null) onOpen!();
+            openContainer();
+          });
+        },
+        closedShape: RoundedRectangleBorder(
+          borderRadius: customBorderRadius ??
+              BorderRadius.all(
+                Radius.circular(borderRadius),
+              ),
+        ),
       ),
     );
   }

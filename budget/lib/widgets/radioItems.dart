@@ -48,9 +48,9 @@ class _RadioItemsState<T> extends State<RadioItems<T>> {
   @override
   Widget build(BuildContext context) {
     List<Widget> children = [];
-    int index = -1;
+    // int index = -1;
     for (T item in widget.items) {
-      index += 1;
+      // index += 1;
       bool selected = false;
       if (currentValue == item || (widget.getSelected != null && widget.getSelected!(item))) selected = true;
       if (item == null && widget.ifNullSelectNone == true) selected = false;
@@ -70,9 +70,9 @@ class _RadioItemsState<T> extends State<RadioItems<T>> {
               widget.onChanged(item);
             },
             child: ListTile(
-              contentPadding: EdgeInsets.only(left: 16, right: widget.getEndInfo == null ? 16 : 7),
+              contentPadding: EdgeInsets.only(right: 16, left: widget.getEndInfo == null ? 16 : 7),
               title: Transform.translate(
-                offset: Offset(-12, 0),
+                offset: Offset(12, 0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -106,7 +106,7 @@ class _RadioItemsState<T> extends State<RadioItems<T>> {
                     ),
                     if (widget.getEndInfo != null)
                       Padding(
-                        padding: const EdgeInsets.only(left: 3),
+                        padding: const EdgeInsets.only(right: 3),
                         child: TextFont(
                           fontSize: noDescription ? 18 : 16,
                           text: widget.getEndInfo == null ? "" : widget.getEndInfo!(item),
@@ -194,6 +194,7 @@ class _CheckItemsState<T> extends State<CheckItems<T>> {
   }
 
   void didUpdateWidget(oldWidget) {
+    super.didUpdateWidget(oldWidget);
     if (oldWidget != widget && widget.syncWithInitial) {
       setState(() {
         currentValues = widget.initial ?? [];
@@ -276,9 +277,9 @@ class _CheckItemsState<T> extends State<CheckItems<T>> {
                 ),
               ),
               dense: true,
-              contentPadding: EdgeInsets.only(right: 0, left: 16),
+              contentPadding: EdgeInsets.only(left: 0, right: 16),
               leading: Padding(
-                padding: const EdgeInsets.only(right: 5),
+                padding: const EdgeInsets.only(left: 5),
                 child: selected
                     ? Icon(
                         widget.selectedIcon ?? Icons.check_box,
