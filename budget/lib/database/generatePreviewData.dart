@@ -813,7 +813,8 @@ class PreviewDemoWarning extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 child: TextFont(
-                  text: "preview-demo-warning".tr(),
+                  text:
+                      "حالت دمو در حال حاضر فعال می باشد و داده هایی که به صورت خودکار تولید شده اند در اپلیکیشن استفاده شده است. استفاده از اپلیکیشن در حالت دمو به دلیل اینکه داده هایی شما ممکن است از بین برود، توصیه نمیشود. برای حذف داده های تولید شده و خروج از حالت دمو لطفا اینجا را کلیک کنید.",
                   textColor: Theme.of(context).colorScheme.onError,
                   fontSize: 15,
                   maxLines: 10,

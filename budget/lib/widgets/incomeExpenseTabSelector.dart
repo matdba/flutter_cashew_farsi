@@ -9,6 +9,7 @@ import 'package:budget/widgets/transactionEntry/incomeAmountArrow.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' as material;
 
 class IncomeExpenseTabSelector extends StatefulWidget {
   final Function(bool isIncome) onTabChanged;
@@ -104,53 +105,56 @@ class _IncomeExpenseTabSelectorState extends State<IncomeExpenseTabSelector> wit
                     ? getColor(context, "lightDarkAccentHeavyLight").withOpacity(0.5)
                     : Colors.black.withOpacity(0.03)
             : widget.unselectedColor,
-        child: TabBar(
-          splashFactory: getPlatform() == PlatformOS.isIOS ? NoSplash.splashFactory : null,
-          controller: _incomeTabController,
-          dividerColor: Colors.transparent,
-          indicatorColor: Colors.transparent,
-          indicatorSize: TabBarIndicatorSize.tab,
-          indicator: BoxDecoration(
-            color: widget.color != null
-                ? widget.color
-                : (appStateSettings["materialYou"]
-                    ? Theme.of(context).colorScheme.primary.withOpacity(0.25)
-                    : Theme.of(context).brightness == Brightness.dark
-                        ? getColor(context, "black").withOpacity(0.15)
-                        : Theme.of(context).colorScheme.secondaryContainer),
+        child: Directionality(
+          textDirection: material.TextDirection.ltr,
+          child: TabBar(
+            splashFactory: getPlatform() == PlatformOS.isIOS ? NoSplash.splashFactory : null,
+            controller: _incomeTabController,
+            dividerColor: Colors.transparent,
+            indicatorColor: Colors.transparent,
+            indicatorSize: TabBarIndicatorSize.tab,
+            indicator: BoxDecoration(
+              color: widget.color != null
+                  ? widget.color
+                  : (appStateSettings["materialYou"]
+                      ? Theme.of(context).colorScheme.primary.withOpacity(0.25)
+                      : Theme.of(context).brightness == Brightness.dark
+                          ? getColor(context, "black").withOpacity(0.15)
+                          : Theme.of(context).colorScheme.secondaryContainer),
+            ),
+            labelColor: getColor(context, "black"),
+            unselectedLabelColor: widget.unselectedLabelColor ?? getColor(context, "black").withOpacity(0.3),
+            onTap: (value) {
+              widget.onTabChanged(value == 0);
+              setState(() {
+                selectedIncome = value == 0;
+              });
+            },
+            tabs: [
+              Tab(
+                child: ExpenseIncomeSelectorLabel(
+                  selectedIncome: selectedIncome,
+                  showIcons: widget.showIcons,
+                  label: widget.incomeLabel,
+                  isIncome: true,
+                  customIcon: widget.incomeCustomIcon,
+                  tabController: _incomeTabController,
+                  customColor: widget.incomeIconColor,
+                ),
+              ),
+              Tab(
+                child: ExpenseIncomeSelectorLabel(
+                  selectedIncome: selectedIncome,
+                  showIcons: widget.showIcons,
+                  label: widget.expenseLabel,
+                  isIncome: false,
+                  customIcon: widget.expenseCustomIcon,
+                  tabController: _incomeTabController,
+                  customColor: widget.expenseIconColor,
+                ),
+              ),
+            ],
           ),
-          labelColor: getColor(context, "black"),
-          unselectedLabelColor: widget.unselectedLabelColor ?? getColor(context, "black").withOpacity(0.3),
-          onTap: (value) {
-            widget.onTabChanged(value == 0);
-            setState(() {
-              selectedIncome = value == 0;
-            });
-          },
-          tabs: [
-            Tab(
-              child: ExpenseIncomeSelectorLabel(
-                selectedIncome: selectedIncome,
-                showIcons: widget.showIcons,
-                label: widget.incomeLabel,
-                isIncome: true,
-                customIcon: widget.incomeCustomIcon,
-                tabController: _incomeTabController,
-                customColor: widget.incomeIconColor,
-              ),
-            ),
-            Tab(
-              child: ExpenseIncomeSelectorLabel(
-                selectedIncome: selectedIncome,
-                showIcons: widget.showIcons,
-                label: widget.expenseLabel,
-                isIncome: false,
-                customIcon: widget.expenseCustomIcon,
-                tabController: _incomeTabController,
-                customColor: widget.expenseIconColor,
-              ),
-            ),
-          ],
         ),
       ),
     );

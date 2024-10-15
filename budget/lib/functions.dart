@@ -214,9 +214,9 @@ String convertToMoney(AllWallets allWallets, double amount,
   // numberFormatSymbols[locale] as NumberSymbols
 
   // If there is no currency symbol, use the currency code
-  if (forceHideCurrencyName == false && getCurrencyString(allWallets, currencyKey: currencyKey) == "") {
-    addCurrencyName = true;
-  }
+  // if (forceHideCurrencyName == false && getCurrencyString(allWallets, currencyKey: currencyKey) == "") {
+  //   addCurrencyName = true;
+  // }
 
   String formatOutput = intAmount.toString() + ' ' + symbol;
   developer.log('formatOutput: ${intAmount}');

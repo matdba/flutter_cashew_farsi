@@ -551,18 +551,18 @@ DateTime? getEndDateOfSelectedCustomPeriod(
 String getLabelOfSelectedCustomPeriod(String cycleSettingsExtension) {
   CycleType selectedPeriodType = CycleType.values[appStateSettings["selectedPeriodCycleType" + cycleSettingsExtension] ?? 0];
   if (selectedPeriodType == CycleType.allTime) {
-    return "all-time".tr();
+    return "تمام زمان ها";
   } else if (selectedPeriodType == CycleType.cycle) {
     DateTimeRange dateRange = getCycleDateTimeRange(cycleSettingsExtension);
     return getWordedDateShort(Jalali.fromDateTime(dateRange.start)) + " – " + getWordedDateShort(Jalali.fromDateTime(dateRange.end));
   } else if (selectedPeriodType == CycleType.pastDays) {
     int days = appStateSettings["customPeriodPastDays" + cycleSettingsExtension] ?? 1;
-    return "previous".tr() + " " + days.toString() + " " + (days == 1 ? "day".tr() : "days".tr());
+    return days.toString().toPersianDigit() + " روز گذشته";
   } else if (selectedPeriodType == CycleType.dateRange) {
     DateTime startDate = getStartDateOfSelectedCustomPeriod(cycleSettingsExtension) ?? DateTime.now();
     DateTime? endDate = getEndDateOfSelectedCustomPeriod(cycleSettingsExtension);
     return getWordedDateShort(Jalali.fromDateTime(startDate)) +
-        (endDate == null ? " " + "onwards".tr().toLowerCase() : (" – " + getWordedDateShort(Jalali.fromDateTime(endDate))));
+        (endDate == null ? " تا همیشه" : (" – " + getWordedDateShort(Jalali.fromDateTime(endDate))));
   }
   return "";
 }

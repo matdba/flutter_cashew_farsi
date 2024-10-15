@@ -49,6 +49,7 @@ import 'package:flutter/material.dart';
 import 'package:budget/colors.dart';
 import 'package:budget/widgets/viewAllTransactionsButton.dart';
 import 'package:flutter_sticky_header/flutter_sticky_header.dart';
+import 'package:persian_number_utility/persian_number_utility.dart';
 import 'package:provider/provider.dart';
 import 'package:budget/widgets/fab.dart';
 import 'package:budget/widgets/fadeIn.dart';
@@ -182,7 +183,7 @@ class WalletDetailsPageState extends State<WalletDetailsPage> with SingleTickerP
     await openBottomSheet(
       context,
       PopupFramework(
-        title: "select-period".tr(),
+        title: "انتخاب دوره",
         child: WalletPickerPeriodCycle(
           allWalletsSettingKey: null,
           cycleSettingsExtension: "",
@@ -591,7 +592,7 @@ class WalletDetailsPageState extends State<WalletDetailsPage> with SingleTickerP
               selectAllSpendingPeriod();
             }
           },
-          label: widget.wallet != null ? "account-total".tr() : "net-total".tr(),
+          label: widget.wallet != null ? "دارایی حساب" : "دارایی کل",
           absolute: false,
           currencyKey: Provider.of<AllWallets>(context).indexedByPk[appStateSettings["selectedWalletPk"]]?.currency,
           totalWithCountStream: database.watchTotalWithCountOfWallet(
@@ -696,7 +697,7 @@ class WalletDetailsPageState extends State<WalletDetailsPage> with SingleTickerP
                             ),
                             absolute: false,
                             textColor: getColor(context, "black"),
-                            label: "net-total".tr(),
+                            label: "دارایی کل",
                             totalWithCountStream: database.watchTotalWithCountOfWallet(
                               isIncome: null,
                               allWallets: Provider.of<AllWallets>(context),
@@ -722,7 +723,7 @@ class WalletDetailsPageState extends State<WalletDetailsPage> with SingleTickerP
                             ),
                           ),
                           textColor: getColor(context, "expenseAmount"),
-                          label: "expense".tr(),
+                          label: "هزینه ها",
                           totalWithCountStream: database.watchTotalWithCountOfWallet(
                             isIncome: false,
                             allWallets: Provider.of<AllWallets>(context),
@@ -747,7 +748,7 @@ class WalletDetailsPageState extends State<WalletDetailsPage> with SingleTickerP
                             ),
                           ),
                           textColor: getColor(context, "incomeAmount"),
-                          label: "income".tr(),
+                          label: "درآمد",
                           totalWithCountStream: database.watchTotalWithCountOfWallet(
                             isIncome: true,
                             allWallets: Provider.of<AllWallets>(context),
@@ -790,7 +791,7 @@ class WalletDetailsPageState extends State<WalletDetailsPage> with SingleTickerP
                                   ),
                                 ),
                           textColor: getColor(context, "unPaidUpcoming"),
-                          label: "upcoming".tr(),
+                          label: "موعد نرسیده",
                           absolute: false,
                           totalWithCountStream: database.watchTotalWithCountOfUpcomingOverdue(
                             isOverdueTransactions: false,
@@ -835,7 +836,7 @@ class WalletDetailsPageState extends State<WalletDetailsPage> with SingleTickerP
                                   ),
                                 ),
                           textColor: getColor(context, "unPaidOverdue"),
-                          label: "overdue".tr(),
+                          label: "موعد رسیده",
                           absolute: false,
                           totalWithCountStream: database.watchTotalWithCountOfUpcomingOverdue(
                             isOverdueTransactions: true,
@@ -858,9 +859,8 @@ class WalletDetailsPageState extends State<WalletDetailsPage> with SingleTickerP
                         // But that's not what this does...
                         AmountSpentEntryRow(
                           hide: selectedDateTimeRange != null,
-                          extraText: CycleType.values[appStateSettings["selectedPeriodCycleType"] ?? 0] != CycleType.allTime
-                              ? "all-time".tr()
-                              : null,
+                          extraText:
+                              CycleType.values[appStateSettings["selectedPeriodCycleType"] ?? 0] != CycleType.allTime ? "" : null,
                           openPage: widget.wallet == null &&
                                   (searchFilters?.walletPks == null || (searchFilters?.walletPks.length ?? 0) <= 0)
                               ? CreditDebtTransactions(isCredit: true)
@@ -873,7 +873,7 @@ class WalletDetailsPageState extends State<WalletDetailsPage> with SingleTickerP
                                   ),
                                 ),
                           textColor: getColor(context, "unPaidUpcoming"),
-                          label: "lent".tr(),
+                          label: "قرض داده شده",
                           absolute: false,
                           invertSign: true,
                           totalWithCountStream: database.watchTotalWithCountOfCreditDebt(
@@ -910,7 +910,7 @@ class WalletDetailsPageState extends State<WalletDetailsPage> with SingleTickerP
                         AmountSpentEntryRow(
                           hide: selectedDateTimeRange != null,
                           extraText: CycleType.values[appStateSettings["selectedPeriodCycleType"] ?? 0] != CycleType.allTime
-                              ? "all-time".tr()
+                              ? "تمام زمان ها"
                               : null,
                           openPage: widget.wallet == null &&
                                   (searchFilters?.walletPks == null || (searchFilters?.walletPks.length ?? 0) <= 0)
@@ -924,7 +924,7 @@ class WalletDetailsPageState extends State<WalletDetailsPage> with SingleTickerP
                                   ),
                                 ),
                           textColor: getColor(context, "unPaidOverdue"),
-                          label: "borrowed".tr(),
+                          label: "قرض گرفته شده",
                           absolute: false,
                           totalWithCountStream: database.watchTotalWithCountOfCreditDebt(
                             isCredit: false,
@@ -1828,8 +1828,8 @@ class _WalletCategoryPieChartState extends State<WalletCategoryPieChart> {
                 widget.onSelectedCategory(selectedCategory);
               },
               initialTabIsIncome: false,
-              incomeLabel: "incoming".tr(),
-              expenseLabel: "outgoing".tr(),
+              incomeLabel: "درآمد ها",
+              expenseLabel: "خرج ها",
             ),
           ),
         ),
@@ -2636,18 +2636,16 @@ class AmountSpentEntryRow extends StatelessWidget {
                                           style: TextStyle(
                                             fontSize: 18,
                                             color: getColor(context, "black"),
-                                            fontFamily: appStateSettings["font"],
-                                            fontFamilyFallback: ['Inter'],
                                             fontWeight: FontWeight.bold,
+                                            fontFamily: 'SansFaNum',
                                           ),
                                         ),
                                         TextSpan(
-                                          text: addAmountToString(" ", totalCount, extraText: extraText),
+                                          text: addAmountToString(" ", totalCount, extraText: extraText).toString().toPersianDigit(),
                                           style: TextStyle(
                                             fontSize: 15,
                                             color: getColor(context, "textLight"),
-                                            fontFamily: appStateSettings["font"],
-                                            fontFamilyFallback: ['Inter'],
+                                            fontFamily: 'SansFaNum',
                                           ),
                                         ),
                                       ],
